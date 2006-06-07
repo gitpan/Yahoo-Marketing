@@ -1,0 +1,8 @@
+--- #YAML:1.0
+name: Yahoo-Marketing
+version: 0.01
+author:
+  - Jeff Lavallee <jeff@zeroclue.com>
+abstract: an interface for Yahoo! Search Marketing's Web Services.
+license: perl
+generated_by: Module::Build version 0.2612, without YAML.pm

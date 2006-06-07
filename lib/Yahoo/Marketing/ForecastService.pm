@@ -1,0 +1,34 @@
+package Yahoo::Marketing::ForecastService;
+# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
+
+use base qw/Yahoo::Marketing::Service/;
+
+
+=head1 NAME
+
+Yahoo::Marketing::ForecastService - an object that let you know the results you might expect from your ads (impressions, clicks, cost, and other performance metrics). Keep in mind that the results from a forecast are estimates only and are not guaranteed. You can perform forecasts for ad groups or keywords. 
+
+=cut
+
+=head1 SYNOPSIS
+
+
+See EWS documentation online for available SOAP methods:
+
+http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/ForecastService.asp
+
+Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
+
+
+
+
+=head2 new
+
+Creates a new instance
+
+=cut 
+
+
+
+1;
