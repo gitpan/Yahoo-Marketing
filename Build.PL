@@ -98,7 +98,7 @@ Please make sure they're properly installed on your system.
 
 my $build = $builder->new(
     module_name         => 'Yahoo::Marketing',
-    license             => 'perl',
+    license             => 'artistic',
     dist_author         => 'Jeff Lavallee <jeff@zeroclue.com>',
     dist_version_from   => 'lib/Yahoo/Marketing.pm',
     build_requires => {
@@ -106,7 +106,7 @@ my $build = $builder->new(
        # requires below by jeff
         'perl'                     => '5.8.1',   
         'SOAP::Lite'               => '>= 0.66, < 1.0',
-        'YAML'                     => '> 0.01',
+        'YAML'                     => '>= 0.01',
         'Class::Accessor::Chained' => '>= 0.01, < 1.0',
         'Module::Build'            => '>= 0.2610',  
         'Scalar::Util'             => '>= 1.01, < 2.0',

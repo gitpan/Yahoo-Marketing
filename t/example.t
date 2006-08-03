@@ -20,7 +20,7 @@ use strict; use warnings;
 #use SOAP::Lite +trace => [qw/ debug method fault /]; #global debug for SOAP calls
 
 use Module::Build;
-use Test::More tests => 10;
+use Test::More tests => 20;
 
 # Yahoo::Marketing complex types and services
 
@@ -36,16 +36,19 @@ use Yahoo::Marketing::CampaignService;
 use Yahoo::Marketing::ExcludedWordsService;
 
 # we will skip running this test unless we're running ./Build posttest
-my $build = Module::Build->current;
+my $build;
+eval { $build = Module::Build->current; };
 SKIP: { 
     eval {
         # required CPAN modules
         require DateTime;
         require DateTime::Format::W3CDTF;
     };
-    skip 'required modules not installed', 10, if $@;
-    skip 'not running post tests', 10, unless $build->notes( 'run_post_tests' ) 
-                                          and $build->notes( 'run_post_tests' ) =~ /^y/i;
+    skip 'required modules not installed', 20, if $@;
+    skip 'not running post tests', 20, unless $build
+                                          and $build->notes( 'run_post_tests' ) 
+                                          and $build->notes( 'run_post_tests' ) =~ /^y/i
+    ;
 
 
 # setup our services
@@ -69,19 +72,24 @@ my $end_datetime   = $formatter->format_datetime( $datetime );
 
 
 # Create a Campaign
-my $campaign = $campaign_service->addCampaign( campaign => 
-                    Yahoo::Marketing::Campaign->new
-                                              ->name( 'MP3'.$$ )  # use pid to help ensure unique name
-                                              ->description( 'MP3 Player' )
-                                              ->accountID( $campaign_service->account )
-                                              ->status( 'On' )
-                                              ->sponsoredSearchON( 'true' )
-                                              ->advancedMatchON( 'true' )
-                                              ->contentMatchON( 'true' )
-                                              ->campaignOptimizationON( 'false' )
-                                              ->startDate( $start_datetime )
-                                              ->endDate( $end_datetime )
-               );
+my $campaign_response = $campaign_service->addCampaign( campaign => 
+                            Yahoo::Marketing::Campaign->new
+                                                      ->name( 'MP3'.$$ )  # use pid to help ensure unique name
+                                                      ->description( 'MP3 Player' )
+                                                      ->accountID( $campaign_service->account )
+                                                      ->status( 'On' )
+                                                      ->sponsoredSearchON( 'true' )
+                                                      ->advancedMatchON( 'true' )
+                                                      ->contentMatchON( 'true' )
+                                                      ->campaignOptimizationON( 'false' )
+                                                      ->startDate( $start_datetime )
+                                                      ->endDate( $end_datetime )
+                       );
+
+ok( $campaign_response );
+is( $campaign_response->operationSucceeded, 'true', 'operation succeeded' );
+
+my $campaign = $campaign_response->campaign;
 
 ok( $campaign );
 diag( "\n" );
@@ -89,48 +97,57 @@ diag( "------> Campaign ID: ".$campaign->ID."\n" );
 
 
 # Create an Ad Group
-my $ad_group = $ad_group_service->addAdGroup( adGroup => 
-                    Yahoo::Marketing::AdGroup->new
-                                             ->accountID(  $campaign_service->account )
-                                             ->name( 'MP3 '.$$ )  # use pid to help ensure unique name
-                                             ->adAutoOptimizationON( 'false' )
-                                             ->advancedMatchON( 'false' )
-                                             ->campaignID( $campaign->ID )
-                                             ->contentMatchON( 'true' )
-                                             ->contentMatchMaxBid( 0.25 )
-                                             ->sponsoredSearchON( 'true' )
-                                             ->sponsoredSearchMaxBid( 0.5 )
-                                             ->status( 'On' )
-                                             ->watchON( 'false' )
-               );
+my $ad_group_response = $ad_group_service->addAdGroup( adGroup => 
+                            Yahoo::Marketing::AdGroup->new
+                                                     ->accountID(  $campaign_service->account )
+                                                     ->name( 'MP3 '.$$ )  # use pid to help ensure unique name
+                                                     ->adAutoOptimizationON( 'false' )
+                                                     ->advancedMatchON( 'false' )
+                                                     ->campaignID( $campaign->ID )
+                                                     ->contentMatchON( 'true' )
+                                                     ->contentMatchMaxBid( 0.25 )
+                                                     ->sponsoredSearchON( 'true' )
+                                                     ->sponsoredSearchMaxBid( 0.5 )
+                                                     ->status( 'On' )
+                                                     ->watchON( 'false' )
+                        );
 
+ok( $ad_group_response );
+is( $ad_group_response->operationSucceeded, 'true', 'operation succeeded' );
+
+my $ad_group = $ad_group_response->adGroup;
 ok( $ad_group );
 diag( "\n" );
 diag( "------> Ad Group ID: ".$ad_group->ID."\n" );
 
 # Create individual Ads for the Ad Group
-my @ads = $ad_service->addAds( ads => [
-               Yahoo::Marketing::Ad->new
-                                   ->adGroupID( $ad_group->ID )
-                                   ->description( 'Before you buy, compare prices at e-electronics-gear. We have a complete selection of computers, electronics, video games and office products from consumer-rated online stores.' )
-                                   ->displayUrl( 'http://www.e-electronics-gear.com' )
-                                   ->name( 'IPod1' )
-                                   ->shortDescription( 'Compare Prices at e-electronics-gear.' )
-                                   ->status( 'On' )
-                                   ->title( 'IPod - Cheaper Prices' )
-                                   ->url( 'http://www.e-electronics-gear.com?display&amp;ad=ipod' )
-               ,
-               Yahoo::Marketing::Ad->new
-                                   ->adGroupID(  $ad_group->ID )
-                                   ->description( 'Before you buy, compare prices on {keyword:e-gear} at e-electronics-gear. We have a complete selection of computers, electronics, video games and office products from consumer-rated online stores.' )
-                                   ->displayUrl( 'http://www.e-electronics-gear.com' )
-                                   ->name( 'IPod2' )
-                                   ->shortDescription( 'Compare Prices on {keyword:E-Gear} at e-electronics-gear.' )
-                                   ->status( 'On' )
-                                   ->title( '{keyword:Electronics} - Cheaper Prices' )
-                                   ->url( 'http://www.e-electronics-gear.com?display&amp;ad=ipod2' )
-               ,
-          ] );
+my @ad_responses = $ad_service->addAds( ads => [
+                       Yahoo::Marketing::Ad->new
+                                           ->adGroupID( $ad_group->ID )
+                                           ->description( 'Before you buy, compare prices at e-electronics-gear. We have a complete selection of computers, electronics, video games and office products from consumer-rated online stores.' )
+                                           ->displayUrl( 'http://www.e-electronics-gear.com' )
+                                           ->name( 'IPod1' )
+                                           ->shortDescription( 'Compare Prices at e-electronics-gear.' )
+                                           ->status( 'On' )
+                                           ->title( 'IPod - Cheaper Prices' )
+                                           ->url( 'http://www.e-electronics-gear.com?display&ad=ipod' )  # unescaped example
+                       ,
+                       Yahoo::Marketing::Ad->new
+                                           ->adGroupID(  $ad_group->ID )
+                                           ->description( 'Before you buy, compare prices on {keyword:e-gear} at e-electronics-gear. We have a complete selection of computers, electronics, video games and office products from consumer-rated online stores.' )
+                                           ->displayUrl( 'http://www.e-electronics-gear.com' )
+                                           ->name( 'IPod2' )
+                                           ->shortDescription( 'Compare Prices on {keyword:E-Gear} at e-electronics-gear.' )
+                                           ->status( 'On' )
+                                           ->title( '{keyword:Electronics} - Cheaper Prices' )
+                                           ->url( 'http://www.e-electronics-gear.com?display&amp;ad=ipod2' ) #escaped example
+                       ,
+                   ] );
+
+ok( scalar @ad_responses == 2 );
+ok( not grep { $_->operationSucceeded ne 'true' } @ad_responses );
+
+my @ads = map { $_->ad } @ad_responses;
 
 ok ( scalar @ads == 2 );
 
@@ -139,52 +156,62 @@ diag( "------> Ad ID: ".$ads[0]->ID."\n" );
 diag( "------> Ad ID: ".$ads[1]->ID."\n" );
 
 # Add Keywords
-my @keywords = $keyword_service->addKeywords( keywords => [
-                   Yahoo::Marketing::Keyword->new
-                                            ->adGroupID( $ad_group->ID ) 
-                                            ->advancedMatchON( 'true' )
-                                            ->status( 'On' )
-                                            ->text( 'ipod' )
-                   ,
-                   Yahoo::Marketing::Keyword->new
-                                            ->adGroupID( $ad_group->ID ) 
-                                            ->advancedMatchON( 'true' )
-                                            ->status( 'On' )
-                                            ->text( 'iPod Mini' )
-                   ,
-                   Yahoo::Marketing::Keyword->new
-                                            ->adGroupID( $ad_group->ID ) 
-                                            ->advancedMatchON( 'true' )
-                                            ->status( 'On' )
-                                            ->text( 'iPod U2' )
-                   ,
-                   Yahoo::Marketing::Keyword->new
-                                            ->adGroupID( $ad_group->ID ) 
-                                            ->advancedMatchON( 'true' )
-                                            ->status( 'On' )
-                                            ->text( 'iPod Shuffle' )
-                   ,
-               ] );
+my @keyword_responses = $keyword_service->addKeywords( keywords => [
+                            Yahoo::Marketing::Keyword->new
+                                                     ->adGroupID( $ad_group->ID ) 
+                                                     ->advancedMatchON( 'true' )
+                                                     ->status( 'On' )
+                                                     ->text( 'ipod' )
+                            ,
+                            Yahoo::Marketing::Keyword->new
+                                                     ->adGroupID( $ad_group->ID ) 
+                                                     ->advancedMatchON( 'true' )
+                                                     ->status( 'On' )
+                                                     ->text( 'iPod Mini' )
+                            ,
+                            Yahoo::Marketing::Keyword->new
+                                                     ->adGroupID( $ad_group->ID ) 
+                                                     ->advancedMatchON( 'true' )
+                                                     ->status( 'On' )
+                                                     ->text( 'iPod U2' )
+                            ,
+                            Yahoo::Marketing::Keyword->new
+                                                     ->adGroupID( $ad_group->ID ) 
+                                                     ->advancedMatchON( 'true' )
+                                                     ->status( 'On' )
+                                                     ->text( 'iPod Shuffle' )
+                            ,
+                        ] );
+
+ok( scalar @keyword_responses == 4 );
+ok( not grep { $_->operationSucceeded ne 'true' } @keyword_responses );
+
+my @keywords = map { $_->keyword } @keyword_responses;
 
 ok ( scalar @keywords == 4 );
 diag( "\n" );
 diag( "------> Keyword ID: ".$keywords[ $_ ]->ID."\n" ) for ( 0..3 );
 
 # Add Excluded Words for the Ad Group
-my @excluded_words = $excluded_words_service->addExcludedWordsToAdGroup( excludedWords => [
-                         Yahoo::Marketing::ExcludedWord->new 
-                                                       ->adGroupID( $ad_group->ID ) 
-                                                       ->text( 'rio' )
-                         ,
-                         Yahoo::Marketing::ExcludedWord->new 
-                                                       ->adGroupID( $ad_group->ID )
-                                                       ->text( 'wma' )
-                         ,
-                         Yahoo::Marketing::ExcludedWord->new 
-                                                       ->adGroupID( $ad_group->ID )
-                                                       ->text( 'plays for sure' )
-                         ,
-                     ] );
+my @excluded_word_responses = $excluded_words_service->addExcludedWordsToAdGroup( excludedWords => [
+                                  Yahoo::Marketing::ExcludedWord->new 
+                                                                ->adGroupID( $ad_group->ID ) 
+                                                                ->text( 'rio' )
+                                  ,
+                                  Yahoo::Marketing::ExcludedWord->new 
+                                                                ->adGroupID( $ad_group->ID )
+                                                                ->text( 'wma' )
+                                  ,
+                                  Yahoo::Marketing::ExcludedWord->new 
+                                                                ->adGroupID( $ad_group->ID )
+                                                                ->text( 'plays for sure' )
+                                  ,
+                              ] );
+
+ok( scalar @excluded_word_responses == 3 );
+ok( not grep { $_->operationSucceeded ne 'true' } @excluded_word_responses );
+
+my @excluded_words = map { $_->excludedWord } @excluded_word_responses;
 
 ok ( scalar @excluded_words == 3 );
 diag( "\n" );
@@ -192,7 +219,7 @@ diag( "------> Excluded Word ID: ".$excluded_words[ $_ ]->ID."\n" ) for ( 0..2 )
 
 diag( "done creating objects, cleaning up...\n" );
 
-ok( $excluded_words_service->deleteExcludedWords( excludedWordIDs =>
+ok( my $foo = $excluded_words_service->deleteExcludedWords( excludedWordIDs =>
                                  [ map { $_->ID } @excluded_words ]
                              )
   );

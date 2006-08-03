@@ -27,6 +27,7 @@ sub _user_setable_attributes {
                  sponsoredSearchQualityScore
                  status
                  title
+                 update
                  url
             /  );
 }

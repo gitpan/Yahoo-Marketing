@@ -21,6 +21,7 @@ sub _user_setable_attributes {
                  accountID
                  averageConversionRate
                  averageRevenuePerConversion
+                 bidLimitHeadroom
                  campaignID
                  conversionImportance
                  conversionMetric
@@ -72,6 +73,7 @@ Creates a new instance
     accountID
     averageConversionRate
     averageRevenuePerConversion
+    bidLimitHeadroom
     campaignID
     conversionImportance
     conversionMetric

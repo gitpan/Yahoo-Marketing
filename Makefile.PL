@@ -15,9 +15,10 @@ WriteMakefile
                            'Test::More' => '0',
                            'Test::Simple' => '> 0.60',
                            'XML::XPath' => '> 1.10, < 2.0',
-                           'YAML' => '> 0.01'
+                           'YAML' => '>= 0.01'
                          },
           'INSTALLDIRS' => 'site',
+          'EXE_FILES' => [],
           'PL_FILES' => {}
         )
 ;

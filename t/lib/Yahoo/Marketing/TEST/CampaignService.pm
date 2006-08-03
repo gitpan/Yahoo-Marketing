@@ -3,6 +3,7 @@ package Yahoo::Marketing::TEST::CampaignService;
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
+
 use base qw/ Yahoo::Marketing::TEST::PostTest /;
 
 use Test::More;
@@ -53,41 +54,73 @@ sub test_get_campaign : Test(3) {
     is( $fetched_campaign->ID,   $campaign->ID,   'ID is right' );
 }
 
-sub test_update_campaign : Test(13) { 
+sub test_update_campaign : Test(21) {
     my ( $self ) = @_;
     return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
+    my $formatter = DateTime::Format::W3CDTF->new;
+    my $datetime = DateTime->now;
+    $datetime->set_time_zone( 'America/Chicago' );
+
+    my $start_datetime = $formatter->format_datetime( $datetime );
+
+
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
-    my $updated_campaign = $ysm_ws->updateCampaign( 
-                                        campaign => $campaign->name( "updated campaign $$" )
-                                                             ->watchON( 'true' ) 
-                                                             ->contentMatchON( 'true' ) 
-                                                             ->advancedMatchON( 'true' ) 
-                                                             ->sponsoredSearchON( 'true' ) 
+    my $update_campaign_response = $ysm_ws->updateCampaign( 
+                                        campaign  => $campaign->name( "updated campaign $$" )
+                                                              ->watchON( 'true' ) 
+                                                              ->contentMatchON( 'true' ) 
+                                                              ->advancedMatchON( 'true' ) 
+                                                              ->sponsoredSearchON( 'true' ) 
+                                                              ->startDate( $start_datetime ),
+                                        updateAll => 'true',
                                     );
 
-    ok( $updated_campaign );
+    ok( $update_campaign_response );
+    is( $update_campaign_response->operationSucceeded, 'true' );
+    my $updated_campaign = $update_campaign_response->campaign;
+    ok( $updated_campaign);
     is( $updated_campaign->name,                    "updated campaign $$", 'name is right' );
     is( $updated_campaign->ID,                      $campaign->ID,   'ID is right' );
     is( $updated_campaign->watchON,                 'true',          'watch on is true' );
     is( $updated_campaign->contentMatchON,          'true',          'content match on is true' );
     is( $updated_campaign->advancedMatchON,         'true',          'advanced match on is true' );
     is( $updated_campaign->sponsoredSearchON,       'true',          'sponsored search  on is true' );
+    is( DateTime->compare( $formatter->parse_datetime( $updated_campaign->startDate ),
+                           $datetime ),             0,               'start date is right' );
 
     is( $ysm_ws->last_command_group, 'Marketing', 'last command group gets set correctly' );
     like( $ysm_ws->remaining_quota, qr/^\d+$/, 'remaining quota looks right' );
 
-    $updated_campaign = $ysm_ws->updateCampaign( campaign => $updated_campaign->watchON( '0' )
-                                                                              ->contentMatchON( '0' ) 
-                                                                              ->advancedMatchON( '0' ) 
-                                                                              ->sponsoredSearchON( '0' ) 
+    $update_campaign_response = $ysm_ws->updateCampaign( campaign  => $updated_campaign->watchON( 'false' )
+                                                                               ->contentMatchON( 'false' ) 
+                                                                               ->advancedMatchON( 'false' ) 
+                                                                               ->sponsoredSearchON( 'true' ),
+                                                         updateAll => 'true',
                                  );
+    is( $update_campaign_response->operationSucceeded, 'true' );
+    $updated_campaign = $update_campaign_response->campaign;
     is( $updated_campaign->watchON,                 'false',          'watch on is false' );
     is( $updated_campaign->contentMatchON,          'false',          'content match on is false' );
     is( $updated_campaign->advancedMatchON,         'false',          'advanced match on is false' );
-    is( $updated_campaign->sponsoredSearchON,       'false',          'sponsored search  on is false' );
+    is( $updated_campaign->sponsoredSearchON,       'true',          'sponsored search  on is false' );
+
+    $datetime->subtract( years => 1 );
+    $start_datetime = $formatter->format_datetime( $datetime );
+
+    $update_campaign_response = $ysm_ws->updateCampaign( campaign  => $updated_campaign->startDate( $start_datetime ), 
+                                                         updateAll => 'true',
+                                                       );
+    is( $update_campaign_response->operationSucceeded, 'false' ); # cannot set startDate to past time.
+    ok( $update_campaign_response->errors );
+
+    $update_campaign_response = $ysm_ws->updateCampaign( campaign  => $updated_campaign->endDate( $start_datetime ),
+                                                         updateAll => 'true',
+                                                       );
+    is( $update_campaign_response->operationSucceeded, 'false' ); # cannot set endDate before startDate.
+    ok( $update_campaign_response->errors );
 }
 
 sub test_can_add_campaign : Test(4) {
@@ -111,8 +144,7 @@ sub test_can_add_campaign : Test(4) {
     );
 }
 
-# getCampaignAdGroupCount has a problem - it always returns 0.
-sub test_can_get_campaign_ad_group_count : Test(1) {
+sub test_can_get_campaign_ad_group_count : Test(6) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -120,19 +152,47 @@ sub test_can_get_campaign_ad_group_count : Test(1) {
     my $campaign = $self->common_test_data( 'test_campaign' );
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+
     my $count = $ysm_ws->getCampaignAdGroupCount(
-                             campaignID => $campaign->ID,
+                             campaignID     => $campaign->ID,
+                             includeDeleted => 'false',
                          );
+    is( $count, '0', 'AdGroup count is right' );
 
-    like( $count, qr/^[\d]+$/, 'Campaign AdGroup Count is numeric' );
+    my $ad_group = Yahoo::Marketing::AdGroup->new
+                                            ->campaignID( $campaign->ID )
+                                            ->name( 'test ad group '.$$ )
+                                            ->status( 'On' )
+                                            ->contentMatchON( 'true' )
+                                            ->contentMatchMaxBid( '0.18' )
+                                            ->sponsoredSearchON( 'true' )
+                                            ->sponsoredSearchMaxBid( '0.28' )
+                                            ->adAutoOptimizationON( 'false' )
+                   ;
+    my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $add_ad_group_response = $ad_group_service->addAdGroup( adGroup => $ad_group );
+    ok( not $add_ad_group_response->errors );
+
+    $count = $ysm_ws->getCampaignAdGroupCount(
+                             campaignID     => $campaign->ID,
+                             includeDeleted => 'false',
+                         );
+    is( $count, '1', 'AdGroup count is right' );
+
+    ok( $ad_group_service->deleteAdGroup( adGroupID => $add_ad_group_response->adGroup->ID ) );
+
+    $count = $ysm_ws->getCampaignAdGroupCount(
+                             campaignID     => $campaign->ID,
+                             includeDeleted => 'false',
+                         );
+    is( $count, '0', 'AdGroup count is right' );
+
+    $count = $ysm_ws->getCampaignAdGroupCount(
+                             campaignID     => $campaign->ID,
+                             includeDeleted => 'true',
+                         );
+    is( $count, '1', 'AdGroup count is right' );
 }
-
-
-
-
-
-
-
 
 sub test_can_get_campaigns_by_account_id : Test(1) {
     my ( $self ) = @_;
@@ -141,13 +201,16 @@ sub test_can_get_campaigns_by_account_id : Test(1) {
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
-    my @campaigns = $ysm_ws->getCampaignsByAccountID( accountID => $ysm_ws->account, );
+    my @campaigns = $ysm_ws->getCampaignsByAccountID(
+        accountID      => $ysm_ws->account,
+        includeDeleted => 'false',
+    );
 
     ok( scalar @campaigns );
 }
 
 
-sub test_can_update_campaigns : Test(11) {
+sub test_can_update_campaigns : Test(13) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -158,12 +221,15 @@ sub test_can_update_campaigns : Test(11) {
 
     ok( @campaigns );
 
-    my $response = $ysm_ws->updateCampaigns( campaigns => [ $campaigns[0]->name( "updated campaign $$ 1" ),
+    my @response = $ysm_ws->updateCampaigns( campaigns => [ $campaigns[0]->name( "updated campaign $$ 1" ),
                                                             $campaigns[1]->name( "updated campaign $$ 2" ),
-                                                          ]
+                                                          ],
+                                             updateAll => 'true',
                                            );
 
-    ok( $response );   # the response is really sort of useless...
+    ok( @response );
+    ok( not $response[0]->errors );
+    ok( not $response[1]->errors );
 
     sleep 2;
 
@@ -261,7 +327,10 @@ sub test_can_get_campaign_keyword_count : Test(1) {
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
-    my $count = $ysm_ws->getCampaignKeywordCount( campaignID => $campaign->ID, );
+    my $count = $ysm_ws->getCampaignKeywordCount(
+        campaignID     => $campaign->ID,
+        includeDeleted => 'false',
+    );
 
     like( $count, qr/^[\d]+$/, 'Campaign Keyword Count is numeric' );
 }
@@ -282,9 +351,7 @@ sub test_can_delete_campaign : Test(2) {
         'can delete campaign'
     );
 
-    my $fetched_campaign = $ysm_ws->getCampaign(
-                                        campaignID => $campaign->ID,
-                                    );
+    my $fetched_campaign = $ysm_ws->getCampaign( campaignID => $campaign->ID, );
 
     is( $fetched_campaign->status, 'Deleted', 'campaign has Deleted status' );
 }
@@ -331,23 +398,19 @@ sub test_can_set_get_delete_geographic_location_for_campaign : Test(16) {
 
     ok ( $ysm_ws->deleteGeographicLocationFromCampaign( campaignID => $campaign->ID ) );
 
-    eval {
-        @locations = $ysm_ws->getGeographicLocationForCampaign(
-            campaignID => $campaign->ID,
-        );
-    };
-    # if no geo location set, the action will throw a soap error.
-    ok( $@ );
+    @locations = $ysm_ws->getGeographicLocationForCampaign(
+        campaignID => $campaign->ID,
+    );
+
+    # if no geo location set, the action returns empty.
+    ok( not @locations );
     ok( $ysm_ws->deleteCampaign( campaignID => $campaign->ID ) );
 }
 
-sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(3) {
+sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(4) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
-
-    return 'waiting on additional functionality';
-
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
@@ -355,7 +418,6 @@ sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(3) {
 
     my $campaignOptimizationGuidelines = Yahoo::Marketing::CampaignOptimizationGuidelines->new
                                              ->campaignID( $campaign->ID )
-                                             ->contentMatchMaxBid( '0.5' )
                                              ->conversionMetric( 'Revenue' )
                                              ->ROAS( '0.3' )                         # ROAS (return on ad spend) is required when conversionMetric is 'Revenue'
                                              ->averageConversionRate( '0.04')        # also required as above reason
@@ -364,23 +426,29 @@ sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(3) {
                                              ->CPM( '0.1' )
                                              ->impressionImportance( 'Low' )
                                              ->leadImportance( 'Low' )
-                                             ->sponsoredSearchMaxBid( '0.5' ) 
                                              ->taggedForConversion( 1 )
                                              ->taggedForRevenue( 0 )
                                              ->maxBid( '1.00' )
+                                             ->bidLimitHeadroom( '0.10' )
     ;
 
+    $ysm_ws->setCampaignOptimizationON(
+                 campaignID             => $campaign->ID,
+                 campaignOptimizationON => 'true',
+             );
+
     $ysm_ws->setOptimizationGuidelinesForCampaign(
-        optimizationGuidelines => $campaignOptimizationGuidelines,
-    );
+                 optimizationGuidelines => $campaignOptimizationGuidelines,
+             );
 
-    my $fetched_campaignOptimizationGuidelines = $ysm_ws->getOptimizationGuidelinesForCampaign(
-        campaignID => $campaign->ID,
-    );
+    my $fetched_campaign_optimization_guidelines = $ysm_ws->getOptimizationGuidelinesForCampaign(
+                                                                campaignID => $campaign->ID,
+                                                            );
 
-    is( $fetched_campaignOptimizationGuidelines->conversionMetric, 'Conversions' );
-    is( $fetched_campaignOptimizationGuidelines->contentMatchMaxBid, 0.5 );
-    is( $fetched_campaignOptimizationGuidelines->impressionImportance, 'Low' );
+    is( $fetched_campaign_optimization_guidelines->conversionMetric, 'Revenue' );
+    is( $fetched_campaign_optimization_guidelines->maxBid, '1.0' );
+    is( $fetched_campaign_optimization_guidelines->impressionImportance, 'Low' );
+    is( $fetched_campaign_optimization_guidelines->bidLimitHeadroom, '0.1' );
 }
 
 sub test_can_get_campaigns_by_account_id_by_campaign_status : Test(1) {
@@ -462,7 +530,10 @@ sub test_add_campaigns_doesnt_add_if_one_is_bad : Test(3) {
     eval { $ysm_ws->addCampaigns( campaigns => [ $campaign1, $campaign2, $campaign3 ] ); };
 
     like( $@, qr/A required field startDate is missing/m, 'add campaigns fails as expected' );
-    my @campaigns = $ysm_ws->getCampaignsByAccountID( accountID => $ysm_ws->account, );
+    my @campaigns = $ysm_ws->getCampaignsByAccountID(
+        accountID      => $ysm_ws->account,
+        includeDeleted => 'false',
+    );
 
     ok( ( not grep { /^test bad/ } map { $_->name } @campaigns ), 'bad campaign was not added' );
     ok( ( not grep { /^test good/ } map { $_->name } @campaigns ), 'good campaigns were not added either' );
@@ -525,6 +596,7 @@ sub test_can_delete_campaigns : Test(3) {
     is( $fetched_campaigns[0]->status, 'Deleted', 'first campaign has Deleted status' );
     is( $fetched_campaigns[1]->status, 'Deleted', 'second campaign has Deleted status' );
 }
+
 
 1;
 

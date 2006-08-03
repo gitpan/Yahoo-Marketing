@@ -15,14 +15,16 @@ use Scalar::Util qw/ blessed /;
 
 our $service_data;
 
-__PACKAGE__->mk_accessors( qw/ username 
-                               password 
-                               license 
-                               master_account 
-                               account 
+__PACKAGE__->mk_accessors( qw/ username
+                               password
+                               license
+                               master_account
+                               account
+                               on_behalf_of_username
+                               on_behalf_of_password
                                endpoint
-                               use_wsse_security_headers 
-                               use_location_service 
+                               use_wsse_security_headers
+                               use_location_service
                                last_command_group
                                remaining_quota
                                uri
@@ -61,6 +63,7 @@ sub wsdl_init {
     my $self = shift;
 
     $self->_parse_wsdl;
+    return;
 }
 
 sub parse_config {
@@ -78,9 +81,13 @@ sub parse_config {
         $self->$config_setting( $value );
     }
 
-    my $default_account = $config->{ $args{ 'section' } }->{ 'default_account' };
-    # Maybe we should let the default account overwrite the account???
-    $self->account( $default_account ) if defined $default_account and not defined $self->account;
+    foreach my $config_setting ( qw/ default_account default_on_behalf_of_username default_on_behalf_of_password / ){
+        my $value = $config->{ $args{ 'section' } }->{ $config_setting };
+        my $setting_name = $config_setting;
+        $setting_name =~ s/^default_//;
+        # Maybe we should let the default overwrite ???
+        $self->$setting_name( $value ) if defined $value and not defined $self->$setting_name;
+    }
 
     return $self;
 }
@@ -180,8 +187,8 @@ sub _process_soap_call {
 SOAP FAULT!
 
 String:  @{[ $som->faultstring ]}
-Code:    @{[ $detail and $detail->{Code}    ? $detail->{Code} : 'none' ]}
-Message: @{[ $detail and $detail->{Message} ? $detail->{Message} : 'none' ]}
+Code:    @{[ defined $detail and $detail->{Code}    ? $detail->{Code} : 'none' ]}
+Message: @{[ defined $detail and $detail->{Message} ? $detail->{Message} : 'none' ]}
 
 
 ENDFAULT
@@ -191,6 +198,7 @@ ENDFAULT
 
         return $self->_parse_response( $som, $method );
     }
+    return;
 }
 
 sub _set_quota_from_som {
@@ -201,6 +209,7 @@ sub _set_quota_from_som {
 
     $self->last_command_group( $command_group );
     $self->remaining_quota( $remaining_quota );
+    return;
 }
 
 sub _parse_response {
@@ -209,7 +218,7 @@ sub _parse_response {
     if( my $result = $som->valueof( '/Envelope/Body/'.$method.'Response/' ) ){
 
         # catch empty string responses
-        return if defined $result->{ out } and $result->{ out } eq '';
+        return if ( not defined $result->{ out } ) or ( defined $result->{ out } and $result->{ out } eq '' );
 
         my @return_values;
 
@@ -228,7 +237,7 @@ sub _parse_response {
 
         confess "oops, trying to deserialize non trivial response, but cannot determine object type!" unless $type;
 
-        if( $type !~ /^tns:.*Status$/ 
+        if( $type !~ /^tns:(.*Status|Continent)$/ 
             and $type =~ s/^tns:// 
             and scalar @values ){  # make an object
 
@@ -269,6 +278,7 @@ sub _is_special_case {
     if( ref $response_values->[0] && defined $response_values->[0]->{ string } ){
         return 1;
     }
+    return;
 }
 
 
@@ -294,6 +304,22 @@ sub _headers {
                ? SOAP::Header->name('accountID')
                              ->type('string')
                              ->value( $self->account )
+                             ->uri( $self->uri )
+                             ->prefix('')
+               : ()
+             ,
+             $self->on_behalf_of_username
+               ? SOAP::Header->name('onBehalfOfUsername')
+                             ->type('string')
+                             ->value( $self->on_behalf_of_username )
+                             ->uri( $self->uri )
+                             ->prefix('')
+               : ()
+             ,
+             $self->on_behalf_of_password
+               ? SOAP::Header->name('onBehalfOfPassword')
+                             ->type('string')
+                             ->value( $self->on_behalf_of_password )
                              ->uri( $self->uri )
                              ->prefix('')
                : ()
@@ -340,7 +366,6 @@ sub _login_headers {
 }
 
 sub _parse_wsdl {
-
     my ( $self, ) = @_;
 
     if( my $wsdl_data = $self->cache->get( $self->_wsdl ) ){
@@ -364,18 +389,21 @@ sub _parse_wsdl {
     }
 
     $self->cache->set( $self->_wsdl, $service_data->{ $self->_wsdl }, $self->cache_expire_time );
+    return;
 }
 
 sub clear_cache {
     my $self = shift;
     $self->cache->clear;
-    delete $service_data->{ $self->_wsdl };
+    delete $service_data->{ $self->_wsdl } if $service_data;
+    return $self;
 }
 
 sub purge_cache {
     my $self = shift;
     $self->cache->purge;
-    delete $service_data->{ $self->_wsdl };
+    delete $service_data->{ $self->_wsdl } if $service_data;
+    return $self;
 }
 
 sub _parse_request_type {
@@ -397,7 +425,8 @@ sub _parse_request_type {
         $self->_parse_array_of_type( $xpath, $name, $type ) if $type=~ /^tns:ArrayOf/;
         $service_data->{ $self->_wsdl }->{ type_map }->{ $name } = $type ;
     }
- 
+
+    return;
 }
 
 sub _parse_array_of_type {
@@ -411,6 +440,8 @@ sub _parse_array_of_type {
         = { type => $type, child => $def_node->getAttribute('name') };
     $service_data->{ $self->_wsdl }->{ array_type_map }->{ $type } 
         = { type => $def_node->getAttribute('type'), name => $def_node->getAttribute('name') };
+
+    return; 
 }
 
 sub _parse_response_type {
@@ -432,6 +463,7 @@ sub _parse_response_type {
  
     $service_data->{ $self->_wsdl }->{ response_map }->{ $element_name } = { $name => $type };
 
+    return;
 }
 
 
@@ -453,6 +485,8 @@ sub _parse_complex_type {
 
         $service_data->{ $self->_wsdl }->{ type_map }->{ $name } = $type ;
     }
+
+    return;
 }
 
 
@@ -488,7 +522,7 @@ sub _simple_types {
 
     return $service_data->{ $self->_wsdl }->{ type_map }->{ $name } 
         if exists $service_data->{ $self->_wsdl }->{ type_map }->{ $name };
-    return undef;
+    return;
 }
 
 
@@ -506,6 +540,19 @@ sub _status_type {
     my $type = $self->_class_name;
     $type =~ s/(Service$|$)/Status/;
     return 'tns:'.$type;
+}
+
+sub _escape_xml_baddies {
+    my ( $self, $input ) = @_;
+    return unless defined $input;
+    # trouble with HTML::Entities::encode_entities is it will happily double encode things
+    # SOAP::Lite::encode_data also appears to have this problem
+    #return encode_entities( $input );
+    $input =~ s/&(?!\w+;)/&amp;/g;
+    $input =~ s/</&lt;/g;
+    $input =~ s/\]\]>/\]\]&gt;/g;  # From SOAP::Lite's encode_data
+    #$input =~ s/"/&quot;/g;   # no values in attributes
+    return $input;
 }
 
 sub _serialize_argument {
@@ -547,18 +594,20 @@ sub _serialize_argument {
     }
 
     if( blessed( $value ) and $value->UNIVERSAL::isa( 'Yahoo::Marketing::ComplexType' )  ){
+        my $type = $self->_simple_types( $name );
         return SOAP::Data->name( $name )
+                         ->type( $type )
                          ->value( $self->_serialize_complex_type( $value ) );
     }elsif( my $type = $self->_simple_types( $name ) ){
         return SOAP::Data->type(  $type )
                          ->name(  $name )
-                         ->value( $value ) 
+                         ->value( $self->_escape_xml_baddies($value) ) 
         ;
     }
 
     # don't do anything special
     return SOAP::Data->name( $name )
-                     ->value( $value );
+                     ->value( $self->_escape_xml_baddies( $value ) );
 }
 
 
@@ -568,7 +617,9 @@ sub _serialize_complex_type {
     return \SOAP::Data->value( map { $self->_serialize_argument( $_, $complex_type->$_ )
                                    } 
                                    grep { defined $complex_type->$_ } $complex_type->_user_setable_attributes
-                             );
+                             )
+                      ->type( $complex_type->_type )
+    ;
 }
 
 
@@ -654,6 +705,18 @@ to be set.
 
  http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/requests.asp#header
 
+=head2 on_behalf_of_username
+
+Get/set the onBehalfOfUsername to be used for requests.  
+
+ http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/auth.asp#onbehalfof
+
+=head2 on_behalf_of_password
+
+Get/set the onBehalfOfPassword to be used for requests.  
+
+ http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/auth.asp#onbehalfof
+
 =head2 use_wsse_security_headers
 
 If set to a true value, requests will use the WSSE headers for authentication.  See http://schemas.xmlsoap.org/ws/2002/04/secext/
@@ -719,6 +782,8 @@ parse_config() returns $self, so you can do things like this:
     my $service = Yahoo::Marketing::CampaignService->new->parse_config();
 
 The default config section used is 'default'
+
+Note that "default_account", "default_on_behalf_of_username", and "default_on_behalf_of_password" are not required.  If present, they will be used to set "account", "on_behalf_of_username", and "on_behalf_of_password" *if* those values have not already been set.  
 
 See example config file in the EXAMPLES section of perldoc Yahoo::Marketing
 

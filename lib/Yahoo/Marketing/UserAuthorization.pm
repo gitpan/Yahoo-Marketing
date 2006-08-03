@@ -4,6 +4,7 @@ package Yahoo::Marketing::UserAuthorization;
 
 use strict; use warnings;
 
+use Yahoo::Marketing::Role;
 use base qw/Yahoo::Marketing::ComplexType/;
 
 =head1 NAME
@@ -28,6 +29,23 @@ sub _read_only_attributes {
 __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes, 
                            __PACKAGE__->_read_only_attributes
                          );
+
+
+sub _new_from_hash {
+    my ( $self, $hash ) = @_;
+
+    my $obj = __PACKAGE__->new;
+    foreach my $key ( keys %$hash ) {
+        if ( $key eq 'role' ) {
+            my $role = Yahoo::Marketing::Role->new->_new_from_hash( $hash->{$key} );
+            $obj->$key( $role );
+        }
+        else {
+            $obj->$key( $hash->{ $key } );
+        }
+    }
+    return $obj;
+}
 
 
 1;

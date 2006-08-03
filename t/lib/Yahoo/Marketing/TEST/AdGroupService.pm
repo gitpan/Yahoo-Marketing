@@ -2,7 +2,10 @@ package Yahoo::Marketing::TEST::AdGroupService;
 # Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
+use strict; use warnings;
+
 use base qw/ Yahoo::Marketing::TEST::PostTest /;
+
 use Test::More;
 use Module::Build;
 
@@ -127,6 +130,7 @@ sub test_get_ad_group_ad_count : Test(1) {
 
     my $ad_count = $ysm_ws->getAdGroupAdCount(
         adGroupID => $ad_group->ID,
+        includeDeleted => 'false',
     );
 
     like( $ad_count, qr/^[\d]+$/, 'Ad Count is numberic' );
@@ -163,6 +167,7 @@ sub test_get_ad_group_excluded_words_count : Test(1) {
 
     my $excluded_words_count = $ysm_ws->getAdGroupExcludedWordsCount(
         adGroupID => $ad_group->ID,
+        includeDeleted => 'false',
     );
 
     like( $excluded_words_count, qr/^[\d]+$/, 'Excluded Words Count is numberic' );
@@ -181,6 +186,7 @@ sub test_get_ad_group_keyword_count : Test(1) {
 
     my $keyword_count = $ysm_ws->getAdGroupKeywordCount(
         adGroupID => $ad_group->ID,
+        includeDeleted => 'false',
     );
 
     like( $keyword_count, qr/^[\d]+$/, 'Keyword Count is numberic' );
@@ -228,6 +234,7 @@ sub test_get_ad_groups_by_campaign_id : Test(1) {
 
     my @fetched_ad_groups = $ysm_ws->getAdGroupsByCampaignID(
         campaignID   => $campaign->ID,
+        includeDeleted => 'false',
         startElement => 0,
         numElements  => 1000,
     );
@@ -254,7 +261,7 @@ sub test_get_ad_groups_by_campaign_id_by_status : Test(2) {
     ok( @fetched_ad_groups );
 
     my $not_on_status_found = 0;
-    foreach $ad_group ( @fetched_ad_groups ) {
+    foreach my $ad_group ( @fetched_ad_groups ) {
         $not_on_status_found++ if $ad_group->status ne 'On';
     }
     is( $not_on_status_found, 0 );
@@ -394,7 +401,7 @@ sub test_set_ad_group_sponsored_search_max_bid : Test(2) {
 };
 
 
-sub test_update_ad_group : Test(5) {
+sub test_update_ad_group : Test(7) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -402,7 +409,11 @@ sub test_update_ad_group : Test(5) {
     my $ad_group = $self->create_ad_group;
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
-    my $updated_ad_group = $ysm_ws->updateAdGroup( adGroup => $ad_group->name( "updated ad group $$" ) );
+    my $response = $ysm_ws->updateAdGroup( adGroup => $ad_group->name( "updated ad group $$" ) ,
+                                           updateAll => 'True',
+                                         );
+
+    my $updated_ad_group = $response->adGroup;
 
     ok( $updated_ad_group );
     is( $updated_ad_group->name, "updated ad group $$", 'name is right' );
@@ -410,6 +421,9 @@ sub test_update_ad_group : Test(5) {
 
     is( $ysm_ws->last_command_group, 'Marketing', 'last command group gets set correctly' );
     like( $ysm_ws->remaining_quota, qr/^\d+$/, 'remaining quota looks right' );
+
+    ok( ! $response->errors );
+    is( $response->operationSucceeded, 'true', 'operation succeeded' );
 
     $ysm_ws->deleteAdGroup( adGroupID => $ad_group->ID );
 };
@@ -428,7 +442,8 @@ sub test_update_ad_groups : Test(11) {
 
     my $response = $ysm_ws->updateAdGroups( adGroups => [ $ad_groups[0]->name( "updated ad group $$ 1" ),
                                                           $ad_groups[1]->name( "updated ad group $$ 2" ),
-                                                        ]
+                                                        ],
+                                            updateAll => 'True',
                                           );
 
     ok( $response );
@@ -504,6 +519,43 @@ sub test_update_status_for_ad_groups : Test(4) {
     is( $ysm_ws->getAdGroup( adGroupID => $ad_groups[1]->ID )->status, 'On' );
 };
 
+sub test_move_ad_group : Test(7) {
+    my ( $self ) = @_;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $campaign = $self->create_campaign;
+    ok( $campaign );
+    my $ad_group_name = 'test ad group '.($$ + $Yahoo::Marketing::TEST::PostTest::ad_group_count++).' 4';
+    my $ad_group = Yahoo::Marketing::AdGroup->new
+                                            ->campaignID( $campaign->ID )
+                                            ->name( $ad_group_name )
+                                            ->status( 'On' )
+                                            ->contentMatchON( 'true' )
+                                            ->contentMatchMaxBid( '0.18' )
+                                            ->sponsoredSearchON( 'true' )
+                                            ->sponsoredSearchMaxBid( '0.28' )
+                                            ->adAutoOptimizationON( 'false' )
+                   ;
+    my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $added_ad_group = $ad_group_service->addAdGroup( adGroup => $ad_group )->adGroup;
+    ok( $added_ad_group );
+
+    my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    ok( $campaign_service->deleteCampaign( campaignID => $campaign->ID ) );
+
+    $ad_group_service->moveAdGroup(
+        adGroupID             => $added_ad_group->ID,
+        destinationCampaignID => $self->common_test_data( 'test_campaign' )->ID,
+        newAdGroupName        => "$ad_group_name new",
+    );
+
+    my $moved_ad_group = $ad_group_service->getAdGroup( adGroupID => $added_ad_group->ID );
+    ok( $moved_ad_group );
+    is( $moved_ad_group->campaignID, $self->common_test_data( 'test_campaign' )->ID, 'campaignID is right' );
+    is( $moved_ad_group->name, "$ad_group_name new", 'name is right' );
+    ok( $ad_group_service->deleteAdGroup( adGroupID => $added_ad_group->ID ) );
+}
 
 sub startup_test_ad_group_service : Test(startup) {
     my ( $self ) = @_;

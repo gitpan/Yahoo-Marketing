@@ -4,7 +4,7 @@ package Yahoo::Marketing::AdEditorialReasons;
 
 use strict; use warnings;
 
-use base qw/Yahoo::Marketing::ComplexType/;
+use base qw/Yahoo::Marketing::EditorialReasons/;
 
 =head1 NAME
 

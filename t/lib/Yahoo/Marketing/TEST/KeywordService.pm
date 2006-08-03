@@ -11,7 +11,7 @@ use Yahoo::Marketing::Keyword;
 use Yahoo::Marketing::KeywordService;
 use Yahoo::Marketing::KeywordOptimizationGuidelines;
 
-#use SOAP::Lite +trace => [qw/ debug method fault /];
+# SOAP::Lite +trace => [qw/ debug method fault /];
 
 my $section = 'sandbox';
 
@@ -40,6 +40,7 @@ sub shutdown_test_keyword_service : Test(shutdown) {
     $self->cleanup_ad_group;
     $self->cleanup_campaign;
 }
+
 
 sub test_can_add_keyword : Test(8) {
     my ( $self ) = @_;
@@ -166,9 +167,10 @@ sub test_can_get_keywords_by_account_id : Test(28) {
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
     my @fetched_keywords = $ysm_ws->getKeywordsByAccountID(
-                                        accountID    => $ysm_ws->account,
-                                        startElement => 0,
-                                        endElement   => 1000,
+                                        accountID      => $ysm_ws->account,
+                                        includeDeleted => 'false',
+                                        startElement   => 0,
+                                        numElements    => 1000,
                                     );
 
     foreach my $fetched_keyword ( @fetched_keywords ){
@@ -192,9 +194,10 @@ sub test_can_get_keywords_by_ad_group_id : Test(28) {
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
     my @fetched_keywords = $ysm_ws->getKeywordsByAdGroupID(
-                                        adGroupID => $self->common_test_data( 'test_ad_group' )->ID,
-                                        startElement => 0,
-                                        endElement   => 1000,
+                                        adGroupID      => $self->common_test_data( 'test_ad_group' )->ID,
+                                        includeDeleted => 'false',
+                                        startElement   => 0,
+                                        numElements    => 1000,
                                     );
 
     foreach my $fetched_keyword ( @fetched_keywords ){
@@ -220,13 +223,15 @@ sub test_can_get_keywords_by_ad_group_id_by_editorial_status : Test(28) {
 
     my @fetched_keywords = $ysm_ws->getKeywordsByAdGroupIDByEditorialStatus(
                                         adGroupID       => $self->common_test_data( 'test_ad_group' )->ID,
-                                        pendingChange   => 'false',
-                                        editorialStatus => 'Approved',
+                                        update          => 'false',
+                                        status          => 'Approved',
+                                        includeDeleted  => 'false',
                                     );
     push @fetched_keywords, $ysm_ws->getKeywordsByAdGroupIDByEditorialStatus(
                                          adGroupID       => $self->common_test_data( 'test_ad_group' )->ID,
-                                         pendingChange   => 'false',
-                                         editorialStatus => 'Pending',
+                                         update          => 'false',
+                                         status          => 'Pending',
+                                         includeDeleted  => 'false',
                                     );
 
     foreach my $fetched_keyword ( @fetched_keywords ){
@@ -268,7 +273,6 @@ sub test_can_get_keywords_by_ad_group_id_by_status : Test(28) {
     }
 }
 
-
 sub test_can_get_keyword_sponsored_search_max_bid : Test(1) {
     my ( $self ) = @_;
 
@@ -303,7 +307,7 @@ sub test_can_get_and_set_optimization_guidelines_for_keyword : Test(1) {
 }
 
 
-sub test_can_get_pending_change_for_keyword : Test(3) {
+sub test_can_get_update_for_keyword : Test(3) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -314,21 +318,20 @@ sub test_can_get_pending_change_for_keyword : Test(3) {
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
-    $ysm_ws->updateKeyword( keyword => $added_keyword->alternateText('sex') );
-    my $pending_keyword = $ysm_ws->getPendingChangeForKeyword( keywordID => $added_keyword->ID );
+    $ysm_ws->updateKeyword( keyword   => $added_keyword->alternateText('sex'),
+                            updateAll => 'true',
+                          );
+    my $update_keyword = $ysm_ws->getUpdateForKeyword( keywordID => $added_keyword->ID );
 
-    is( $pending_keyword->alternateText, 'sex', 'getting pending alternateText right' );
+    is( $update_keyword->alternateText, 'sex', 'getting pending alternateText right' );
 
     ok( $ysm_ws->deleteKeyword( keywordID => $added_keyword->ID ), 'delete new keyword' );
 }
 
-
-sub test_can_get_editorial_reasons_for_keyword : Test(0) {
+sub test_can_get_editorial_reasons_for_keyword : Test(7) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
-
-    return 'waiting for additional functionality.';
 
     my $added_keyword = $self->create_keyword;
 
@@ -336,21 +339,28 @@ sub test_can_get_editorial_reasons_for_keyword : Test(0) {
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
-    $ysm_ws->updateKeyword( keyword => $added_keyword->alternateText('sex') );
-    my $editorial_reasons = $ysm_ws->getEditorialReasonsForKeyword( keywordID => $added_keyword->ID );
-    ok( $editorial_reasons );
+    my $new_keyword = $added_keyword->alternateText('drug oxycodone');
 
-    use Data::Dumper; warn Dumper( $editorial_reasons );
+    my $response = $ysm_ws->updateKeyword(
+        keyword => $new_keyword,
+        updateAll => 'false',
+    );
+    ok( $response );
+    ok( $response->errors );
+    like( $response->errors->[0]->message, qr/rejected/ );
+    use Data::Dumper;
+#    warn 'x'x200;
+#    warn Dumper(  $response->editorialReasons->alternateTextEditorialReasons );
+#    warn Dumper( $response );
+    ok( $response->editorialReasons );
+
+    my $editorial_reason = $ysm_ws->getEditorialReasonText(
+        editorialReasonCode => 39, # $response->editorialReasons->alternateTextEditorialReasons
+        locale              => 'en_US',
+    );
+    ok( $editorial_reason );
+    ok( $ysm_ws->deleteKeyword( keywordID => $added_keyword->ID ), 'delete new keyword' );
 }
-
-sub test_can_get_editorial_reason_text : Test(0) {
-    my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
-
-    return 'waiting for additional functionality.';
-}
-
 
 sub test_can_get_status_for_keyword : Test(2) {
     my ( $self ) = @_;
@@ -387,7 +397,7 @@ sub test_can_set_keyword_sponsored_search_max_bid : Test(2) {
 }
 
 
-sub test_can_update_keyword : Test(3) {
+sub test_can_update_keyword : Test(5) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -397,7 +407,12 @@ sub test_can_update_keyword : Test(3) {
     my $old_url = $added_keyword->url;
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
-    $ysm_ws->updateKeyword( keyword => $added_keyword->alternateText( 'apple' )->url( 'http://www.somedomain.net' ) );
+    my $response = $ysm_ws->updateKeyword( keyword   => $added_keyword->alternateText( 'apple' )
+                                                                      ->url( 'http://www.somedomain.net' ),
+                                           updateAll => 'true',
+                                         );
+    ok( $response );
+    is( $response->operationSucceeded, 'true' );
 
     my $updated_keyword = $ysm_ws->getKeyword( keywordID => $added_keyword->ID );
     is( $updated_keyword->alternateText, 'apple' );
@@ -419,7 +434,9 @@ sub test_can_update_keywords : Test(7) {
     }
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
-    $ysm_ws->updateKeywords( keywords => \@added_keywords );
+    $ysm_ws->updateKeywords( keywords  => \@added_keywords,
+                             updateAll => 'true',
+                           );
 
     my @updated_keywords = $ysm_ws->getKeywords( keywordIDs => [ map { $_->ID } @added_keywords ] );
     foreach my $keyword ( @updated_keywords ) {
@@ -529,7 +546,6 @@ sub test_can_update_status_for_keywords : Test(6) {
 }
 
 
-
 1;
 
 
@@ -547,7 +563,7 @@ __END__
 * getKeywordsByAdGroupIDByStatus
 * getKeywordSponsoredSearchMaxBid
 * getOptimizationGuidelinesForKeyword
-* getPendingChangeForKeyword
+* getUpdateForKeyword
 * getEditorialReasonsForKeyword
 * getEditorialReasonText
 * getStatusForKeyword

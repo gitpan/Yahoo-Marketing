@@ -41,7 +41,10 @@ sub _new_from_hash {
         }
         elsif ( $key eq 'forecastLandscape' ) {
             my @array;
-            foreach my $item ( ref $hash->{ $key }{'ForecastResponseData'} eq 'ARRAY' ? @{ $hash->{ $key }{'ForecastResponseData'} } : ( $hash->{ $key }{'ForecastResponseData'} || () ) ) {
+            foreach my $item ( ref $hash->{ $key }{'ForecastResponseData'} eq 'ARRAY' 
+                             ? @{ $hash->{ $key }{'ForecastResponseData'} } 
+                             : ( $hash->{ $key }{'ForecastResponseData'} || () ) 
+                             ) {
                 my $forecast_response_data = Yahoo::Marketing::ForecastResponseData->new->_new_from_hash( $item );
                 push @array, $forecast_response_data;
             }

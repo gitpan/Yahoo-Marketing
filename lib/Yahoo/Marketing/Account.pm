@@ -20,9 +20,11 @@ sub _user_setable_attributes {
                  contentMatchON
                  displayURL
                  marketID
+                 masterAccountID
                  name
                  nameFurigana
                  personalID
+                 sitePassword
                  siteUserName
                  sponsoredSearchON
                  vatCode
@@ -64,9 +66,11 @@ Creates a new instance
     contentMatchON
     displayURL
     marketID
+    masterAccountID
     name
     nameFurigana
     personalID
+    sitePassword
     siteUserName
     sponsoredSearchON
     vatCode

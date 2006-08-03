@@ -4,6 +4,9 @@ package Yahoo::Marketing::PaymentMethodInfo;
 
 use strict; use warnings;
 
+use Yahoo::Marketing::Address;
+use Yahoo::Marketing::BillingUser;
+
 use base qw/Yahoo::Marketing::ComplexType/;
 
 =head1 NAME
@@ -17,6 +20,8 @@ sub _user_setable_attributes {
                  ID
                  displayNumber
                  expirationDate
+                 billingAddress
+                 billingUser
             /  );
 }
 
@@ -28,6 +33,27 @@ sub _read_only_attributes {
 __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes, 
                            __PACKAGE__->_read_only_attributes
                          );
+
+
+sub _new_from_hash {
+    my ( $self, $hash ) = @_;
+
+    my $obj = __PACKAGE__->new;
+    foreach my $key ( keys %$hash ) {
+        if ( $key eq 'billingAddress' ) {
+            my $address = Yahoo::Marketing::Address->new->_new_from_hash( $hash->{$key} );
+            $obj->$key( $address );
+        }
+        elsif ( $key eq 'billingUser' ) {
+            my $billing_user = Yahoo::Marketing::BillingUser->new->_new_from_hash( $hash->{$key} );
+            $obj->$key( $billing_user );
+        }
+        else {
+            $obj->$key( $hash->{ $key } );
+        }
+    }
+    return $obj;
+}
 
 
 1;
@@ -51,6 +77,8 @@ Creates a new instance
     ID
     displayNumber
     expirationDate
+    billingAddress
+    billingUser
 
 =back
 

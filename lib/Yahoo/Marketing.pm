@@ -18,7 +18,7 @@ Version 0.01
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,7 @@ Sample Usage:
             ->license( 'your license' )
             ->master_account( 'your master account ID' )
             ->account( 'your account ID' )
-            ->endpoint( 'https://sandbox.marketing.ews.yahooapis.com/services/V1' );
+            ->endpoint( 'https://sandbox.marketing.ews.yahooapis.com/services' );
 
     # OR
 
@@ -68,7 +68,7 @@ Yahoo's Marketing API allows you to manage your search marketing account in an a
 
 The calls you can make to the various services are documented on YSM's Technology Solutions Portal.  See
 
- http://ysm.techportal.searchmarketing.yahoo.com/docs/index.asp
+http://ysm.techportal.searchmarketing.yahoo.com/docs/index.asp
 
 Where the documentation indicates that a complex type must be passed in to a particular service call, you must pass in the appropriate 
 Yahoo::Marketing::ComplexType object.  For example, CampaignService->addCampaign requires that a Campaign be passed in:
@@ -125,15 +125,9 @@ No exported functions
 
 There are no methods available in Yahoo::Marketing directly.  All functionality is exposed by the various Service modules and complex types.
 
-See perldoc Yahoo::Marketing::Service
+See perldoc Yahoo::Marketing::Service for service use
 
-    for service use
-
-And 
-
-See perldoc Yahoo::Marketing::ComplexTypes
-
-    for Complex Type documentation
+And perldoc Yahoo::Marketing::ComplexTypes for Complex Type documentation
 
 =head1 EXAMPLES
 
@@ -141,7 +135,7 @@ See perldoc Yahoo::Marketing::ComplexTypes
 
 See t/example.t for an example that parallels the perl example code at 
 
- http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perl.asp
+http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perl.asp
 
 =head2 Example 1 - creating a campaign
  

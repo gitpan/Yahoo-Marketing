@@ -15,12 +15,12 @@ Yahoo::Marketing::Role - an object to represent a user role for an account, for 
 
 sub _user_setable_attributes {
     return ( qw/ 
+              name
             /  );
 }
 
 sub _read_only_attributes {
     return ( qw/
-              name
            / );
 }
 

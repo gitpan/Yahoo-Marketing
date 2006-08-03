@@ -21,6 +21,7 @@ sub _user_setable_attributes {
                  sponsoredSearchMaxBid
                  status
                  text
+                 update
                  url
                  watchON
             /  );

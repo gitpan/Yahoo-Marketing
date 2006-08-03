@@ -1,8 +1,172 @@
---- #YAML:1.0
+---
 name: Yahoo-Marketing
-version: 0.01
+version: 0.02
 author:
-  - Jeff Lavallee <jeff@zeroclue.com>
+  - 'Jeff Lavallee <jeff@zeroclue.com>'
 abstract: an interface for Yahoo! Search Marketing's Web Services.
-license: perl
-generated_by: Module::Build version 0.2612, without YAML.pm
+license: artistic
+resources:
+  license: http://opensource.org/licenses/artistic-license.php
+build_requires:
+  Cache::Cache: '>= 1.01, < 2.0'
+  Class::Accessor::Chained: '>= 0.01, < 1.0'
+  Crypt::SSLeay: '> 0.40'
+  Module::Build: '>= 0.2610'
+  SOAP::Lite: '>= 0.66, < 1.0'
+  Scalar::Util: '>= 1.01, < 2.0'
+  Test::Class: '> 0.10, < 1.0'
+  Test::More: 0
+  Test::Simple: '> 0.60'
+  XML::XPath: '> 1.10, < 2.0'
+  YAML: '>= 0.01'
+  perl: 5.8.1
+provides:
+  Yahoo::Marketing:
+    file: lib/Yahoo/Marketing.pm
+    version: 0.02
+  Yahoo::Marketing::Account:
+    file: lib/Yahoo/Marketing/Account.pm
+  Yahoo::Marketing::AccountService:
+    file: lib/Yahoo/Marketing/AccountService.pm
+  Yahoo::Marketing::Ad:
+    file: lib/Yahoo/Marketing/Ad.pm
+  Yahoo::Marketing::AdEditorialReasons:
+    file: lib/Yahoo/Marketing/AdEditorialReasons.pm
+  Yahoo::Marketing::AdGroup:
+    file: lib/Yahoo/Marketing/AdGroup.pm
+  Yahoo::Marketing::AdGroupOptimizationGuidelines:
+    file: lib/Yahoo/Marketing/AdGroupOptimizationGuidelines.pm
+  Yahoo::Marketing::AdGroupResponse:
+    file: lib/Yahoo/Marketing/AdGroupResponse.pm
+  Yahoo::Marketing::AdGroupService:
+    file: lib/Yahoo/Marketing/AdGroupService.pm
+  Yahoo::Marketing::AdResponse:
+    file: lib/Yahoo/Marketing/AdResponse.pm
+  Yahoo::Marketing::AdService:
+    file: lib/Yahoo/Marketing/AdService.pm
+  Yahoo::Marketing::Address:
+    file: lib/Yahoo/Marketing/Address.pm
+  Yahoo::Marketing::AmbiguousGeoMatch:
+    file: lib/Yahoo/Marketing/AmbiguousGeoMatch.pm
+  Yahoo::Marketing::ApiFault:
+    file: lib/Yahoo/Marketing/ApiFault.pm
+  Yahoo::Marketing::Authorization:
+    file: lib/Yahoo/Marketing/Authorization.pm
+  Yahoo::Marketing::BasicReportRequest:
+    file: lib/Yahoo/Marketing/BasicReportRequest.pm
+  Yahoo::Marketing::BasicReportService:
+    file: lib/Yahoo/Marketing/BasicReportService.pm
+  Yahoo::Marketing::BidInformation:
+    file: lib/Yahoo/Marketing/BidInformation.pm
+  Yahoo::Marketing::BidInformationService:
+    file: lib/Yahoo/Marketing/BidInformationService.pm
+  Yahoo::Marketing::BillingUser:
+    file: lib/Yahoo/Marketing/BillingUser.pm
+  Yahoo::Marketing::BucketType:
+    file: lib/Yahoo/Marketing/BucketType.pm
+  Yahoo::Marketing::BudgetingService:
+    file: lib/Yahoo/Marketing/BudgetingService.pm
+  Yahoo::Marketing::Campaign:
+    file: lib/Yahoo/Marketing/Campaign.pm
+  Yahoo::Marketing::CampaignOptimizationGuidelines:
+    file: lib/Yahoo/Marketing/CampaignOptimizationGuidelines.pm
+  Yahoo::Marketing::CampaignResponse:
+    file: lib/Yahoo/Marketing/CampaignResponse.pm
+  Yahoo::Marketing::CampaignService:
+    file: lib/Yahoo/Marketing/CampaignService.pm
+  Yahoo::Marketing::Capability:
+    file: lib/Yahoo/Marketing/Capability.pm
+  Yahoo::Marketing::ComplexType:
+    file: lib/Yahoo/Marketing/ComplexType.pm
+  Yahoo::Marketing::CreditCardInfo:
+    file: lib/Yahoo/Marketing/CreditCardInfo.pm
+  Yahoo::Marketing::Error:
+    file: lib/Yahoo/Marketing/Error.pm
+  Yahoo::Marketing::ErrorType:
+    file: lib/Yahoo/Marketing/ErrorType.pm
+  Yahoo::Marketing::ExcludedWord:
+    file: lib/Yahoo/Marketing/ExcludedWord.pm
+  Yahoo::Marketing::ExcludedWordResponse:
+    file: lib/Yahoo/Marketing/ExcludedWordResponse.pm
+  Yahoo::Marketing::ExcludedWordsService:
+    file: lib/Yahoo/Marketing/ExcludedWordsService.pm
+  Yahoo::Marketing::FileOutputFormat:
+    file: lib/Yahoo/Marketing/FileOutputFormat.pm
+  Yahoo::Marketing::ForecastKeyword:
+    file: lib/Yahoo/Marketing/ForecastKeyword.pm
+  Yahoo::Marketing::ForecastKeywordResponse:
+    file: lib/Yahoo/Marketing/ForecastKeywordResponse.pm
+  Yahoo::Marketing::ForecastRequestData:
+    file: lib/Yahoo/Marketing/ForecastRequestData.pm
+  Yahoo::Marketing::ForecastResponse:
+    file: lib/Yahoo/Marketing/ForecastResponse.pm
+  Yahoo::Marketing::ForecastResponseData:
+    file: lib/Yahoo/Marketing/ForecastResponseData.pm
+  Yahoo::Marketing::ForecastService:
+    file: lib/Yahoo/Marketing/ForecastService.pm
+  Yahoo::Marketing::Keyword:
+    file: lib/Yahoo/Marketing/Keyword.pm
+  Yahoo::Marketing::KeywordEditorialReasons:
+    file: lib/Yahoo/Marketing/KeywordEditorialReasons.pm
+  Yahoo::Marketing::KeywordOptimizationGuidelines:
+    file: lib/Yahoo/Marketing/KeywordOptimizationGuidelines.pm
+  Yahoo::Marketing::KeywordRejectionReasons:
+    file: lib/Yahoo/Marketing/KeywordRejectionReasons.pm
+  Yahoo::Marketing::KeywordResearchService:
+    file: lib/Yahoo/Marketing/KeywordResearchService.pm
+  Yahoo::Marketing::KeywordResponse:
+    file: lib/Yahoo/Marketing/KeywordResponse.pm
+  Yahoo::Marketing::KeywordService:
+    file: lib/Yahoo/Marketing/KeywordService.pm
+  Yahoo::Marketing::LocationService:
+    file: lib/Yahoo/Marketing/LocationService.pm
+  Yahoo::Marketing::MasterAccount:
+    file: lib/Yahoo/Marketing/MasterAccount.pm
+  Yahoo::Marketing::MasterAccountService:
+    file: lib/Yahoo/Marketing/MasterAccountService.pm
+  Yahoo::Marketing::PageRelatedKeywordRequestType:
+    file: lib/Yahoo/Marketing/PageRelatedKeywordRequestType.pm
+  Yahoo::Marketing::PaymentMethodInfo:
+    file: lib/Yahoo/Marketing/PaymentMethodInfo.pm
+  Yahoo::Marketing::PendingKeyword:
+    file: lib/Yahoo/Marketing/PendingKeyword.pm
+  Yahoo::Marketing::RangeDefinitionRequestType:
+    file: lib/Yahoo/Marketing/RangeDefinitionRequestType.pm
+  Yahoo::Marketing::RangeDefinitionResponseType:
+    file: lib/Yahoo/Marketing/RangeDefinitionResponseType.pm
+  Yahoo::Marketing::RangeDefinitionType:
+    file: lib/Yahoo/Marketing/RangeDefinitionType.pm
+  Yahoo::Marketing::RangeValueType:
+    file: lib/Yahoo/Marketing/RangeValueType.pm
+  Yahoo::Marketing::RelatedKeywordRequestType:
+    file: lib/Yahoo/Marketing/RelatedKeywordRequestType.pm
+  Yahoo::Marketing::RelatedKeywordResponseType:
+    file: lib/Yahoo/Marketing/RelatedKeywordResponseType.pm
+  Yahoo::Marketing::RelatedKeywordType:
+    file: lib/Yahoo/Marketing/RelatedKeywordType.pm
+  Yahoo::Marketing::ReportInfo:
+    file: lib/Yahoo/Marketing/ReportInfo.pm
+  Yahoo::Marketing::ResponseStatusType:
+    file: lib/Yahoo/Marketing/ResponseStatusType.pm
+  Yahoo::Marketing::ResponseType:
+    file: lib/Yahoo/Marketing/ResponseType.pm
+  Yahoo::Marketing::Role:
+    file: lib/Yahoo/Marketing/Role.pm
+  Yahoo::Marketing::Service:
+    file: lib/Yahoo/Marketing/Service.pm
+  Yahoo::Marketing::SetGeographicLocationResponse:
+    file: lib/Yahoo/Marketing/SetGeographicLocationResponse.pm
+  Yahoo::Marketing::UpdateForAd:
+    file: lib/Yahoo/Marketing/UpdateForAd.pm
+  Yahoo::Marketing::UpdateForKeyword:
+    file: lib/Yahoo/Marketing/UpdateForKeyword.pm
+  Yahoo::Marketing::User:
+    file: lib/Yahoo/Marketing/User.pm
+  Yahoo::Marketing::UserAuthorization:
+    file: lib/Yahoo/Marketing/UserAuthorization.pm
+  Yahoo::Marketing::UserManagementService:
+    file: lib/Yahoo/Marketing/UserManagementService.pm
+generated_by: Module::Build version 0.2805
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2

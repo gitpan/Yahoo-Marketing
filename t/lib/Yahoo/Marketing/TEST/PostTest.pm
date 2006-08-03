@@ -17,8 +17,6 @@ use Yahoo::Marketing::CampaignService;
 use Yahoo::Marketing::AccountService;
 use Yahoo::Marketing::AdGroupService;
 use Yahoo::Marketing::KeywordService;
-# remove Dumper before release.
-use Data::Dumper;
 
 our %common_test_data;
 my $section = 'sandbox';
@@ -190,12 +188,24 @@ sub cleanup_campaigns_in_test_account {
     return;
 }
 
+our $run_post_tests;
 sub run_post_tests {
     my $self = shift;
 
-    my $build = Module::Build->current;
-    return $build->notes( 'run_post_tests' )
-       and $build->notes( 'run_post_tests' ) =~ /^y/i;
+    return $run_post_tests if defined $run_post_tests;
+
+    my $build;
+
+    eval {
+        $build = Module::Build->current;
+    };
+
+    $run_post_tests = ( $build 
+                        and $build->notes( 'run_post_tests' )
+                        and $build->notes( 'run_post_tests' ) =~ /^y/i
+                      )
+                    ? 1
+                    : 0;
 }
 
 
@@ -222,9 +232,16 @@ sub create_campaign {
                                              ->name( 'test campaign '.($$ + $campaign_count++) )
                                              ->status( 'On' )
                                              ->accountID( $ysm_ws->account )
+                                             ->contentMatchON( 'true' )
                    ;
 
-    return  $ysm_ws->addCampaign( campaign => $campaign );
+    my $response = $ysm_ws->addCampaign( campaign => $campaign );
+
+    if ( $response->operationSucceeded ne 'true' ) {
+        croak( 'addCampaign failed' );
+    }
+
+    return $response->campaign;
 }
 
 sub create_campaigns {
@@ -248,6 +265,7 @@ sub create_campaigns {
                                               ->name( 'test campaign '.($$ + $campaign_count++).' 1' )
                                               ->status( 'On' )
                                               ->accountID( $ysm_ws->account )
+                                              ->contentMatchON( 'true' )
                     ;
     my $campaign2 = Yahoo::Marketing::Campaign->new
                                               ->startDate( $start_datetime )
@@ -255,6 +273,7 @@ sub create_campaigns {
                                               ->name( 'test campaign '.($$ + $campaign_count++).' 2' )
                                               ->status( 'On' )
                                               ->accountID( $ysm_ws->account )
+                                              ->contentMatchON( 'true' )
                     ;
     my $campaign3 = Yahoo::Marketing::Campaign->new
                                               ->startDate( $start_datetime )
@@ -262,9 +281,16 @@ sub create_campaigns {
                                               ->name( 'test campaign '.($$ + $campaign_count++).' 3' )
                                               ->status( 'On' )
                                               ->accountID( $ysm_ws->account )
+                                              ->contentMatchON( 'true' )
                     ;
 
-    return ( $ysm_ws->addCampaigns( campaigns => [ $campaign1, $campaign2, $campaign3 ] ) );
+    my @responses = $ysm_ws->addCampaigns( campaigns => [ $campaign1, $campaign2, $campaign3 ] );
+
+    if ( grep { $_->operationSucceeded ne 'true' } @responses ) {
+        croak( 'addCampaigns failed' );
+    }
+
+    return map { $_->campaign } @responses;
 }
 
 our $ad_group_count = 0;
@@ -280,13 +306,18 @@ sub create_ad_group {
                                             ->contentMatchMaxBid( '0.18' )
                                             ->sponsoredSearchON( 'true' )
                                             ->sponsoredSearchMaxBid( '0.28' )
+                                            ->adAutoOptimizationON( 'false' )
                    ;
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
 
-    my $added_ad_group = $ysm_ws->addAdGroup( adGroup => $ad_group );
+    my $response = $ysm_ws->addAdGroup( adGroup => $ad_group );
 
-    return $added_ad_group;
+    if ( $response->operationSucceeded ne 'true' ) {
+        croak( 'addAdGroup failed' );
+    }
+
+    return $response->adGroup;
 }
 
 sub create_ad_groups {
@@ -303,6 +334,7 @@ sub create_ad_groups {
                                              ->contentMatchMaxBid( '0.18' )
                                              ->sponsoredSearchON( 'true' )
                                              ->sponsoredSearchMaxBid( '0.28' )
+                                             ->adAutoOptimizationON( 'false' )
                     ;
 
     my $ad_group2 = Yahoo::Marketing::AdGroup->new
@@ -313,6 +345,7 @@ sub create_ad_groups {
                                              ->contentMatchMaxBid( '0.18' )
                                              ->sponsoredSearchON( 'true' )
                                              ->sponsoredSearchMaxBid( '0.28' )
+                                             ->adAutoOptimizationON( 'false' )
                     ;
 
     my $ad_group3 = Yahoo::Marketing::AdGroup->new
@@ -323,13 +356,18 @@ sub create_ad_groups {
                                              ->contentMatchMaxBid( '0.18' )
                                              ->sponsoredSearchON( 'true' )
                                              ->sponsoredSearchMaxBid( '0.28' )
+                                             ->adAutoOptimizationON( 'false' )
                     ;
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
 
-    my @added_ad_groups = $ysm_ws->addAdGroups( adGroups => [ $ad_group1, $ad_group2, $ad_group3 ] );
+    my @responses = $ysm_ws->addAdGroups( adGroups => [ $ad_group1, $ad_group2, $ad_group3 ] );
 
-    return @added_ad_groups;
+    if ( grep { $_->operationSucceeded ne 'true' } @responses ) {
+        croak( 'addAdGroups failed' );
+    }
+
+    return map { $_->adGroup } @responses;
 }
 
 our $ad_count = 0;
@@ -350,7 +388,13 @@ sub create_ad {
                                  ->shortDescription( 'here\'s some great short description' )
              ;
 
-    return $ysm_ws->addAd( Ad => $ad );
+    my $response = $ysm_ws->addAd( ad => $ad );
+
+    if ( $response->operationSucceeded ne 'true' ) {
+        croak( 'addAd failed' );
+    }
+
+    return $response->ad;
 }
 
 sub create_ads {
@@ -395,9 +439,13 @@ sub create_ads {
               ;
 
 
-    my @added_ads = $ysm_ws->addAds( ads => [ $ad1, $ad2, $ad3 ] );
+    my @responses = $ysm_ws->addAds( ads => [ $ad1, $ad2, $ad3 ] );
 
-    return @added_ads;
+    if ( grep { $_->operationSucceeded ne 'true' } @responses ) {
+        croak( 'addAds failed' );
+    }
+
+    return map { $_->ad } @responses;
 }
 
 
@@ -421,7 +469,13 @@ sub create_keyword {
                   ;
 
     $keyword_count++;
-    return $ysm_ws->addKeyword( keyword => $keyword );
+    my $response = $ysm_ws->addKeyword( keyword => $keyword );
+
+    if ( $response->operationSucceeded ne 'true' ) {
+        croak( 'addKeyword failed' );
+    }
+
+    return $response->keyword;
 }
 
 sub create_keywords {
@@ -460,7 +514,13 @@ sub create_keywords {
                                             ->url( 'http://www.yahoo.com/testkeyword?id='.( $$ + $keyword_count++ ) )
                     ;
 
-    return ( $ysm_ws->addKeywords( keywords => [ $keyword1, $keyword2, $keyword3 ] ) );
+    my @responses = $ysm_ws->addKeywords( keywords => [ $keyword1, $keyword2, $keyword3 ] );
+
+    if ( grep { $_->operationSucceeded ne 'true' } @responses ) {
+        croak( 'addKeywords failed' );
+    }
+
+    return map { $_->keyword } @responses;
 }
 
 BEGIN {

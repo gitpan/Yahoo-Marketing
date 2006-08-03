@@ -3,6 +3,7 @@ package Yahoo::Marketing::TEST::AdService;
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
+
 use base qw/ Test::Class Yahoo::Marketing::TEST::PostTest /;
 use Test::More;
 
@@ -59,7 +60,7 @@ sub test_can_add_ad : Test(4) {
     ok( $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
 }
 
-sub test_dies_for_rejected_ad : Test(3) {
+sub test_dies_for_rejected_ad : Test(4) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -70,54 +71,66 @@ sub test_dies_for_rejected_ad : Test(3) {
                  ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
                  ->name( 'test rejected ad ' )
                  ->status( 'On' )
-                 ->title( 'faces of death pt 1' )
-                 ->displayUrl( 'http://www.perl.com/' )
-                 ->url( 'http://www.perl.com/' )
+                 ->title( 'best faces of death pt 1' )
+                 ->displayUrl( 'http://www.perl.com' )
+                 ->url( 'http://www.perl.com?bar=foo&' )
                  ->description( 'here\'s some great long description.  Not too long though.' )
                  ->shortDescription( 'here\'s some great short description' )
     ;
 
     ok( $ad );
 
-    eval { $ysm_ws->addAd( Ad => $ad ) };
+    my $ad_return = $ysm_ws->addAd( Ad => $ad );
 
-    ok( $@ );  # command failed
-    like( $@, qr/Rejected/i, 'faces of death pt 1 is rejected' );
+    is( $ad_return->operationSucceeded, 'false', 'Ad was not added succesfully' );
+
+    is( $ad_return->editorialReasons->titleEditorialReasons->[0], 45, 'Title was rejected for correct reason' );
+    my $reason = $ysm_ws->getEditorialReasonText(
+        editorialReasonCode => 45,
+        locale              => 'en_US',
+    );
+    ok( $reason );
 }
 
 
-sub test_can_add_pending_ad : Test(8) {
+sub test_can_add_pending_ad : Test(11) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
 
-    my $ad = $ysm_ws->addAd( Ad => Yahoo::Marketing::Ad->new
-                                       ->accountID( $ysm_ws->account )
-                                       ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
-                                       ->name( 'test pending ad '.$$ )
-                                       ->status( 'On' )
-                                       ->title( 'Machine Gun Alley' )
-                                       ->displayUrl( 'http://www.perl.com/' )
-                                       ->url( 'http://www.perl.com/' )
-                                       ->description( 'here\'s some great long description.  Not too long though.' )
-                                       ->shortDescription( 'here\'s some great short description' )
+    my $response = $ysm_ws->addAd( Ad => Yahoo::Marketing::Ad->new
+                                                             ->accountID( $ysm_ws->account )
+                                                             ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
+                                                             ->name( 'test pending ad '.$$ )
+                                                             ->status( 'On' )
+                                                             ->title( 'sexual massage' )
+                                                             ->displayUrl( 'http://www.perl.com/' )
+                                                             ->url( 'http://www.perl.com/' )
+                                                             ->description( 'here\'s some great long description.  Not too long though.' )
+                                                             ->shortDescription( 'here\'s some pork & beans, by hi&lois.' )
                       );
+
+    my $ad = $response->ad;
+
     ok( $ad );
 
     like( $ad->ID, qr/^[\d]+$/, 'ID is numeric' );
     is(   $ad->name, "test pending ad $$", 'name looks right' );
-    is(   $ad->title, 'Machine Gun Alley' );
+    is(   $ad->title, 'sexual massage' );
+    like( $ad->shortDescription, qr/[Hh]ere\'s some pork & beans, by hi&lois\.?$/, 'short description looks right' );  
+    like( $ad->description, qr/[Hh]ere\'s some great long description.  Not too long though\./, 'description looks right' );   # period is being removed, see TODO
     is(   $ad->status, 'On' );
-    like( $ad->editorialStatus, qr/Approved|Pending/, 'editorial status is Approved or Pending' );    # this will be Pending in the future
-    is(   $ad->pending, 'true' );
+    like( $ad->editorialStatus, qr/Pending/, 'editorial status is Pending' );
 
-    ok( $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
+    ok( ! $response->errors, 'no errors' );
+    is(   $response->operationSucceeded, 'true', 'operation succeeded' );
+    ok(   $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
 }
 
 
-sub test_can_get_pending_change_for_ad : Test(7) {
+sub test_can_get_update_change_for_ad : Test(7) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -126,17 +139,23 @@ sub test_can_get_pending_change_for_ad : Test(7) {
 
     my $ad = $self->create_ad;
 
-    ok( $ysm_ws->updateAd( ad => $ad->title( 'something illegal' ) ) );
-    ok( $ysm_ws->updateAd( ad => $ad->shortDescription( 'something illegal but more descriptive' ) ) );
+    ok( $ysm_ws->updateAd( ad        => $ad->title( 'something illegal' ),
+                           updateAll => 'true',
+                         )
+      );
+    ok( $ysm_ws->updateAd( ad        => $ad->shortDescription( 'something illegal but more descriptive' ),
+                           updateAll => 'true',
+                         )
+      );
 
-    my $pending_ad = $ysm_ws->getPendingChangeForAd( adID => $ad->ID );
+    my $update_ad = $ysm_ws->getUpdateForAd( adID => $ad->ID );
 
-    is( $pending_ad->ID,               $ad->ID,                                  'ID is correct' );
-    is( $pending_ad->title,            'something illegal',                      'pending title is correct' );
-    is( $pending_ad->shortDescription, 'something illegal but more descriptive', 'pending short description is correct' );
-    is( $pending_ad->editorialStatus,  'Pending',                                'editorial status is pending' );
+    is(   $update_ad->ID,               $ad->ID,                                  'ID is correct' );
+    like( $update_ad->title,            qr/^[Ss]omething [Ii]llegal\.?$/,                      'pending title is correct' );
+    like( $update_ad->shortDescription, qr/^[Ss]omething [Ii]llegal but more descriptive\.?$/, 'pending short description is correct' );
+    is(   $update_ad->editorialStatus,  'Pending',                                'editorial status is pending' );
 
-    ok( $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
+    ok(   $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
 }
 
 sub test_can_add_ads : Test(8) {
@@ -251,37 +270,6 @@ sub test_update_status_for_ads : Test(8) {
 
 }
 
-sub test_update_ad : Test(8) {
-    my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
-
-    my $ad = $self->common_test_data( 'test_ad' );
-
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
-
-    ok( $ysm_ws->updateAd( ad => $ad->name( 'some updated ad name!' )
-                                    ->status( 'Off' )
-                                    ->title( 'second lamest title in the world' )
-                                    ->displayUrl( 'http://www.cpan.org/' )
-                                    ->url( 'http://www.perl.com/' )
-                                    ->description( 'here\'s some lame long description. Not too long though.' )
-                                    ->shortDescription( 'here\'s some lame short description' )
-
-                 ) 
-      );
-
-    my $fetched_ad = $ysm_ws->getAd( adID => $ad->ID );
-
-    ok( $fetched_ad );
-    is( $fetched_ad->status,           'Off',                                 'status is Off' );
-    is( $fetched_ad->title,            'second lamest title in the world',    'title is updated' );
-    is( $fetched_ad->displayUrl,       'http://www.cpan.org/',                'displayUrl is updated' );
-    is( $fetched_ad->url,              'http://www.perl.com/',                'url is updated' );
-    is( $fetched_ad->description,      'here\'s some lame long description. Not too long though.', 'long description is updated' );
-    is( $fetched_ad->shortDescription, 'here\'s some lame short description', 'short description is updated' );
-}
-
 
 sub test_update_ads : Test(22) {
     my ( $self ) = @_;
@@ -292,43 +280,44 @@ sub test_update_ads : Test(22) {
 
     my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
 
-    ok( $ysm_ws->updateAds( ads => [ $ads[0]->name( 'some updated name!' )
-                                            ->status( 'Off' )
-                                            ->title( 'second lamest title in the world' )
-                                            ->displayUrl( 'http://www.cpan.org/' )
-                                            ->url( 'http://www.perl.com/' )
-                                            ->description( 'here\'s some lame long description.' )
-                                            ->shortDescription( 'here\'s some lame short description' ),
-                                     $ads[1]->name( 'another updated name!' )
-                                            ->status( 'On' )
-                                            ->title( 'third lamest title in the world' )
-                                            ->displayUrl( 'http://www.cpan.org/' )
-                                            ->url( 'http://www.yahoo.com/' )
-                                            ->description( 'a great long description' )
-                                            ->shortDescription( 'a great short description' ),
-                                    ],
+    ok( $ysm_ws->updateAds( ads      => [ $ads[0]->name( 'some updated name!' )
+                                                 ->status( 'Off' )
+                                                 ->title( 'second lamest title in the world' )
+                                                 ->displayUrl( 'http://www.cpan.org/' )
+                                                 ->url( 'http://www.perl.com/' )
+                                                 ->description( 'here\'s some lame long description.' )
+                                                 ->shortDescription( 'here\'s some lame short description' ),
+                                          $ads[1]->name( 'another updated name!' )
+                                                 ->status( 'On' )
+                                                 ->title( 'third lamest title in the world' )
+                                                 ->displayUrl( 'http://www.cpan.org/' )
+                                                 ->url( 'http://www.yahoo.com/' )
+                                                 ->description( 'a great long description' )
+                                                 ->shortDescription( 'a great short description' ),
+                                         ],
+                            updateAll => 'true',
                  ) 
       );
 
     my $updated_ad = $ysm_ws->getAd( adID => $ads[0]->ID );
 
-    ok( $updated_ad );
-    is( $updated_ad->status,           'Off',                                 'status is Off' );
-    is( $updated_ad->title,            'second lamest title in the world',    'title is updated' );
-    is( $updated_ad->displayUrl,       'http://www.cpan.org/',                'displayUrl is updated' );
-    is( $updated_ad->url,              'http://www.perl.com/',                'url is updated' );
-    is( $updated_ad->description,      'here\'s some lame long description.', 'long description is updated' );
-    is( $updated_ad->shortDescription, 'here\'s some lame short description', 'short description is updated' );
+    ok(   $updated_ad );
+    is(   $updated_ad->status,           'Off',                                         'status is Off' );
+    like( $updated_ad->title,            qr/^[Ss]econd [Ll]amest [Tt]itle [Ii]n [Tt]he [Ww]orld$/,      'title is updated' );
+    like( $updated_ad->displayUrl,       qr#^(http://)?www.cpan.org/#,                  'displayUrl is updated' );
+    is(   $updated_ad->url,              'http://www.perl.com/',                        'url is updated' );
+    like( $updated_ad->description,      qr/^[Hh]ere\'s some lame long description\.$/,  'long description is updated' );
+    like( $updated_ad->shortDescription, qr/^[Hh]ere\'s some lame short description\.?$/,   'short description is updated' );
 
     $updated_ad = $ysm_ws->getAd( adID => $ads[1]->ID );
 
-    ok( $updated_ad );
-    is( $updated_ad->status,           'On',                                  'status is On' );
-    is( $updated_ad->title,            'third lamest title in the world',     'title is updated' );
-    is( $updated_ad->displayUrl,       'http://www.cpan.org/',                'displayUrl is updated' );
-    is( $updated_ad->url,              'http://www.yahoo.com/',               'url is updated' );
-    is( $updated_ad->description,      'a great long description',            'long description is updated' );
-    is( $updated_ad->shortDescription, 'a great short description',           'short description is updated' );
+    ok(   $updated_ad );
+    is(   $updated_ad->status,           'On',                                     'status is On' );
+    like( $updated_ad->title,            qr/^[Tt]hird [Ll]amest [Tt]itle [Ii]n [Tt]he [Ww]orld$/,  'title is updated' );
+    like( $updated_ad->displayUrl,       qr#^(http://)?www.cpan.org#,              'displayUrl is updated' );
+    is(   $updated_ad->url,              'http://www.yahoo.com/',                  'url is updated' );
+    like( $updated_ad->description,      qr/^[Aa] great long description\.?$/,         'long description is updated' );
+    like( $updated_ad->shortDescription, qr/^[Aa] great short description\.?$/,        'short description is updated' );
 
     my $unchanged_ad = $ysm_ws->getAd( adID => $ads[2]->ID );
 
@@ -378,6 +367,71 @@ sub test_can_get_ads : Test(10) {
 }
 
 
+
+sub test_can_get_ads_by_ad_group_id_by_editorial_status : Test(17) {
+    my ( $self ) = @_;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    # we need another ad group to add an ad to
+
+    my $ad_group = $self->create_ad_group;
+
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+
+    my $ad = Yahoo::Marketing::Ad->new
+                                 ->accountID( $ysm_ws->account )
+                                 ->adGroupID( $ad_group->ID )
+                                 ->name( 'ad in other ad group '.$$ )
+                                 ->status( 'On' )
+                                 ->title( 'machine gun bombrecipe simple explosive' )
+                                 ->displayUrl( 'http://www.perl.com/' )
+                                 ->url( 'http://www.perl.com/' )
+                                 ->description( 'here\'s some great long description.  Not too long though.' )
+                                 ->shortDescription( 'here\'s some great short description' )
+             ;
+    $ad = $ysm_ws->addAd( Ad => $ad )->ad;
+
+    ok( (( !$ad->pending ) or ( $ad->pending eq 'true' )), 'ad is pending' );  # XXX allow undef for now in dev
+    is( $ad->editorialStatus, 'Pending', 'ad is pending' );
+
+    my @fetched_ads = $ysm_ws->getAdsByAdGroupIDByEditorialStatus( adGroupID       => $ad_group->ID, 
+                                                                   update          => 'True',
+                                                                   status          => 'Pending',
+                                                                   includeDeleted  => 'False',
+                                                                 );
+
+    @fetched_ads = $ysm_ws->getAdsByAdGroupIDByEditorialStatus( adGroupID       => $ad_group->ID, 
+                                                                update          => 'true',
+                                                                status          => 'Suspended',
+                                                                includeDeleted  => 'False',
+                                                              );
+
+    ok(   scalar @fetched_ads == 0, 'got expected number of ads: 0');
+
+    @fetched_ads = $ysm_ws->getAdsByAdGroupIDByEditorialStatus( adGroupID       => $self->common_test_data( 'test_ad_group' )->ID,
+                                                                update          => 'False',
+                                                                status          => 'Approved',
+                                                                includeDeleted  => 'False',
+                                                              );
+
+    my @test_ads = @{ $self->common_test_data( 'test_ads' ) };
+
+    return 'No Approved ads in dev4 env' unless scalar @fetched_ads;
+
+    ok( scalar @fetched_ads );
+
+    foreach my $fetched_ad ( @fetched_ads ){
+        next if $fetched_ad->status eq 'Deleted';
+        ok( $fetched_ad );
+        like( $fetched_ad->name, qr/^test ad \d+$/, 'name looks right' );
+        like( $fetched_ad->ID, qr/^[\d]+$/, 'ID is numeric' );
+    }
+
+    ok( $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
+    $self->cleanup_ad_group( $ad_group );
+}
+
 sub test_can_get_ads_by_ad_group_id_by_status : Test(18) {
     my ( $self ) = @_;
 
@@ -400,7 +454,9 @@ sub test_can_get_ads_by_ad_group_id_by_status : Test(18) {
                                  ->description( 'here\'s some great long description.  Not too long though.' )
                                  ->shortDescription( 'here\'s some great short description' )
              ;
-    my $added_ad = $ysm_ws->addAd( Ad => $ad );
+    my $response = $ysm_ws->addAd( Ad => $ad );
+
+    my $added_ad = $response->ad;
 
     my @fetched_ads = $ysm_ws->getAdsByAdGroupIDByStatus( adGroupID => $ad_group->ID, status => 'On' );
 
@@ -433,66 +489,7 @@ sub test_can_get_ads_by_ad_group_id_by_status : Test(18) {
 }
 
 
-sub test_can_get_ads_by_ad_group_id_by_editorial_status : Test(17) {
-    my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    return 'waiting on next sandbox build';
-
-    # we need another ad group to add an ad to
-
-    my $ad_group = $self->create_ad_group;
-
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
-
-    my $ad = Yahoo::Marketing::Ad->new
-                                 ->accountID( $ysm_ws->account )
-                                 ->adGroupID( $ad_group->ID )
-                                 ->name( 'ad in other ad group '.$$ )
-                                 ->status( 'On' )
-                                 ->title( 'machine gun' )
-                                 ->displayUrl( 'http://www.perl.com/' )
-                                 ->url( 'http://www.perl.com/' )
-                                 ->description( 'here\'s some great long description.  Not too long though.' )
-                                 ->shortDescription( 'here\'s some great short description' )
-             ;
-    $ad = $ysm_ws->addAd( Ad => $ad );
-
-    is( $ad->pending, 'true', 'ad is pending' );
-    is( $ad->editorialStatus, 'Pending', 'ad is pending' );
-
-    my @fetched_ads = $ysm_ws->getAdsByAdGroupIDByEditorialStatus( adGroupID       => $ad_group->ID, 
-                                                                   pendingChange   => 'True',
-                                                                   status          => 'Pending',
-                                                                 );
-
-    @fetched_ads = $ysm_ws->getAdsByAdGroupIDByEditorialStatus( adGroupID       => $ad_group->ID, 
-                                                                pendingChange   => 'true',
-                                                                editorialStatus => 'Suspended',
-                                                              );
-
-    ok(   scalar @fetched_ads == 0, 'got expected number of ads: 0');
-
-    @fetched_ads = $ysm_ws->getAdsByAdGroupIDByEditorialStatus( adGroupID       => $self->common_test_data( 'test_ad_group' )->ID,
-                                                                pendingChange   => 'false',
-                                                                editorialStatus => 'Approved',
-                                                              );
-
-    my @test_ads = @{ $self->common_test_data( 'test_ads' ) };
-
-    ok( scalar @fetched_ads );
-
-    foreach my $fetched_ad ( @fetched_ads ){
-        next if $fetched_ad->status eq 'Deleted';
-        ok( $fetched_ad );
-        like( $fetched_ad->name, qr/^test ad \d+$/, 'name looks right' );
-        like( $fetched_ad->ID, qr/^[\d]+$/, 'ID is numeric' );
-    }
-
-    ok( $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
-    $self->cleanup_ad_group( $ad_group );
-}
 
 sub test_can_get_ads_by_ad_group_id : Test(12) {
     my ( $self ) = @_;
@@ -518,7 +515,7 @@ sub test_can_get_ads_by_ad_group_id : Test(12) {
                                  ->description( 'here\'s some great long description.  Not too long though.' )
                                  ->shortDescription( 'here\'s some great short description' )
              ;
-    my $added_ad = $ysm_ws->addAd( Ad => $ad );
+    my $added_ad = $ysm_ws->addAd( Ad => $ad )->ad;
 
     my $ad1 = Yahoo::Marketing::Ad->new
                                   ->accountID( $ysm_ws->account )
@@ -544,16 +541,20 @@ sub test_can_get_ads_by_ad_group_id : Test(12) {
                                   ->description( 'here\'s some great long description.  Not too long though.' )
                                   ->shortDescription( 'here\'s some great short description' )
               ;
-    my @added_ads = $ysm_ws->addAds( ads => [ $ad1, $ad2 ]);
+    my @added_ads = map { $_->ad } $ysm_ws->addAds( ads => [ $ad1, $ad2 ]);
 
-    my @fetched_ads = $ysm_ws->getAdsByAdGroupID( adGroupID => $ad_group1->ID );
+    my @fetched_ads = $ysm_ws->getAdsByAdGroupID( adGroupID      => $ad_group1->ID,
+                                                  includeDeleted => 'false',
+                                                );
 
     ok(   scalar @fetched_ads == 1,                              'got expected number of ads: 1' );
     like( $fetched_ads[0]->name, qr/^ad in new ad group \d+$/, 'name looks right' );
     like( $fetched_ads[0]->ID,   qr/^[\d]+$/,                    'ID is numeric' );
 
 
-    @fetched_ads = grep { $_->status ne 'Deleted' } $ysm_ws->getAdsByAdGroupID( adGroupID => $ad_group2->ID );
+    @fetched_ads = grep { $_->status ne 'Deleted' } $ysm_ws->getAdsByAdGroupID( adGroupID => $ad_group2->ID,
+                                                                                includeDeleted => 'false',
+                                                                              );
 
     my @test_ads = @{ $self->common_test_data( 'test_ads' ) };
 
@@ -574,6 +575,42 @@ sub test_can_get_ads_by_ad_group_id : Test(12) {
 }
 
 
+sub test_update_ad : Test(10) {
+    my ( $self ) = @_;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $ad = $self->common_test_data( 'test_ad' );
+
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+
+    ok( my $response = $ysm_ws->updateAd( ad        => $ad->name( 'some updated ad name!' )
+                                                          ->status( 'Off' )
+                                                          ->title( 'second lamest title in the world' )
+                                                          ->displayUrl( 'http://www.cpan.org/' )
+                                                          ->url( 'http://www.perl.com/' )
+                                                          ->description( 'here\'s some lame long description. Not too long though.' )
+                                                          ->shortDescription( 'here\'s some lame short description' ),
+                                          updateAll => 'true',
+
+                                ) 
+      );
+
+    is( $response->operationSucceeded, 'true', 'operation succeeded' );
+    ok( !$response->errors, 'no errors' );
+
+    my $fetched_ad = $ysm_ws->getAd( adID => $ad->ID );
+
+    ok(   $fetched_ad );
+    is(   $fetched_ad->status,           'Off',                                    'status is Off' );
+    like( $fetched_ad->title,            qr/^[Ss]econd [Ll]amest [Tt]itle [Ii]n [Tt]he [Ww]orld$/,  'title is updated' );
+    like( $fetched_ad->displayUrl,       qr#^(http://)?www.cpan.org/$#,             'displayUrl is updated' );
+    is(   $fetched_ad->url,              'http://www.perl.com/',                   'url is updated' );
+    like( $fetched_ad->description,      qr/^[Hh]ere's some lame long description\. Not too long though\.$/, 'long description is updated' );
+    like( $fetched_ad->shortDescription, qr/^[Hh]ere's some lame short description\.?$/, 'short description is updated' );
+}
+
+
 1;
 
 __END__
@@ -590,7 +627,7 @@ operations:
     * getAdsByAdGroupIDByStatus
     * getEditorialReasonsForAd
     * getEditorialReasonText
-    * getPendingChangeForAd
+    * getUpdateForAd
     * getStatusForAd
     * updateAd
     * updateAds

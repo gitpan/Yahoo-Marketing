@@ -1,4 +1,4 @@
-package Yahoo::Marketing::PendingAd;
+package Yahoo::Marketing::BillingUser;
 # Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
@@ -8,27 +8,22 @@ use base qw/Yahoo::Marketing::ComplexType/;
 
 =head1 NAME
 
-Yahoo::Marketing::PendingAd - an object to represent a Yahoo Marketing PendingAd.
+Yahoo::Marketing::BillingUser - an object to represent a Yahoo Marketing BillingUser.
 
 =cut
 
 sub _user_setable_attributes {
     return ( qw/ 
-                 ID
-                 accountID
-                 description
-                 displayUrl
-                 editorialStatus
-                 shortDescription
-                 title
-                 url
+                 email
+                 firstName
+                 lastName
+                 middleInitial
+                 phone
             /  );
 }
 
 sub _read_only_attributes {
     return ( qw/
-                 createTimestamp
-                 lastUpdateTimestamp
            / );
 }
 
@@ -43,26 +38,23 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 See http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp for documentation of the various data objects.
 
 
-=head2 new
-
-Creates a new instance
-
 =cut
 
 =head1 METHODS
+
+=head2 new
+
+Creates a new instance
 
 =head2 get/set methods
 
 =over 8
 
-    ID
-    accountID
-    description
-    displayUrl
-    editorialStatus
-    shortDescription
-    title
-    url
+    email
+    firstName
+    lastName
+    middleInitial
+    phone
 
 =back
 
@@ -70,8 +62,6 @@ Creates a new instance
 
 =over 8
 
-    createTimestamp
-    lastUpdateTimestamp
 
 =back
 
