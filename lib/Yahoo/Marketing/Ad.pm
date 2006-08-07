@@ -22,7 +22,6 @@ sub _user_setable_attributes {
                  displayUrl
                  editorialStatus
                  name
-                 pending
                  shortDescription
                  sponsoredSearchQualityScore
                  status
@@ -50,13 +49,14 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 
 See http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp for documentation of the various data objects.
 
-=head2 new
-
-Creates a new instance
 
 =cut
 
 =head1 METHODS
+
+=head2 new
+
+Creates a new instance
 
 =head2 get/set methods
 
@@ -70,11 +70,11 @@ Creates a new instance
     displayUrl
     editorialStatus
     name
-    pending
     shortDescription
     sponsoredSearchQualityScore
     status
     title
+    update
     url
 
 =back

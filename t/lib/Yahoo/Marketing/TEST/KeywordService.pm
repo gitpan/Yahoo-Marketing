@@ -11,7 +11,7 @@ use Yahoo::Marketing::Keyword;
 use Yahoo::Marketing::KeywordService;
 use Yahoo::Marketing::KeywordOptimizationGuidelines;
 
-# SOAP::Lite +trace => [qw/ debug method fault /];
+# use SOAP::Lite +trace => [qw/ debug method fault /];
 
 my $section = 'sandbox';
 
@@ -40,7 +40,6 @@ sub shutdown_test_keyword_service : Test(shutdown) {
     $self->cleanup_ad_group;
     $self->cleanup_campaign;
 }
-
 
 sub test_can_add_keyword : Test(8) {
     my ( $self ) = @_;
@@ -348,14 +347,11 @@ sub test_can_get_editorial_reasons_for_keyword : Test(7) {
     ok( $response );
     ok( $response->errors );
     like( $response->errors->[0]->message, qr/rejected/ );
-    use Data::Dumper;
-#    warn 'x'x200;
-#    warn Dumper(  $response->editorialReasons->alternateTextEditorialReasons );
-#    warn Dumper( $response );
+
     ok( $response->editorialReasons );
 
     my $editorial_reason = $ysm_ws->getEditorialReasonText(
-        editorialReasonCode => 39, # $response->editorialReasons->alternateTextEditorialReasons
+        editorialReasonCode => $response->editorialReasons->alternateTextEditorialReasons->[0], # 39
         locale              => 'en_US',
     );
     ok( $editorial_reason );
@@ -544,7 +540,6 @@ sub test_can_update_status_for_keywords : Test(6) {
         is( $keyword->status, 'On' );
     }
 }
-
 
 1;
 

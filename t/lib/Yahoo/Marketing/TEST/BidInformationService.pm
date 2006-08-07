@@ -25,7 +25,7 @@ sub test_get_bids_for_best_rank : Test(3) {
 
     my $bid_information = $ysm_ws->getBidsForBestRank(
         adGroupID => $ad_group->ID,
-        keyword   => 'porche',
+        keyword   => 'porsche',
     );
 
     ok( $bid_information );

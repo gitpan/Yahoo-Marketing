@@ -30,6 +30,7 @@ lib/Yahoo/Marketing/CampaignService.pm
 lib/Yahoo/Marketing/Capability.pm
 lib/Yahoo/Marketing/ComplexType.pm
 lib/Yahoo/Marketing/CreditCardInfo.pm
+lib/Yahoo/Marketing/EditorialReasons.pm
 lib/Yahoo/Marketing/Error.pm
 lib/Yahoo/Marketing/ErrorType.pm
 lib/Yahoo/Marketing/ExcludedWord.pm

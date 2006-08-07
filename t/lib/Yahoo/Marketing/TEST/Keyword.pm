@@ -19,11 +19,11 @@ sub test_can_create_keyword_and_set_all_fields : Test(19) {
                                            ->alternateText( 'alternate text' )
                                            ->canonicalSearchText( 'canonical search text' )
                                            ->editorialStatus( 'editorial status' )
-                                           ->pending( 'pending' )
                                            ->phraseSearchText( 'phrase search text' )
                                            ->sponsoredSearchMaxBid( 'sponsored search max bid' )
                                            ->status( 'status' )
                                            ->text( 'text' )
+                                           ->update( 'update' )
                                            ->url( 'url' )
                                            ->watchON( 'watch on' )
                                            ->createTimestamp( 'create timestamp' )
@@ -41,11 +41,11 @@ sub test_can_create_keyword_and_set_all_fields : Test(19) {
     is( $keyword->alternateText, 'alternate text', 'can get alternate text' );
     is( $keyword->canonicalSearchText, 'canonical search text', 'can get canonical search text' );
     is( $keyword->editorialStatus, 'editorial status', 'can get editorial status' );
-    is( $keyword->pending, 'pending', 'can get pending' );
     is( $keyword->phraseSearchText, 'phrase search text', 'can get phrase search text' );
     is( $keyword->sponsoredSearchMaxBid, 'sponsored search max bid', 'can get sponsored search max bid' );
     is( $keyword->status, 'status', 'can get status' );
     is( $keyword->text, 'text', 'can get text' );
+    is( $keyword->update, 'update', 'can get update' );
     is( $keyword->url, 'url', 'can get url' );
     is( $keyword->watchON, 'watch on', 'can get watch on' );
     is( $keyword->createTimestamp, 'create timestamp', 'can get create timestamp' );

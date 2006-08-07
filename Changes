@@ -3,4 +3,12 @@ Revision history for Yahoo-Marketing
 0.01    07 June 2006
         First version.  Comments welcome!
 
-0.02    
+0.02    03 August 2006
+        Second version, lots of changes for 1.0 sandbox release
+        - new Response types
+        - automatically encode values
+        - proper types for ComplexTypes
+
+0.03    07 August 2006
+        Couple of documentation fixes
+        Removed pending field from Ad (no longer used)

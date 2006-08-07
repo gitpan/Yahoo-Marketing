@@ -30,12 +30,11 @@ sub _user_setable_attributes {
 sub _read_only_attributes {
     return ( qw/
                  accountID
-                 createTimestamp
                  canonicalSearchText
+                 createTimestamp
                  deleteTimestamp
                  editorialStatus
                  lastUpdateTimestamp
-                 pending
                  phraseSearchText
                  sponsoredSearchMaxBidTimestamp
            / );
@@ -52,13 +51,13 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 See http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp for documentation of the various data objects.
 
 
-=head2 new
-
-Creates a new instance
-
 =cut
 
 =head1 METHODS
+
+=head2 new
+
+Creates a new instance
 
 =head2 get/set methods
 
@@ -71,6 +70,7 @@ Creates a new instance
     sponsoredSearchMaxBid
     status
     text
+    update
     url
     watchON
 
@@ -81,12 +81,11 @@ Creates a new instance
 =over 8
 
     accountID
-    createTimestamp
     canonicalSearchText
+    createTimestamp
     deleteTimestamp
     editorialStatus
     lastUpdateTimestamp
-    pending
     phraseSearchText
     sponsoredSearchMaxBidTimestamp
 

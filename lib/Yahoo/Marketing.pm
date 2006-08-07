@@ -12,13 +12,13 @@ Yahoo::Marketing - an interface for Yahoo! Search Marketing's Web Services.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.03
 
 =cut
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -57,14 +57,18 @@ Sample Usage:
                                            ->url( 'http://www.someurl.com' )
                   ;
 
+    my $keyword_response = $service->addKeyword( keyword => $keyword );
+
     # added keyword will have ID set 
 
-    my $added_keyword = $service->addKeyword( keyword => $keyword );
+    my $added_keyword = $keyword_response->keyword;
     ...
 
 =head1 OVERVIEW
 
 Yahoo's Marketing API allows you to manage your search marketing account in an automated fashion rather than manually.  The API is exposed as a standard SOAP service that you can make calls to.  This set of modules is designed to make using the SOAP service easier than using SOAP::Lite (for example) directly.  There are 2 main types of modules available.  The service modules (CampaignService, AdGroupService, BidInformationService, etc) are used to make the actual calls to each of the SOAP services in the API.  The other type of module provided are the complex type modules, each of which represents one of the complex types defined in one of the WSDLs of the SOAP service.  Examples include Campaign, AdGroup, Ad, PendingAd, CreditCardInfo, etc.
+
+Yahoo::Marketing will call LocationService for you, and cache the results.  This should be completely transparent.  See the documtation for cache, cache_expire_time, purge_cache and clear_cache in Yahoo::Marketing::Service for more details.
 
 The calls you can make to the various services are documented on YSM's Technology Solutions Portal.  See
 
@@ -76,17 +80,19 @@ Yahoo::Marketing::ComplexType object.  For example, CampaignService->addCampaign
  use Yahoo::Marketing::Campaign;
  use Yahoo::Marketing::CampaignService;
 
- my $campaign         = Yahoo::Marketing::Campaign->new
-                                                  ->startDate( '2006-07-16T09:20:30-05:00' )
-                                                  ->endDate( '2007-07-16T09:20:30-05:00' )
-                                                  ->name( 'test campaign' )
-                                                  ->status( 'On' )
-                                                  ->accountID( 123456789 )
-                        ;
+ my $campaign          = Yahoo::Marketing::Campaign->new
+                                                   ->startDate( '2006-07-16T09:20:30-05:00' )
+                                                   ->endDate( '2007-07-16T09:20:30-05:00' )
+                                                   ->name( 'test campaign' )
+                                                   ->status( 'On' )
+                                                   ->accountID( 123456789 )
+                         ;
  
- my $campaign_service =  Yahoo::Marketing::CampaignService->new;
+ my $campaign_service  =  Yahoo::Marketing::CampaignService->new;
 
- my $added_campaign   = $ysm_ws->addCampaign( campaign => $campaign );
+ my $campaign_response = $ysm_ws->addCampaign( campaign => $campaign );
+
+ my $added_campaign    = $campaign_response->campaign;
 
 Note that Yahoo::Marketing is smart enough to upgrade status from a simple string to the CampaignStatus simpleType for you.  All simpleTypes referenced in the WSDLs are automatically handled for you - just pass in an appropriate string, and let Yahoo::Marketing do the rest.
 
@@ -114,7 +120,7 @@ Suggestions for improving how multiple return values should be handled in a scal
 
 If a SOAP Fault is encountered (whenever a call fails), the Yahoo::Marketing service will croak with the fault.  The error may be exposed in a future version of this module.
 
-Note that all get/set methods are "chainable".  That is, they return $self when used to set, so you can chain them together.  See examples of this above and below in this documentation.
+Note that all get/set methods (and many other methods) are "chainable".  That is, they return $self when used to set, so you can chain them together.  See examples of this above and below in this documentation.
 
 
 =head1 EXPORT
@@ -137,25 +143,31 @@ See t/example.t for an example that parallels the perl example code at
 
 http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perl.asp
 
+and
+
+http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perlsdk.asp
+
 =head2 Example 1 - creating a campaign
  
  my $campaign_service  = Yahoo::Marketing::CampaignService->new
                                                           ->parse_config( section => 'sandbox' );
  
  # Create a Campaign
- my $campaign = $campaign_service->addCampaign( campaign => 
-                     Yahoo::Marketing::Campaign->new
-                                               ->name( 'MP3' )
-                                               ->description( 'MP3 Player' )
-                                               ->accountID( $campaign_service->account )
-                                               ->status( 'On' )
-                                               ->sponsoredSearchON( 'true' )
-                                               ->advancedMatchON( 'true' )
-                                               ->contentMatchON( 'true' )
-                                               ->campaignOptimizationON( 'false' )
-                                               ->startDate( '2006-06-07T19:32:37-05:00' )
-                                               ->endDate( '2007-07-08T07:32:37-05:00' )
-                );
+ my $campaign_response = $campaign_service->addCampaign( campaign => 
+                             Yahoo::Marketing::Campaign->new
+                                                       ->name( 'MP3' )
+                                                       ->description( 'MP3 Player' )
+                                                       ->accountID( $campaign_service->account )
+                                                       ->status( 'On' )
+                                                       ->sponsoredSearchON( 'true' )
+                                                       ->advancedMatchON( 'true' )
+                                                       ->contentMatchON( 'true' )
+                                                       ->campaignOptimizationON( 'false' )
+                                                       ->startDate( '2006-06-07T19:32:37-05:00' )
+                                                       ->endDate( '2007-07-08T07:32:37-05:00' )
+                         );
+
+  my $campaign         = $campaign_response->campaign;
 
   # $campaign now contains the newly created campaign.
   # $campaign->ID will be set to the ID assigned to the new campaign.
@@ -165,18 +177,19 @@ http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perl.asp
  my $ad_service = Yahoo::Marketing::AdService->new
                                              ->parse_config;
 
- $ad_service->updateAds( ads => [ Yahoo::Marketing::Ad->new
-                                                      ->ID( '12427153' )   # id of existing ad
-                                                      ->name( 'better than the old name' )
-                                                      ->status( 'Off' )
-                                  ,
-                                  Yahoo::Marketing::Ad->new
-                                                      ->ID( '32482170' )   # id of existing ad
-                                                      ->displayUrl( 'http://new.display.url/' )
-                                                      ->url( 'http://new.url' )
-                                                      ->description( 'a fancy new description' )
-                                  ,
-                                ]      # end of our array of ads
+ $ad_service->updateAds( ads       => [ Yahoo::Marketing::Ad->new
+                                                            ->ID( '12427153' )   # id of existing ad
+                                                            ->name( 'better than the old name' )
+                                                            ->status( 'Off' )
+                                        ,
+                                        Yahoo::Marketing::Ad->new
+                                                            ->ID( '32482170' )   # id of existing ad
+                                                            ->displayUrl( 'http://new.display.url/' )
+                                                            ->url( 'http://new.url' )
+                                                            ->description( 'a fancy new description' )
+                                        ,
+                                      ],      # end of our array of ads
+                         updateAll => 'false',
                        ); 
 
   # Note that we passed an anonymous array for the ads parameter.
@@ -196,7 +209,7 @@ http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perl.asp
                                             ->sponsoredSearchMaxBid( '0.99' );
 
  my $result = $ysm_ws->getForecastForKeyword(
-                           keyword             => 'porche',
+                           keyword             => 'porsche',
                            adGroupID           => 016439261,           # some existing Ad Group ID
                            forecastRequestData => $forecast_request_data,
                        );
@@ -226,7 +239,7 @@ http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perl.asp
 
  my $bid_information = $ysm_ws->getBidsForBestRank(
                                     adGroupID => '90171822',   # existing Ad Group ID
-                                    keyword   => 'porche',
+                                    keyword   => 'porsche',
                                 );
 
  print "Bid: "

@@ -368,7 +368,7 @@ sub test_can_get_ads : Test(10) {
 
 
 
-sub test_can_get_ads_by_ad_group_id_by_editorial_status : Test(17) {
+sub test_can_get_ads_by_ad_group_id_by_editorial_status : Test(16) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -392,7 +392,6 @@ sub test_can_get_ads_by_ad_group_id_by_editorial_status : Test(17) {
              ;
     $ad = $ysm_ws->addAd( Ad => $ad )->ad;
 
-    ok( (( !$ad->pending ) or ( $ad->pending eq 'true' )), 'ad is pending' );  # XXX allow undef for now in dev
     is( $ad->editorialStatus, 'Pending', 'ad is pending' );
 
     my @fetched_ads = $ysm_ws->getAdsByAdGroupIDByEditorialStatus( adGroupID       => $ad_group->ID, 
