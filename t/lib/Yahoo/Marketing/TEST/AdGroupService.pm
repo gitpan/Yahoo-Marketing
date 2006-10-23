@@ -55,7 +55,7 @@ sub test_add_ad_groups : Test(5) {
 };
 
 
-sub test_delete_ad_group : Test(2) {
+sub test_delete_ad_group : Test(3) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -64,9 +64,10 @@ sub test_delete_ad_group : Test(2) {
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
 
-    $ysm_ws->deleteAdGroup(
-        adGroupID => $ad_group->ID,
-    );
+    my $response = $ysm_ws->deleteAdGroup(
+                       adGroupID => $ad_group->ID,
+                   );
+    is( $response->operationSucceeded, 'true' );
 
     my $fetched_ad_group = $ysm_ws->getAdGroup(
         adGroupID => $ad_group->ID,
@@ -77,7 +78,7 @@ sub test_delete_ad_group : Test(2) {
 };
 
 
-sub test_delete_ad_groups : Test(3) {
+sub test_delete_ad_groups : Test(5) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -87,9 +88,12 @@ sub test_delete_ad_groups : Test(3) {
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
 
-    $ysm_ws->deleteAdGroups(
-        adGroupIDs => [ $ad_group1->ID, $ad_group2->ID ],
-    );
+    my @responses = $ysm_ws->deleteAdGroups(
+                        adGroupIDs => [ $ad_group1->ID, $ad_group2->ID ],
+                    );
+    foreach my $response ( @responses ){
+        is( $response->operationSucceeded, 'true' );
+    }
 
     my @fetched_ad_groups = $ysm_ws->getAdGroups(
         adGroupIDs => [ $ad_group1->ID, $ad_group2->ID ],
@@ -286,7 +290,7 @@ sub test_get_ad_group_sponsored_search_max_bid : Test(1) {
 };
 
 
-sub test_get_and_set_optimization_guidelines_for_ad_group : Test(15) {
+sub test_get_and_set_optimization_guidelines_for_ad_group : Test(16) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -306,35 +310,35 @@ sub test_get_and_set_optimization_guidelines_for_ad_group : Test(15) {
                                             ->CPM( '2.38' )
                                             ->impressionImportance( 'High' )
                                             ->leadImportance( 'Low' )
-                                            ->ROAS( '0.68' )
+                                            ->ROAS( 110.0 )
                                             ->sponsoredSearchMaxBid( '1.08' )
                                             ->sponsoredSearchMinPosition( '3' )
                                             ->sponsoredSearchMinPositionImportance( 'None' )
     ;
 
-    $ysm_ws->setOptimizationGuidelinesForAdGroup(
-        optimizationGuidelines => $adGroupOptimizationGuidelines,
-    );
+    my $response = $ysm_ws->setOptimizationGuidelinesForAdGroup(
+                       optimizationGuidelines => $adGroupOptimizationGuidelines,
+                   );
 
-    my $fetched_ad_group_optimization_guidelines = $ysm_ws->getOptimizationGuidelinesForAdGroup(
-        adGroupID => $ad_group->ID,
-    );
+    my $updated_ad_group_optimization_guidelines = $response->adGroupOptimizationGuidelines;
 
-    ok( $fetched_ad_group_optimization_guidelines );
-    is( $fetched_ad_group_optimization_guidelines->adGroupID, $ad_group->ID );
-    is( $fetched_ad_group_optimization_guidelines->averageConversionRate, '0.02' );
-    is( $fetched_ad_group_optimization_guidelines->averageRevenuePerConversion, '0.08' );
-    is( $fetched_ad_group_optimization_guidelines->contentMatchMaxBid, '0.98' );
-    is( $fetched_ad_group_optimization_guidelines->conversionImportance, 'Medium' );
-    is( $fetched_ad_group_optimization_guidelines->CPA, '1.18' );
-    is( $fetched_ad_group_optimization_guidelines->CPC, '0.98' );
-    is( $fetched_ad_group_optimization_guidelines->CPM, '2.38' );
-    is( $fetched_ad_group_optimization_guidelines->impressionImportance, 'High' );
-    is( $fetched_ad_group_optimization_guidelines->leadImportance, 'Low' );
-    is( $fetched_ad_group_optimization_guidelines->ROAS, '0.68' );
-    is( $fetched_ad_group_optimization_guidelines->sponsoredSearchMaxBid, '1.08' );
-    is( $fetched_ad_group_optimization_guidelines->sponsoredSearchMinPosition, '3' );
-    is( $fetched_ad_group_optimization_guidelines->sponsoredSearchMinPositionImportance, 'None' );
+    is( $response->operationSucceeded, 'true' );
+
+    ok( $updated_ad_group_optimization_guidelines );
+    is( $updated_ad_group_optimization_guidelines->adGroupID, $ad_group->ID );
+    is( $updated_ad_group_optimization_guidelines->averageConversionRate, '0.02' );
+    is( $updated_ad_group_optimization_guidelines->averageRevenuePerConversion, '0.08' );
+    is( $updated_ad_group_optimization_guidelines->contentMatchMaxBid, '0.98' );
+    is( $updated_ad_group_optimization_guidelines->conversionImportance, 'Medium' );
+    is( $updated_ad_group_optimization_guidelines->CPA, '1.18' );
+    is( $updated_ad_group_optimization_guidelines->CPC, '0.98' );
+    is( $updated_ad_group_optimization_guidelines->CPM, '2.38' );
+    is( $updated_ad_group_optimization_guidelines->impressionImportance, 'High' );
+    is( $updated_ad_group_optimization_guidelines->leadImportance, 'Low' );
+    is( sprintf('%.1f', $updated_ad_group_optimization_guidelines->ROAS), '110.0' );    # need sprintf for rounding issue
+    is( $updated_ad_group_optimization_guidelines->sponsoredSearchMaxBid, '1.08' );
+    is( $updated_ad_group_optimization_guidelines->sponsoredSearchMinPosition, '3' );
+    is( $updated_ad_group_optimization_guidelines->sponsoredSearchMinPositionImportance, 'None' );
 };
 
 

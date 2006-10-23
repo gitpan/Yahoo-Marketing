@@ -22,7 +22,7 @@ Operations that include the word "user" can be executed by an administrator for 
 
 See EWS documentation online for available SOAP methods:
 
-http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/UserManagementService.asp
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/UserManagementService.asp>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

@@ -345,11 +345,11 @@ sub test_can_delete_campaign : Test(2) {
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
-    ok( $ysm_ws->deleteCampaign(
-                     campaignID => $campaign->ID,
-                 ),
-        'can delete campaign'
-    );
+    my $response = $ysm_ws->deleteCampaign(
+                       campaignID => $campaign->ID,
+                   );
+
+    is( $response->operationSucceeded, 'true' );
 
     my $fetched_campaign = $ysm_ws->getCampaign( campaignID => $campaign->ID, );
 
@@ -407,7 +407,7 @@ sub test_can_set_get_delete_geographic_location_for_campaign : Test(16) {
     ok( $ysm_ws->deleteCampaign( campaignID => $campaign->ID ) );
 }
 
-sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(4) {
+sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(5) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -419,17 +419,18 @@ sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(4) {
     my $campaignOptimizationGuidelines = Yahoo::Marketing::CampaignOptimizationGuidelines->new
                                              ->campaignID( $campaign->ID )
                                              ->conversionMetric( 'Revenue' )
-                                             ->ROAS( '0.3' )                         # ROAS (return on ad spend) is required when conversionMetric is 'Revenue'
-                                             ->averageConversionRate( '0.04')        # also required as above reason
-                                             ->averageRevenuePerConversion( '0.03')  # also required as above reason
-                                             ->CPC( '0.1' )
-                                             ->CPM( '0.1' )
+                                             ->ROAS( 100.0 )                        # ROAS (return on ad spend) is required when conversionMetric is 'Revenue'.  % value
+                                             ->averageConversionRate( 0.04 )        # also required as above reason
+                                             ->averageRevenuePerConversion( 0.03 )  # also required as above reason
+                                             ->CPC( 0.1 )
+                                             ->CPM( 0.1 )
                                              ->impressionImportance( 'Low' )
                                              ->leadImportance( 'Low' )
                                              ->taggedForConversion( 1 )
                                              ->taggedForRevenue( 0 )
-                                             ->maxBid( '1.00' )
-                                             ->bidLimitHeadroom( '0.10' )
+                                             ->maxBid( 1.00 )
+                                             ->bidLimitHeadroom( 10.0 )             #  % value
+                                             ->monthlySpendRate( 100.00 )
     ;
 
     $ysm_ws->setCampaignOptimizationON(
@@ -437,18 +438,18 @@ sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(4) {
                  campaignOptimizationON => 'true',
              );
 
-    $ysm_ws->setOptimizationGuidelinesForCampaign(
-                 optimizationGuidelines => $campaignOptimizationGuidelines,
-             );
+    my $response = $ysm_ws->setOptimizationGuidelinesForCampaign(
+                       optimizationGuidelines => $campaignOptimizationGuidelines,
+                   );
 
-    my $fetched_campaign_optimization_guidelines = $ysm_ws->getOptimizationGuidelinesForCampaign(
-                                                                campaignID => $campaign->ID,
-                                                            );
+    is( $response->operationSucceeded, 'true' );
 
-    is( $fetched_campaign_optimization_guidelines->conversionMetric, 'Revenue' );
-    is( $fetched_campaign_optimization_guidelines->maxBid, '1.0' );
-    is( $fetched_campaign_optimization_guidelines->impressionImportance, 'Low' );
-    is( $fetched_campaign_optimization_guidelines->bidLimitHeadroom, '0.1' );
+    my $updated_campaign_optimization_guidelines = $response->campaignOptimizationGuidelines;
+
+    is( $updated_campaign_optimization_guidelines->conversionMetric, 'Revenue' );
+    is( $updated_campaign_optimization_guidelines->maxBid, '1.0' );
+    is( $updated_campaign_optimization_guidelines->impressionImportance, 'Low' );
+    is( $updated_campaign_optimization_guidelines->bidLimitHeadroom, '10.0' );
 }
 
 sub test_can_get_campaigns_by_account_id_by_campaign_status : Test(1) {
@@ -571,7 +572,7 @@ sub test_can_update_status_for_campaign : Test(4) {
     is( $fetched_campaign->status, 'On' );
 }
 
-sub test_can_delete_campaigns : Test(3) {
+sub test_can_delete_campaigns : Test(4) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -581,13 +582,13 @@ sub test_can_delete_campaigns : Test(3) {
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
-    ok( $ysm_ws->deleteCampaigns(
-                     campaignIDs => [ $campaign1->ID, $campaign2->ID ],
-                 ),
-        'can delete campaigns'
-    );
+    my @responses = $ysm_ws->deleteCampaigns(
+                        campaignIDs => [ $campaign1->ID, $campaign2->ID ],
+                    );
 
-    sleep 5;
+    foreach my $response ( @responses ){
+        is( $response->operationSucceeded, 'true' );
+    }
 
     my @fetched_campaigns = $ysm_ws->getCampaigns(
                                          campaignIDs => [ $campaign1->ID, $campaign2->ID ],

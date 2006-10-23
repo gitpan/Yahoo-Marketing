@@ -18,7 +18,7 @@ Yahoo::Marketing::BidInformationService - an object that provides operations tha
 
 See EWS documentation online for available SOAP methods:
 
-http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/BidInformationService.asp
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/BidInformationService.asp>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

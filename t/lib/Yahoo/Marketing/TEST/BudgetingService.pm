@@ -22,13 +22,9 @@ sub test_account_daily_spend_limit : Test(4) {
 
     $ysm_ws->updateAccountDailySpendLimit(
                  accountID => $ysm_ws->account,
-                 amount    => '100.01',
+                 amount    => '100.005',
              );
 
-    $ysm_ws->updateCampaignDailySpendLimitStatus( 
-                 campaignID => $self->common_test_data( 'test_campaign' )->ID,
-                 status     => 'True'
-             );
     my $spend_status = $ysm_ws->getAccountDailySpendLimitStatus( accountID => $ysm_ws->account );
 
     ok( $spend_status );
@@ -58,7 +54,7 @@ sub test_campaign_daily_spend_limit : Test(7) {
 
     $ysm_ws->updateCampaignDailySpendLimit(
                  campaignID => $campaign->ID,
-                 amount     => '200.01',
+                 amount     => '200.011',
              );
 
     $ysm_ws->updateCampaignDailySpendLimitStatus(
@@ -77,7 +73,7 @@ sub test_campaign_daily_spend_limit : Test(7) {
 }
 
 
-sub startup_test_forecast_service : Test(startup) {
+sub startup_test_budgeting_service : Test(startup) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -87,7 +83,7 @@ sub startup_test_forecast_service : Test(startup) {
     $self->common_test_data( 'test_campaign', $self->create_campaign ) unless defined $self->common_test_data( 'test_campaign' );
 }
 
-sub shutdown_test_forecast_service : Test(shutdown) {
+sub shutdown_test_budgeting_service : Test(shutdown) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;

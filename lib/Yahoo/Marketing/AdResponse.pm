@@ -46,7 +46,7 @@ sub _editorial_reasons_class {
 1;
 =head1 SYNOPSIS
 
-See http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp for documentation of the various data objects.
+See L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp> for documentation of the various data objects.
 
 
 =cut

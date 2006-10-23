@@ -84,7 +84,7 @@ sub test_can_add_keywords : Test(22) {
 }
 
 
-sub test_can_delete_keyword : Test(2) {
+sub test_can_delete_keyword : Test(3) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -94,13 +94,15 @@ sub test_can_delete_keyword : Test(2) {
     ok( $added_keyword, 'something was returned' );
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
-    $ysm_ws->deleteKeyword( keywordID => $added_keyword->ID );
+    my $response = $ysm_ws->deleteKeyword( keywordID => $added_keyword->ID );
+
+    is( $response->operationSucceeded, 'true' );
 
     is( $ysm_ws->getKeyword( keywordID => $added_keyword->ID )->status, 'Deleted', 'status is Deleted');
 }
 
 
-sub test_can_delete_keywords : Test(7) {
+sub test_can_delete_keywords : Test(10) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -110,7 +112,11 @@ sub test_can_delete_keywords : Test(7) {
     ok( @added_keywords );
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
-    $ysm_ws->deleteKeywords( keywordIDs => [ map { $_->ID } @added_keywords ] );
+    my @responses = $ysm_ws->deleteKeywords( keywordIDs => [ map { $_->ID } @added_keywords ] );
+
+    foreach my $response ( @responses ){
+        is( $response->operationSucceeded, 'true' );
+    }
 
     for my $keyword ( $ysm_ws->getKeywords( keywordIDs => [ map { $_->ID } @added_keywords ] ) ) {
         ok( $keyword );
@@ -282,7 +288,7 @@ sub test_can_get_keyword_sponsored_search_max_bid : Test(1) {
 }
 
 
-sub test_can_get_and_set_optimization_guidelines_for_keyword : Test(1) {
+sub test_can_get_and_set_optimization_guidelines_for_keyword : Test(2) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -296,13 +302,13 @@ sub test_can_get_and_set_optimization_guidelines_for_keyword : Test(1) {
                                               ->sponsoredSearchMaxBid( 9.99 )
     ;
 
-    $ysm_ws->setOptimizationGuidelinesForKeyword( optimizationGuidelines => $keyword_optimization_guidelines );
+    my $response = $ysm_ws->setOptimizationGuidelinesForKeyword( 
+                       optimizationGuidelines => $keyword_optimization_guidelines 
+                   );
 
-    my $fetched_keyword_optimization_guidelines = $ysm_ws->getOptimizationGuidelinesForKeyword(
-                                                               keywordID => $self->common_test_data( 'test_keyword' )->ID,
-                                                           );
+    is( $response->operationSucceeded, 'true' );
 
-    is( $fetched_keyword_optimization_guidelines->sponsoredSearchMaxBid, '9.99' );
+    is( $response->keywordOptimizationGuidelines->sponsoredSearchMaxBid, '9.99' );
 }
 
 
@@ -320,6 +326,7 @@ sub test_can_get_update_for_keyword : Test(3) {
     $ysm_ws->updateKeyword( keyword   => $added_keyword->alternateText('sex'),
                             updateAll => 'true',
                           );
+
     my $update_keyword = $ysm_ws->getUpdateForKeyword( keywordID => $added_keyword->ID );
 
     is( $update_keyword->alternateText, 'sex', 'getting pending alternateText right' );

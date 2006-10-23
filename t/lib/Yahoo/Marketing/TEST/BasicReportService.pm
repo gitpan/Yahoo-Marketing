@@ -68,7 +68,7 @@ sub test_get_report_list : Test(2) {
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report for testing get report list' )
-        ->reportType( 'MultiChannelKeyword' )
+        ->reportType( 'AdvancedAdKeywordPerformance' )
         ->dateRange( 'MonthToDate' );
 
     my $reportID = $ysm_ws->addReportRequestForAccountID(
@@ -200,7 +200,7 @@ sub test_get_report_output_url : Test(2) {
         sleep 5;
     }
 
-    return 'report pending for too long time, skip test of getReportOutputUrl' unless @ready;
+    return 'report pending for too long time, skip test of getReportOutputUrl(s)' unless @ready;
 
     my $file_output_format = Yahoo::Marketing::FileOutputFormat->new
         ->fileOutputType( 'CSV' )
@@ -256,7 +256,7 @@ sub test_get_report_output_urls : Test(4) {
         @ready = ();
     }
 
-    return 'report pending for too long time, skip test of getReportOutputUrls' unless @ready;
+    return 'report pending for too long time, skip test of getReportOutputUrl(s)' unless @ready;
 
     my $file_output_format = Yahoo::Marketing::FileOutputFormat->new
         ->fileOutputType( 'XML' )

@@ -40,9 +40,11 @@ Sample Usage:
                                            ->url( 'http://www.someurl.com' )
                   ;
 
+    my $keyword_response = $service->addKeyword( keyword => $keyword );
+
     # added keyword will have ID set 
 
-    my $added_keyword = $service->addKeyword( keyword => $keyword );
+    my $added_keyword = $keyword_response->keyword;
     ...
 
 

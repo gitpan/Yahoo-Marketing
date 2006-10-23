@@ -17,7 +17,7 @@ Yahoo::Marketing::MasterAccountService - an object that provides access to Yahoo
 
 See EWS documentation online for available SOAP methods:
 
-http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/MasterAccountService.asp
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/MasterAccountService.asp>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

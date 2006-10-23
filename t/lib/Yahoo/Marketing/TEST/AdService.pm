@@ -60,7 +60,7 @@ sub test_can_add_ad : Test(4) {
     ok( $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
 }
 
-sub test_dies_for_rejected_ad : Test(4) {
+sub test_dies_for_rejected_ad : Test(3) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -84,12 +84,15 @@ sub test_dies_for_rejected_ad : Test(4) {
 
     is( $ad_return->operationSucceeded, 'false', 'Ad was not added succesfully' );
 
-    is( $ad_return->editorialReasons->titleEditorialReasons->[0], 45, 'Title was rejected for correct reason' );
+    my $editorial_reason_code =  $ad_return->editorialReasons->titleEditorialReasons->[0];
     my $reason = $ysm_ws->getEditorialReasonText(
-        editorialReasonCode => 45,
+        editorialReasonCode => $editorial_reason_code,
         locale              => 'en_US',
     );
-    ok( $reason );
+    like( $reason, 
+          qr/Contains a superlative phrase\.|Editorial review required\./, 
+          'editorial reason text is correct'    # we get different reasons in sandbox and qa`
+    ); 
 }
 
 
@@ -118,9 +121,9 @@ sub test_can_add_pending_ad : Test(11) {
 
     like( $ad->ID, qr/^[\d]+$/, 'ID is numeric' );
     is(   $ad->name, "test pending ad $$", 'name looks right' );
-    is(   $ad->title, 'sexual massage' );
+    like( $ad->title, qr/[Ss]exual [Mm]assage/, 'title looks right' );
     like( $ad->shortDescription, qr/[Hh]ere\'s some pork & beans, by hi&lois\.?$/, 'short description looks right' );  
-    like( $ad->description, qr/[Hh]ere\'s some great long description.  Not too long though\./, 'description looks right' );   # period is being removed, see TODO
+    like( $ad->description, qr/[Hh]ere\'s some great long description\.\s+Not too long though\./, 'description looks right' );   # period is being removed, see TODO
     is(   $ad->status, 'On' );
     like( $ad->editorialStatus, qr/Pending/, 'editorial status is Pending' );
 
@@ -400,13 +403,10 @@ sub test_can_get_ads_by_ad_group_id_by_editorial_status : Test(16) {
                                                                    includeDeleted  => 'False',
                                                                  );
 
-    @fetched_ads = $ysm_ws->getAdsByAdGroupIDByEditorialStatus( adGroupID       => $ad_group->ID, 
-                                                                update          => 'true',
-                                                                status          => 'Suspended',
-                                                                includeDeleted  => 'False',
-                                                              );
-
-    ok(   scalar @fetched_ads == 0, 'got expected number of ads: 0');
+    ok(  ( ( scalar @fetched_ads == 0 )
+        or ( scalar @fetched_ads == 1 ) ), 
+        'got expected number of ads: 0 or 1'
+    );
 
     @fetched_ads = $ysm_ws->getAdsByAdGroupIDByEditorialStatus( adGroupID       => $self->common_test_data( 'test_ad_group' )->ID,
                                                                 update          => 'False',
@@ -416,7 +416,7 @@ sub test_can_get_ads_by_ad_group_id_by_editorial_status : Test(16) {
 
     my @test_ads = @{ $self->common_test_data( 'test_ads' ) };
 
-    return 'No Approved ads in dev4 env' unless scalar @fetched_ads;
+    return 'No Approved ads' unless scalar @fetched_ads;
 
     ok( scalar @fetched_ads );
 

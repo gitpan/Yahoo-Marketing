@@ -114,9 +114,9 @@ sub _location {
     my $locations = $self->cache->get( 'locations' );
 
     if( $locations 
-    and $locations->{ $self->endpoint } 
-    and $locations->{ $self->endpoint }->{ $self->account } ){
-        return $locations->{ $self->endpoint }->{ $self->account };
+    and $locations->{ $self->endpoint }
+    and $locations->{ $self->endpoint }->{ $self->master_account } ){
+        return $locations->{ $self->endpoint }->{ $self->master_account };
     }
 
     my $soap = SOAP::Lite->proxy( $self->endpoint
@@ -128,19 +128,36 @@ sub _location {
                          ->default_ns( $self->uri )
                ; 
 
+    my $som = $soap->getMasterAccountLocation( $self->_headers );
 
-    my $location = $soap->getMasterAccountLocation( $self->_headers )
-                        ->valueof( '/Envelope/Body/getMasterAccountLocationResponse/out' );
+    $self->_die_with_soap_fault( $som ) if ($som->fault);
+    
+
+    my $location = $som->valueof( '/Envelope/Body/getMasterAccountLocationResponse/out' );
 
     die "failed to get Master Account Location!" unless $location;
 
     $location .= '/'.$self->version;
 
-    $locations->{ $self->endpoint }->{ $self->account } = $location;
+    $locations->{ $self->endpoint }->{ $self->master_account } = $location ;
 
     $self->cache->set( 'locations', $locations, $self->cache_expire_time );
 
     return $location;
+}
+
+sub _die_with_soap_fault {
+    my ( $self, $som ) = @_;
+        my $detail = $som->faultdetail;
+        croak(<<ENDFAULT);
+SOAP FAULT!
+
+String:  @{[ $som->faultstring ]}
+Code:    @{[ defined $detail and $detail->{ApiFault}->{code}    ? $detail->{ApiFault}->{code}    : 'none' ]}
+Message: @{[ defined $detail and $detail->{ApiFault}->{message} ? $detail->{ApiFault}->{message} : 'none' ]}
+
+
+ENDFAULT
 }
 
 
@@ -181,24 +198,10 @@ sub _process_soap_call {
 
     my $som = $self->_soap->$method( @soap_args, $self->_headers );
 
-    if ($som->fault) {
-        my $detail = $som->faultdetail;
-        croak(<<ENDFAULT);
-SOAP FAULT!
+    $self->_die_with_soap_fault( $som ) if ($som->fault);
 
-String:  @{[ $som->faultstring ]}
-Code:    @{[ defined $detail and $detail->{Code}    ? $detail->{Code} : 'none' ]}
-Message: @{[ defined $detail and $detail->{Message} ? $detail->{Message} : 'none' ]}
-
-
-ENDFAULT
-    }
-    else {
-        $self->_set_quota_from_som( $som );
-
-        return $self->_parse_response( $som, $method );
-    }
-    return;
+    $self->_set_quota_from_som( $som );
+    return $self->_parse_response( $som, $method );
 }
 
 sub _set_quota_from_som {
@@ -654,7 +657,7 @@ See also perldoc Yahoo::Marketing::AccountService
 
 Please see the API docs at 
 
- http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/index.asp#services
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/index.asp#services>
 
 for details about what methods are available from each of the Services.
 
@@ -703,23 +706,23 @@ Get/set the account to be used for requests.  Not all requests require an accoun
 Any service that deals with Campaigns (or Ad Groups, Ads, or Keywords) requires account
 to be set.
 
- http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/requests.asp#header
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/requests.asp#header>
 
 =head2 on_behalf_of_username
 
 Get/set the onBehalfOfUsername to be used for requests.  
 
- http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/auth.asp#onbehalfof
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/auth.asp#onbehalfof>
 
 =head2 on_behalf_of_password
 
 Get/set the onBehalfOfPassword to be used for requests.  
 
- http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/auth.asp#onbehalfof
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/auth.asp#onbehalfof>
 
 =head2 use_wsse_security_headers
 
-If set to a true value, requests will use the WSSE headers for authentication.  See http://schemas.xmlsoap.org/ws/2002/04/secext/
+If set to a true value, requests will use the WSSE headers for authentication.  See L<http://schemas.xmlsoap.org/ws/2002/04/secext/>
 
 Defaults to true.
 

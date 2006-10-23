@@ -21,7 +21,7 @@ This module is also used internally by other services to get the correct AWS end
 
 See EWS documentation online for available SOAP methods:
 
-http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/LocationService.asp
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/LocationService.asp>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

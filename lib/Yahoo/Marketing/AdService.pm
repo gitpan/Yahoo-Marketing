@@ -18,7 +18,7 @@ Yahoo::Marketing::AdService - an object that provides access to Yahoo Marketing'
 
 See EWS documentation online for available SOAP methods:
 
-http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/AdService.asp
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/AdService.asp>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

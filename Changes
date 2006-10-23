@@ -12,3 +12,10 @@ Revision history for Yahoo-Marketing
 0.03    07 August 2006
         Couple of documentation fixes
         Removed pending field from Ad (no longer used)
+
+0.04    23 October 2006
+        Little tweaks to co-inside with new sandbox release
+        Better error message when getMasterAccountLocation calls fail
+        Make http addresses in the Pod link
+
+

@@ -62,7 +62,9 @@ sub test_update_master_account : Test(6) {
 
     $ysm_ws->updateMasterAccount(
         masterAccount => $master_account->name( "new name $$" )
-                                        ->trackingON( $old_tracking_on eq 'false' ? 'true' : 'false' ),
+                                        ->trackingON( $old_tracking_on eq 'false' ? 'true' : 'false' )
+                                        ->timezone('PST8PDT')
+        ,
     );
 
     my $fetched_master_account = $ysm_ws->getMasterAccount( masterAccountID => $ysm_ws->master_account );
@@ -154,12 +156,12 @@ sub test_add_new_customer : Test(8) {
 
     ok( $master_account );
     like( $master_account->ID, qr/^\d+$/, 'ID is numeric' );
-    is( $master_account->currencyID,  'USD', 'Currency ID is correct' );
-    ok( ! $master_account->taggingON, 'Tagging is not on' );
-    is( $master_account->timezone,  'PST8PDT', 'Timezone is correct' );
-    is( $master_account->name,  'new master account test', 'Name is correct' );
-    ok( ! $master_account->signupStatusText, 'signupStatusText is null' );
-    is( $master_account->trackingON,  'false', 'Tracking is not on' );
+    is(   $master_account->currencyID,  'USD', 'Currency ID is correct' );
+    is(   $master_account->taggingON, 'false', 'Tagging is not on' );
+    is(   $master_account->timezone,  'PST8PDT', 'Timezone is correct' );
+    is(   $master_account->name,  'new master account test', 'Name is correct' );
+    like( $master_account->signupStatusText, qr/^Customer creation was not complete/, 'signupStatusText looks right' );
+    is(   $master_account->trackingON,  'false', 'Tracking is not on' );
 
 }
 

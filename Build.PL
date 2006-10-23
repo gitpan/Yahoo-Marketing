@@ -108,9 +108,9 @@ my $build = $builder->new(
         'SOAP::Lite'               => '>= 0.66, < 1.0',
         'YAML'                     => '>= 0.01',
         'Class::Accessor::Chained' => '>= 0.01, < 1.0',
-        'Module::Build'            => '>= 0.2610',  
+        'Module::Build'            => '>= 0.26',  
         'Scalar::Util'             => '>= 1.01, < 2.0',
-        'Test::Class'              => '> 0.10, < 1.0',
+        'Test::Class'              => '>= 0.10, < 1.0',
         'Test::Simple'             => '> 0.60', # for displaying error message in tests.
         'Cache::Cache'             => '>= 1.01, < 2.0',
         'XML::XPath'               => '> 1.10, < 2.0',

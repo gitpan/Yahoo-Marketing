@@ -1,6 +1,6 @@
 ---
 name: Yahoo-Marketing
-version: 0.03
+version: 0.04
 author:
   - 'Jeff Lavallee <jeff@zeroclue.com>'
 abstract: an interface for Yahoo! Search Marketing's Web Services.
@@ -11,10 +11,10 @@ build_requires:
   Cache::Cache: '>= 1.01, < 2.0'
   Class::Accessor::Chained: '>= 0.01, < 1.0'
   Crypt::SSLeay: '> 0.40'
-  Module::Build: '>= 0.2610'
+  Module::Build: '>= 0.26'
   SOAP::Lite: '>= 0.66, < 1.0'
   Scalar::Util: '>= 1.01, < 2.0'
-  Test::Class: '> 0.10, < 1.0'
+  Test::Class: '>= 0.10, < 1.0'
   Test::More: 0
   Test::Simple: '> 0.60'
   XML::XPath: '> 1.10, < 2.0'
@@ -23,7 +23,7 @@ build_requires:
 provides:
   Yahoo::Marketing:
     file: lib/Yahoo/Marketing.pm
-    version: 0.03
+    version: 0.04
   Yahoo::Marketing::Account:
     file: lib/Yahoo/Marketing/Account.pm
   Yahoo::Marketing::AccountService:
@@ -36,6 +36,8 @@ provides:
     file: lib/Yahoo/Marketing/AdGroup.pm
   Yahoo::Marketing::AdGroupOptimizationGuidelines:
     file: lib/Yahoo/Marketing/AdGroupOptimizationGuidelines.pm
+  Yahoo::Marketing::AdGroupOptimizationGuidelinesResponse:
+    file: lib/Yahoo/Marketing/AdGroupOptimizationGuidelinesResponse.pm
   Yahoo::Marketing::AdGroupResponse:
     file: lib/Yahoo/Marketing/AdGroupResponse.pm
   Yahoo::Marketing::AdGroupService:
@@ -56,6 +58,8 @@ provides:
     file: lib/Yahoo/Marketing/BasicReportRequest.pm
   Yahoo::Marketing::BasicReportService:
     file: lib/Yahoo/Marketing/BasicReportService.pm
+  Yahoo::Marketing::BasicResponse:
+    file: lib/Yahoo/Marketing/BasicResponse.pm
   Yahoo::Marketing::BidInformation:
     file: lib/Yahoo/Marketing/BidInformation.pm
   Yahoo::Marketing::BidInformationService:
@@ -70,6 +74,8 @@ provides:
     file: lib/Yahoo/Marketing/Campaign.pm
   Yahoo::Marketing::CampaignOptimizationGuidelines:
     file: lib/Yahoo/Marketing/CampaignOptimizationGuidelines.pm
+  Yahoo::Marketing::CampaignOptimizationGuidelinesResponse:
+    file: lib/Yahoo/Marketing/CampaignOptimizationGuidelinesResponse.pm
   Yahoo::Marketing::CampaignResponse:
     file: lib/Yahoo/Marketing/CampaignResponse.pm
   Yahoo::Marketing::CampaignService:
@@ -112,6 +118,8 @@ provides:
     file: lib/Yahoo/Marketing/KeywordEditorialReasons.pm
   Yahoo::Marketing::KeywordOptimizationGuidelines:
     file: lib/Yahoo/Marketing/KeywordOptimizationGuidelines.pm
+  Yahoo::Marketing::KeywordOptimizationGuidelinesResponse:
+    file: lib/Yahoo/Marketing/KeywordOptimizationGuidelinesResponse.pm
   Yahoo::Marketing::KeywordRejectionReasons:
     file: lib/Yahoo/Marketing/KeywordRejectionReasons.pm
   Yahoo::Marketing::KeywordResearchService:

@@ -18,7 +18,7 @@ Yahoo::Marketing::BudgetingService - an object that provides operations for sett
 
 See EWS documentation online for available SOAP methods:
 
-http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/BudgetingService.asp
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/BudgetingService.asp>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

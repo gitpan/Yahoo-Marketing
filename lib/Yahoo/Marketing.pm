@@ -12,13 +12,13 @@ Yahoo::Marketing - an interface for Yahoo! Search Marketing's Web Services.
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 
@@ -72,7 +72,7 @@ Yahoo::Marketing will call LocationService for you, and cache the results.  This
 
 The calls you can make to the various services are documented on YSM's Technology Solutions Portal.  See
 
-http://ysm.techportal.searchmarketing.yahoo.com/docs/index.asp
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/index.asp>
 
 Where the documentation indicates that a complex type must be passed in to a particular service call, you must pass in the appropriate 
 Yahoo::Marketing::ComplexType object.  For example, CampaignService->addCampaign requires that a Campaign be passed in:
@@ -141,11 +141,11 @@ And perldoc Yahoo::Marketing::ComplexTypes for Complex Type documentation
 
 See t/example.t for an example that parallels the perl example code at 
 
-http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perl.asp
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perl.asp>
 
 and
 
-http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perlsdk.asp
+L<http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perlsdk.asp>
 
 =head2 Example 1 - creating a campaign
  
@@ -210,7 +210,7 @@ http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perlsdk.asp
 
  my $result = $ysm_ws->getForecastForKeyword(
                            keyword             => 'porsche',
-                           adGroupID           => 016439261,           # some existing Ad Group ID
+                           adGroupID           => 116439261,           # some existing Ad Group ID
                            forecastRequestData => $forecast_request_data,
                        );
 
