@@ -14,8 +14,12 @@ Revision history for Yahoo-Marketing
         Removed pending field from Ad (no longer used)
 
 0.04    23 October 2006
-        Little tweaks to co-inside with new sandbox release
+        Little tweaks to coinside with new sandbox release
         Better error message when getMasterAccountLocation calls fail
-        Make http addresses in the Pod link
+        Make http addresses in the POD link
+
+0.05    24 October 2006
+        Fix for SetGeographicLocationResponse with empty ambiguousMatch
+        Added cache clearing example to Yahoo::Marketing POD
 
 

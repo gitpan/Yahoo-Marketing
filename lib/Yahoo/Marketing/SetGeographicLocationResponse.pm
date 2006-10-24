@@ -37,7 +37,10 @@ sub _new_from_hash {
     foreach my $key ( keys %$hash ) {
         if ( $key eq 'ambiguousMatches' ) {
             my @array;
-            foreach my $item ( ref $hash->{ $key }{'AmbiguousGeoMatch'} eq 'ARRAY' ? @{ $hash->{ $key }{'AmbiguousGeoMatch'} } : ( $hash->{ $key }{'AmbiguousGeoMatch'} || () ) ) {
+            next unless (defined ref $hash->{ $key } and ref $hash->{ $key } eq 'HASH');
+            foreach my $item ( ref $hash->{ $key }{'AmbiguousGeoMatch'} eq 'ARRAY' 
+                             ? @{ $hash->{ $key }{'AmbiguousGeoMatch'} } 
+                             : ( $hash->{ $key }{'AmbiguousGeoMatch'} or () ) ) {
                 my $ambiguous_matches = Yahoo::Marketing::AmbiguousGeoMatch->new->_new_from_hash( $item );
                 push @array, $ambiguous_matches;
             }

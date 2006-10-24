@@ -12,13 +12,13 @@ Yahoo::Marketing - an interface for Yahoo! Search Marketing's Web Services.
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =cut
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 SYNOPSIS
 
@@ -250,6 +250,14 @@ L<http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perlsdk.asp>
       .$bid_information->cutOffBid
       ."\n"
  ;
+ 
+=head2 Example 5 - clearing the location cache from the command line
+
+The following code will clear the location cache from the command line on a *nix machine.  
+
+  perl -MYahoo::Marketing::Service -e 'my $ysm_ws = Yahoo::Marketing::Service->new->clear_cache;'
+
+On windows, using double quotes instead of single quotes should work.
  
 =head2 Example Config File
 

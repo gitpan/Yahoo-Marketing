@@ -407,6 +407,51 @@ sub test_can_set_get_delete_geographic_location_for_campaign : Test(16) {
     ok( $ysm_ws->deleteCampaign( campaignID => $campaign->ID ) );
 }
 
+sub test_set_get_delete_geographic_location_for_campaign_works_for_unambiguous_match : Test(3) {
+    my ( $self ) = @_;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $campaign = $self->create_campaign;
+
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+
+    my $response = $ysm_ws->setGeographicLocationForCampaign(
+        campaignID => $campaign->ID,
+        geoStrings => [ 'New York, NY, United States' ],
+    );
+
+    ok( $response );
+
+    is( ref $response, 'Yahoo::Marketing::SetGeographicLocationResponse' );
+    is( $response->setSucceeded, 'true' );
+}
+
+sub test_set_get_delete_geographic_location_for_campaign_doesnt_fail_for_bad_location : Test(5) {
+    my ( $self ) = @_;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $silly_geo_string = 'this is a really silly geo string that shouldnt return any ambiguous matches at all';
+
+    my $campaign = $self->create_campaign;
+
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+
+    my $response = $ysm_ws->setGeographicLocationForCampaign(
+        campaignID => $campaign->ID,
+        geoStrings => [ $silly_geo_string ],
+    );
+
+    ok( $response );
+
+    is( ref $response, 'Yahoo::Marketing::SetGeographicLocationResponse' );
+    is( $response->setSucceeded, 'false' );
+    is( $response->stringsWithNoMatches, $silly_geo_string );
+
+    ok( not $response->ambiguousMatches );
+}
+
 sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(5) {
     my ( $self ) = @_;
 
