@@ -5,7 +5,7 @@
 use strict; use warnings;
 
 use lib 't/lib';
-use Yahoo::Marketing::TEST::ExcludedWordsService;
+use Yahoo::Marketing::Test::ExcludedWordsService;
 
 #use SOAP::Lite +trace => [qw/ debug method fault /];
 

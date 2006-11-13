@@ -12,6 +12,8 @@ use YAML qw/DumpFile LoadFile Dump/;
 use SOAP::Lite on_action => sub { sprintf '' };
 use XML::XPath;
 use Scalar::Util qw/ blessed /;
+use Yahoo::Marketing::ApiFault;
+use DateTime::Format::W3CDTF;
 
 our $service_data;
 
@@ -146,18 +148,40 @@ sub _location {
     return $location;
 }
 
-sub _die_with_soap_fault {
+sub _croak_message_from_som {
     my ( $self, $som ) = @_;
-        my $detail = $som->faultdetail;
-        croak(<<ENDFAULT);
+
+    my @api_faults = defined $som->faultdetail 
+                     ? map { Yahoo::Marketing::ApiFault->_new_from_hash( $_ ) }
+                           ( ref $som->faultdetail->{ApiFault} eq 'ARRAY' 
+                               ? @{ $som->faultdetail->{ApiFault} }
+                               : ( $som->faultdetail->{ApiFault} )
+                           )
+                     : Yahoo::Marketing::ApiFault->_new_from_hash( { code => 'none', message => 'none', } )
+    ;  
+
+    my $croak_message = <<ENDFAULT;
 SOAP FAULT!
 
 String:  @{[ $som->faultstring ]}
-Code:    @{[ defined $detail and $detail->{ApiFault}->{code}    ? $detail->{ApiFault}->{code}    : 'none' ]}
-Message: @{[ defined $detail and $detail->{ApiFault}->{message} ? $detail->{ApiFault}->{message} : 'none' ]}
-
-
 ENDFAULT
+
+    foreach my $api_fault ( @api_faults ){
+        $croak_message .= <<ENDDETAIL;
+
+Code:    @{[ $api_fault->code ]}
+Message: @{[ $api_fault->message ]}
+
+ENDDETAIL
+    }
+
+    return $croak_message;
+}
+
+sub _die_with_soap_fault {
+    my ( $self, $som ) = @_;
+
+    croak( $self->_croak_message_from_som( $som ) );
 }
 
 
@@ -596,14 +620,24 @@ sub _serialize_argument {
         return @return;
     }
 
-    if( blessed( $value ) and $value->UNIVERSAL::isa( 'Yahoo::Marketing::ComplexType' )  ){
+    if( blessed( $value ) and $value->UNIVERSAL::isa( 'Yahoo::Marketing::ComplexType' ) ){
         my $type = $self->_simple_types( $name );
         return SOAP::Data->name( $name )
                          ->type( $type )
-                         ->value( $self->_serialize_complex_type( $value ) );
+                         ->value( $self->_serialize_complex_type( $value ) )
+        ;
+    }elsif( blessed( $value ) and $value->UNIVERSAL::isa( 'DateTime' ) ){
+        my $type = $self->_simple_types( $name );
+        # force correct formatter
+        $value->set_formatter( DateTime::Format::W3CDTF->new );
+
+        return SOAP::Data->name( $name )
+                         ->type( $type )
+                         ->value( "$value" )  #force stringification
+        ;
     }elsif( my $type = $self->_simple_types( $name ) ){
-        return SOAP::Data->type(  $type )
-                         ->name(  $name )
+        return SOAP::Data->name( $name )
+                         ->type( $type )
                          ->value( $self->_escape_xml_baddies($value) ) 
         ;
     }

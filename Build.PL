@@ -103,18 +103,25 @@ my $build = $builder->new(
     dist_version_from   => 'lib/Yahoo/Marketing.pm',
     build_requires => {
         'Test::More'               => 0,
-       # requires below by jeff
-        'perl'                     => '5.8.1',   
-        'SOAP::Lite'               => '>= 0.66, < 1.0',
-        'YAML'                     => '>= 0.01',
-        'Class::Accessor::Chained' => '>= 0.01, < 1.0',
-        'Module::Build'            => '>= 0.26',  
-        'Scalar::Util'             => '>= 1.01, < 2.0',
-        'Test::Class'              => '>= 0.10, < 1.0',
-        'Test::Simple'             => '> 0.60', # for displaying error message in tests.
-        'Cache::Cache'             => '>= 1.01, < 2.0',
-        'XML::XPath'               => '> 1.10, < 2.0',
-        'Crypt::SSLeay'            => '> 0.40',
+        # requires below by jeff
+        'YAML'                     => '0.01',
+        'Module::Build'            => '0.26',  
+    },
+    requires => {
+        'Test::More'               => 0,
+        # requires below by jeff
+
+        'perl'                     => '5.6.1',   
+        'SOAP::Lite'               => '0.66',
+        'YAML'                     => '0.01',
+        'Class::Accessor::Chained' => '0.01',
+        'Module::Build'            => '0.26',  
+        'Scalar::Util'             => '1.01',
+        'Test::Class'              => '0.10',
+        'Test::Simple'             => '0.60', # for displaying error message in tests.
+        'Cache::Cache'             => '1.01',
+        'XML::XPath'               => '1.10',
+        'Crypt::SSLeay'            => '0.40',
     },
     add_to_cleanup                 => [ 'Yahoo-Marketing-*' ],
     # see http://perlmonks.org/index.pl?node_id=458282

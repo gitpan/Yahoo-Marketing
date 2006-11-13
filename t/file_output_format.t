@@ -5,7 +5,7 @@
 use strict; use warnings;
 
 use lib 't/lib';
-use Yahoo::Marketing::TEST::FileOutputFormat;
+use Yahoo::Marketing::Test::FileOutputFormat;
 
 # run all the test methods in Example::Test
 Test::Class->runtests;

@@ -8,7 +8,7 @@ use Test::More skip_all => 'account service not available in sandbox';
 
 #use lib 't/lib';
 
-#use Yahoo::Marketing::TEST::AccountService;
+#use Yahoo::Marketing::Test::AccountService;
 
 #use SOAP::Lite +trace => [qw/ debug method fault /];
 #Test::Class->runtests;

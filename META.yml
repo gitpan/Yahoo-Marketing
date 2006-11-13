@@ -1,29 +1,33 @@
 ---
 name: Yahoo-Marketing
-version: 0.05
+version: 0.06
 author:
   - 'Jeff Lavallee <jeff@zeroclue.com>'
 abstract: an interface for Yahoo! Search Marketing's Web Services.
 license: artistic
 resources:
   license: http://opensource.org/licenses/artistic-license.php
-build_requires:
-  Cache::Cache: '>= 1.01, < 2.0'
-  Class::Accessor::Chained: '>= 0.01, < 1.0'
-  Crypt::SSLeay: '> 0.40'
-  Module::Build: '>= 0.26'
-  SOAP::Lite: '>= 0.66, < 1.0'
-  Scalar::Util: '>= 1.01, < 2.0'
-  Test::Class: '>= 0.10, < 1.0'
+requires:
+  Cache::Cache: 1.01
+  Class::Accessor::Chained: 0.01
+  Crypt::SSLeay: 0.40
+  Module::Build: 0.26
+  SOAP::Lite: 0.66
+  Scalar::Util: 1.01
+  Test::Class: 0.10
   Test::More: 0
-  Test::Simple: '> 0.60'
-  XML::XPath: '> 1.10, < 2.0'
-  YAML: '>= 0.01'
-  perl: 5.8.1
+  Test::Simple: 0.60
+  XML::XPath: 1.10
+  YAML: 0.01
+  perl: 5.6.1
+build_requires:
+  Module::Build: 0.26
+  Test::More: 0
+  YAML: 0.01
 provides:
   Yahoo::Marketing:
     file: lib/Yahoo/Marketing.pm
-    version: 0.05
+    version: 0.06
   Yahoo::Marketing::Account:
     file: lib/Yahoo/Marketing/Account.pm
   Yahoo::Marketing::AccountService:

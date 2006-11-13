@@ -22,4 +22,8 @@ Revision history for Yahoo-Marketing
         Fix for SetGeographicLocationResponse with empty ambiguousMatch
         Added cache clearing example to Yahoo::Marketing POD
 
+0.06    2 November 2006
+        Fix for multiple ApiFaults in response
+        Fix MakeMaker incompatible versions
+
 

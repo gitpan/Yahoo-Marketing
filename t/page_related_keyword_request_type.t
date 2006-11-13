@@ -5,7 +5,7 @@
 use strict; use warnings;
 
 use lib 't/lib';
-use Yahoo::Marketing::TEST::PageRelatedKeywordRequestType;
+use Yahoo::Marketing::Test::PageRelatedKeywordRequestType;
 
 # run all the test methods in Example::Test
 Test::Class->runtests;

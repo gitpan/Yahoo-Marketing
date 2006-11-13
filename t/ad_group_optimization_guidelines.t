@@ -5,7 +5,7 @@
 use strict; use warnings;
 
 use lib 't/lib';
-use Yahoo::Marketing::TEST::AdGroupOptimizationGuidelines;
+use Yahoo::Marketing::Test::AdGroupOptimizationGuidelines;
 
 # run all the test methods in Example::Test
 Test::Class->runtests;

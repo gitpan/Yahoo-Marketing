@@ -7,6 +7,7 @@ use strict; use warnings;
 use base qw/ Class::Accessor::Chained Yahoo::Marketing /;
 
 use Carp;
+use Scalar::Util qw/ blessed /;
 use SOAP::Lite;
 
 
@@ -83,11 +84,13 @@ sub _type {
 sub _new_from_hash {
     my ( $self, $hash ) = @_;
 
+    $self = $self->new unless blessed( $self ); # allow this to be called w/o new() first
+
     my $obj_type = ref $self;
 
     my $new_obj = $obj_type->new;
+
     foreach my $key ( keys %$hash ){
-        no strict 'refs';
         $new_obj->$key( $hash->{ $key } );
     }
     return $new_obj;

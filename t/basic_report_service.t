@@ -5,7 +5,7 @@
 use strict; use warnings;
 
 use lib 't/lib';
-use Yahoo::Marketing::TEST::BasicReportService;
+use Yahoo::Marketing::Test::BasicReportService;
 
 #use SOAP::Lite +trace => [qw/ debug method fault /]; #global debug for SOAP calls
 

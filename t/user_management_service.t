@@ -8,7 +8,7 @@ use Test::More skip_all => 'user management service not available in the sandbox
 
 #use SOAP::Lite +trace => [qw/ debug method fault /];
 #use lib 't/lib';
-#use Yahoo::Marketing::TEST::UserManagementService;
-
+#use Yahoo::Marketing::Test::UserManagementService;
+#
 #Test::Class->runtests;
 

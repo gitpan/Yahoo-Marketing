@@ -5,7 +5,7 @@
 use strict; use warnings;
 
 use lib 't/lib';
-use Yahoo::Marketing::TEST::ApiFault;
+use Yahoo::Marketing::Test::ApiFault;
 
 # run all the test methods in Example::Test
 Test::Class->runtests;

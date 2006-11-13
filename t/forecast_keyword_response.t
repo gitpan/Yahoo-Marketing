@@ -5,7 +5,7 @@
 use strict; use warnings;
 
 use lib 't/lib';
-use Yahoo::Marketing::TEST::ForecastKeywordResponse;
+use Yahoo::Marketing::Test::ForecastKeywordResponse;
 
 # run all the test methods in Example::Test
 Test::Class->runtests;

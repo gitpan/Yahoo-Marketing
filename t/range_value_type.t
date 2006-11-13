@@ -5,7 +5,7 @@
 use strict; use warnings;
 
 use lib 't/lib';
-use Yahoo::Marketing::TEST::RangeValueType;
+use Yahoo::Marketing::Test::RangeValueType;
 
 # run all the test methods in Example::Test
 Test::Class->runtests;

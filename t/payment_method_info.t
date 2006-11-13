@@ -5,7 +5,7 @@
 use strict; use warnings;
 
 use lib 't/lib';
-use Yahoo::Marketing::TEST::PaymentMethodInfo;
+use Yahoo::Marketing::Test::PaymentMethodInfo;
 
 # run all the test methods in Example::Test
 Test::Class->runtests;

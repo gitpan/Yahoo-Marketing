@@ -5,7 +5,7 @@
 use strict; use warnings;
 
 use lib 't/lib';
-use Yahoo::Marketing::TEST::KeywordResearchService;
+use Yahoo::Marketing::Test::KeywordResearchService;
 
 Test::Class->runtests;
 
