@@ -30,6 +30,7 @@ lib/Yahoo/Marketing/CampaignOptimizationGuidelinesResponse.pm
 lib/Yahoo/Marketing/CampaignResponse.pm
 lib/Yahoo/Marketing/CampaignService.pm
 lib/Yahoo/Marketing/Capability.pm
+lib/Yahoo/Marketing/CombinedAccountStatus.pm
 lib/Yahoo/Marketing/ComplexType.pm
 lib/Yahoo/Marketing/CreditCardInfo.pm
 lib/Yahoo/Marketing/EditorialReasons.pm

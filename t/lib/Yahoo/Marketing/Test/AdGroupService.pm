@@ -335,7 +335,7 @@ sub test_get_and_set_optimization_guidelines_for_ad_group : Test(16) {
     is( $updated_ad_group_optimization_guidelines->CPM, '2.38' );
     is( $updated_ad_group_optimization_guidelines->impressionImportance, 'High' );
     is( $updated_ad_group_optimization_guidelines->leadImportance, 'Low' );
-    is( sprintf('%.1f', $updated_ad_group_optimization_guidelines->ROAS), '110.0' );    # need sprintf for rounding issue
+    is( $updated_ad_group_optimization_guidelines->ROAS, '110.0' );    
     is( $updated_ad_group_optimization_guidelines->sponsoredSearchMaxBid, '1.08' );
     is( $updated_ad_group_optimization_guidelines->sponsoredSearchMinPosition, '3' );
     is( $updated_ad_group_optimization_guidelines->sponsoredSearchMinPositionImportance, 'None' );

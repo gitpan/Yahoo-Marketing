@@ -18,7 +18,6 @@ WriteMakefile
                            'YAML' => '0.01'
                          },
           'INSTALLDIRS' => 'site',
-          'EXE_FILES' => [],
           'PL_FILES' => {}
         )
 ;

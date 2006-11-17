@@ -1,12 +1,10 @@
 ---
 name: Yahoo-Marketing
-version: 0.06
+version: 0.07
 author:
   - 'Jeff Lavallee <jeff@zeroclue.com>'
 abstract: an interface for Yahoo! Search Marketing's Web Services.
 license: artistic
-resources:
-  license: http://opensource.org/licenses/artistic-license.php
 requires:
   Cache::Cache: 1.01
   Class::Accessor::Chained: 0.01
@@ -27,7 +25,7 @@ build_requires:
 provides:
   Yahoo::Marketing:
     file: lib/Yahoo/Marketing.pm
-    version: 0.06
+    version: 0.07
   Yahoo::Marketing::Account:
     file: lib/Yahoo/Marketing/Account.pm
   Yahoo::Marketing::AccountService:
@@ -86,6 +84,8 @@ provides:
     file: lib/Yahoo/Marketing/CampaignService.pm
   Yahoo::Marketing::Capability:
     file: lib/Yahoo/Marketing/Capability.pm
+  Yahoo::Marketing::CombinedAccountStatus:
+    file: lib/Yahoo/Marketing/CombinedAccountStatus.pm
   Yahoo::Marketing::ComplexType:
     file: lib/Yahoo/Marketing/ComplexType.pm
   Yahoo::Marketing::CreditCardInfo:
@@ -180,7 +180,4 @@ provides:
     file: lib/Yahoo/Marketing/UserAuthorization.pm
   Yahoo::Marketing::UserManagementService:
     file: lib/Yahoo/Marketing/UserManagementService.pm
-generated_by: Module::Build version 0.2805
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.2.html
-  version: 1.2
+generated_by: Module::Build version 0.261

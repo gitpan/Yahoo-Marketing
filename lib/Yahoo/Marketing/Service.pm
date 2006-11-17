@@ -13,7 +13,6 @@ use SOAP::Lite on_action => sub { sprintf '' };
 use XML::XPath;
 use Scalar::Util qw/ blessed /;
 use Yahoo::Marketing::ApiFault;
-use DateTime::Format::W3CDTF;
 
 our $service_data;
 
@@ -264,7 +263,7 @@ sub _parse_response {
 
         confess "oops, trying to deserialize non trivial response, but cannot determine object type!" unless $type;
 
-        if( $type !~ /^tns:(.*Status|Continent)$/ 
+        if( (($type !~ /^tns:(.*Status|Continent)$/) or ($type =~ /^tns:Combined.*Status$/))
             and $type =~ s/^tns:// 
             and scalar @values ){  # make an object
 
@@ -625,15 +624,6 @@ sub _serialize_argument {
         return SOAP::Data->name( $name )
                          ->type( $type )
                          ->value( $self->_serialize_complex_type( $value ) )
-        ;
-    }elsif( blessed( $value ) and $value->UNIVERSAL::isa( 'DateTime' ) ){
-        my $type = $self->_simple_types( $name );
-        # force correct formatter
-        $value->set_formatter( DateTime::Format::W3CDTF->new );
-
-        return SOAP::Data->name( $name )
-                         ->type( $type )
-                         ->value( "$value" )  #force stringification
         ;
     }elsif( my $type = $self->_simple_types( $name ) ){
         return SOAP::Data->name( $name )

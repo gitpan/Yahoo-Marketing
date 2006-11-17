@@ -212,7 +212,7 @@ sub test_get_account_status : Test(2) {
     my $account_status = $ysm_ws->getAccountStatus( accountID => $ysm_ws->account );
 
     ok( $account_status );
-    like( $account_status, qr/^Active|Inactive$/, 'account status seems right' );
+    like( $account_status->accountStatus, qr/^Active|Inactive$/, 'account status seems right' );
 }
 
 sub test_update_account : Test(7) {
@@ -260,18 +260,18 @@ sub test_update_account_status : Test(3) {
 
     my $account_status = $ysm_ws->getAccountStatus( accountID => $ysm_ws->account );
     ok( $account_status );
-    my $new_status = $account_status eq 'Active' ? 'Inactive' : 'Active';
+    my $new_status = $account_status->accountStatus eq 'Active' ? 'Inactive' : 'Active';
 
     $ysm_ws->updateStatusForAccount(
         accountID     => $ysm_ws->account,
         accountStatus => $new_status,
     );
-    is( $ysm_ws->getAccountStatus( accountID => $ysm_ws->account ), $new_status, 'new status is right' );
+    is( $ysm_ws->getAccountStatus( accountID => $ysm_ws->account )->accountStatus, $new_status, 'new status is right' );
     $ysm_ws->updateStatusForAccount(
         accountID     => $ysm_ws->account,
-        accountStatus => $account_status,
+        accountStatus => $account_status->accountStatus,
     );
-    is( $ysm_ws->getAccountStatus( accountID => $ysm_ws->account ), $account_status, 'change back to old status' );
+    is( $ysm_ws->getAccountStatus( accountID => $ysm_ws->account )->accountStatus, $account_status->accountStatus, 'change back to old status' );
 }
 
 1;
