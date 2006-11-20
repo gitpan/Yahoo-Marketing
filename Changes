@@ -29,4 +29,7 @@ Revision history for Yahoo-Marketing
 0.07    17 November 2006
         New CombinedAccountStatus complex type
 
+0.08    20 November 2006
+        Fix for DateTime::Format::W3CDTF being used
+        MasterAccountService tests fixed
 

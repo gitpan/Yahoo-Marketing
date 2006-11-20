@@ -9,7 +9,7 @@ use Test::More;
 
 use Yahoo::Marketing::Account;
 
-sub test_can_create_account_and_set_all_fields : Test(14) {
+sub test_can_create_account_and_set_all_fields : Test(16) {
 
     my $account = Yahoo::Marketing::Account->new
                                            ->ID( 'id' )
@@ -18,9 +18,11 @@ sub test_can_create_account_and_set_all_fields : Test(14) {
                                            ->contentMatchON( 'content match on' )
                                            ->displayURL( 'display url' )
                                            ->marketID( 'market id' )
+                                           ->masterAccountID( 'master account id' )
                                            ->name( 'name' )
                                            ->nameFurigana( 'name furigana' )
                                            ->personalID( 'personal id' )
+                                           ->sitePassword( 'site password' )
                                            ->siteUserName( 'site user name' )
                                            ->sponsoredSearchON( 'sponsored search on' )
                                            ->vatCode( 'vat code' )
@@ -35,9 +37,11 @@ sub test_can_create_account_and_set_all_fields : Test(14) {
     is( $account->contentMatchON, 'content match on', 'can get content match on' );
     is( $account->displayURL, 'display url', 'can get display url' );
     is( $account->marketID, 'market id', 'can get market id' );
+    is( $account->masterAccountID, 'master account id', 'can get master account id' );
     is( $account->name, 'name', 'can get name' );
     is( $account->nameFurigana, 'name furigana', 'can get name furigana' );
     is( $account->personalID, 'personal id', 'can get personal id' );
+    is( $account->sitePassword, 'site password', 'can get site password' );
     is( $account->siteUserName, 'site user name', 'can get site user name' );
     is( $account->sponsoredSearchON, 'sponsored search on', 'can get sponsored search on' );
     is( $account->vatCode, 'vat code', 'can get vat code' );

@@ -147,7 +147,7 @@ sub test_delete_reports : Test(3) {
 
     my $basic_report_request2 = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report 2 for testing delete' )
-        ->reportType( 'MultiChannelAccount' )
+        ->reportType( 'AccountSummary' )
         ->dateRange( 'Last30Days' );
 
     my $reportID2 = $ysm_ws->addReportRequestForAccountID(
@@ -182,7 +182,7 @@ sub test_get_report_output_url : Test(2) {
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report for getting output url test' )
-        ->reportType( 'MultiChannelAdGroup' )
+        ->reportType( 'AdGroupSummary' )
         ->dateRange( 'LastCalendarQuarter' );
 
     my $reportID = $ysm_ws->addReportRequestForAccountID(
@@ -225,7 +225,7 @@ sub test_get_report_output_urls : Test(4) {
 
     my $basic_report_request1 = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report for getting output urls test' )
-        ->reportType( 'MultiChannelCampaign' )
+        ->reportType( 'CampaignSummary' )
         ->dateRange( 'Yesterday' );
 
     my $reportID1 = $ysm_ws->addReportRequestForAccountID(
@@ -235,7 +235,7 @@ sub test_get_report_output_urls : Test(4) {
 
     my $basic_report_request2 = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report for getting output urls test' )
-        ->reportType( 'MultiChannelDaily' )
+        ->reportType( 'DailySummary' )
         ->dateRange( 'LastCalendarWeek' );
 
     my $reportID2 = $ysm_ws->addReportRequestForAccountID(

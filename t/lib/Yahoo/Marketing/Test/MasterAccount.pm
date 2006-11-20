@@ -15,7 +15,7 @@ sub test_can_create_master_account_and_set_all_fields : Test(8) {
                                                         ->ID( 'id' )
                                                         ->currencyID( 'currency id' )
                                                         ->name( 'name' )
-                                                        ->signupStatusText( 'signup status text' )
+                                                        ->signupStatus( 'signup status' )
                                                         ->taggingON( 'tagging on' )
                                                         ->timezone( 'timezone' )
                                                         ->trackingON( 'tracking on' )
@@ -26,7 +26,7 @@ sub test_can_create_master_account_and_set_all_fields : Test(8) {
     is( $master_account->ID, 'id', 'can get id' );
     is( $master_account->currencyID, 'currency id', 'can get currency id' );
     is( $master_account->name, 'name', 'can get name' );
-    is( $master_account->signupStatusText, 'signup status text', 'can get signup status text' );
+    is( $master_account->signupStatus, 'signup status', 'can get signup status' );
     is( $master_account->taggingON, 'tagging on', 'can get tagging on' );
     is( $master_account->timezone, 'timezone', 'can get timezone' );
     is( $master_account->trackingON, 'tracking on', 'can get tracking on' );

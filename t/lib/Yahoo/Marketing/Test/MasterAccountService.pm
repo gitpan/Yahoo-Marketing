@@ -34,7 +34,7 @@ sub test_get_master_account : Test(7) {
     ok( $master_account->currencyID );
     ok( $master_account->timezone );
     ok( $master_account->name );
-    is( $master_account->signupStatusText, undef, 'signupStatusText is undef' );
+    is( $master_account->signupStatus, 'Success', 'signupStatus is Success' );
     ok( $master_account->trackingON =~ /^(false|true)$/ );
 }
 
@@ -160,7 +160,7 @@ sub test_add_new_customer : Test(8) {
     is( $master_account->taggingON, 'false', 'Tagging is not on' );
     is( $master_account->timezone,  'America/Los_Angeles', 'Timezone is correct' );
     is( $master_account->name,  'new master account test', 'Name is correct' );
-    is( $master_account->signupStatusText, undef, 'signupStatusText is undef' );
+    is( $master_account->signupStatus, 'Success', 'signupStatus is Success' );
     is( $master_account->trackingON,  'false', 'Tracking is not on' );
 }
 
