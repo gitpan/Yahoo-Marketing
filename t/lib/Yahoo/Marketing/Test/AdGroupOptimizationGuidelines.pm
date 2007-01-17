@@ -28,8 +28,8 @@ sub test_can_create_ad_group_optimization_guidelines_and_set_all_fields : Test(1
                                                                                           ->sponsoredSearchMaxBid( 'sponsored search max bid' )
                                                                                           ->sponsoredSearchMinPosition( 'sponsored search min position' )
                                                                                           ->sponsoredSearchMinPositionImportance( 'sponsored search min position importance' )
-                                                                                          ->createTimestamp( 'create timestamp' )
-                                                                                          ->lastUpdateTimestamp( 'last update timestamp' )
+                                                                                          ->createTimestamp( '2008-01-06T17:51:55' )
+                                                                                          ->lastUpdateTimestamp( '2008-01-07T17:51:55' )
                    ;
 
     ok( $ad_group_optimization_guidelines );
@@ -50,8 +50,8 @@ sub test_can_create_ad_group_optimization_guidelines_and_set_all_fields : Test(1
     is( $ad_group_optimization_guidelines->sponsoredSearchMaxBid, 'sponsored search max bid', 'can get sponsored search max bid' );
     is( $ad_group_optimization_guidelines->sponsoredSearchMinPosition, 'sponsored search min position', 'can get sponsored search min position' );
     is( $ad_group_optimization_guidelines->sponsoredSearchMinPositionImportance, 'sponsored search min position importance', 'can get sponsored search min position importance' );
-    is( $ad_group_optimization_guidelines->createTimestamp, 'create timestamp', 'can get create timestamp' );
-    is( $ad_group_optimization_guidelines->lastUpdateTimestamp, 'last update timestamp', 'can get last update timestamp' );
+    is( $ad_group_optimization_guidelines->createTimestamp, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
+    is( $ad_group_optimization_guidelines->lastUpdateTimestamp, '2008-01-07T17:51:55', 'can get 2008-01-07T17:51:55' );
 
 };
 

@@ -16,8 +16,8 @@ sub test_can_create_keyword_optimization_guidelines_and_set_all_fields : Test(7)
                                                                                          ->adGroupID( 'ad group id' )
                                                                                          ->keywordID( 'keyword id' )
                                                                                          ->sponsoredSearchMaxBid( 'sponsored search max bid' )
-                                                                                         ->createTimestamp( 'create timestamp' )
-                                                                                         ->lastUpdateTimestamp( 'last update timestamp' )
+                                                                                         ->createTimestamp( '2008-01-06T17:51:55' )
+                                                                                         ->lastUpdateTimestamp( '2008-01-07T17:51:55' )
                    ;
 
     ok( $keyword_optimization_guidelines );
@@ -26,8 +26,8 @@ sub test_can_create_keyword_optimization_guidelines_and_set_all_fields : Test(7)
     is( $keyword_optimization_guidelines->adGroupID, 'ad group id', 'can get ad group id' );
     is( $keyword_optimization_guidelines->keywordID, 'keyword id', 'can get keyword id' );
     is( $keyword_optimization_guidelines->sponsoredSearchMaxBid, 'sponsored search max bid', 'can get sponsored search max bid' );
-    is( $keyword_optimization_guidelines->createTimestamp, 'create timestamp', 'can get create timestamp' );
-    is( $keyword_optimization_guidelines->lastUpdateTimestamp, 'last update timestamp', 'can get last update timestamp' );
+    is( $keyword_optimization_guidelines->createTimestamp, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
+    is( $keyword_optimization_guidelines->lastUpdateTimestamp, '2008-01-07T17:51:55', 'can get 2008-01-07T17:51:55' );
 
 };
 

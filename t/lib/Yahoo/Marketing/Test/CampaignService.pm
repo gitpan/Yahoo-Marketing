@@ -122,6 +122,51 @@ sub test_update_campaign : Test(21) {
     ok( $update_campaign_response->errors );
 }
 
+
+sub test_update_campaign_can_handle_dates_for_user : Test(12) {
+    my ( $self ) = @_;
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $campaign = $self->common_test_data( 'test_campaign' );
+
+    my $datetime = DateTime->now;
+    $datetime->set_time_zone( 'America/Chicago' );
+
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $update_campaign_response = $ysm_ws->updateCampaign( 
+                                        campaign  => $campaign->name( "updated campaign datetime $$" )
+                                                              ->watchON( 'true' ) 
+                                                              ->contentMatchON( 'true' ) 
+                                                              ->advancedMatchON( 'true' ) 
+                                                              ->sponsoredSearchON( 'true' ) 
+                                                              ->startDate( $datetime ),
+                                        updateAll => 'true',
+                                    );
+
+    ok( $update_campaign_response );
+    is( $update_campaign_response->operationSucceeded, 'true',                       'update call was succesful' );
+    my $updated_campaign = $update_campaign_response->campaign;
+    ok( $updated_campaign);
+    is( $updated_campaign->name,                     "updated campaign datetime $$", 'name is right' );
+    is( $updated_campaign->ID,                       $campaign->ID,                  'ID is right' );
+    is( $updated_campaign->watchON,                  'true',                         'watch on is true' );
+    is( $updated_campaign->contentMatchON,           'true',                         'content match on is true' );
+    is( $updated_campaign->advancedMatchON,          'true',                         'advanced match on is true' );
+    is( $updated_campaign->sponsoredSearchON,        'true',                         'sponsored search  on is true' );
+
+    # time zone will be set to Americal/Los_Angeles when it's returned
+    $datetime->set_time_zone( 'America/Los_Angeles' );
+    is( "@{[ $updated_campaign->startDate ]}",       "$datetime",                    'start date is right and stringified OK' );
+    ok( $updated_campaign->lastUpdateTimestamp->UNIVERSAL::isa('DateTime'),          'lastUpdateTimestamp is a DateTime object' );
+    is( DateTime->compare_ignore_floating( $updated_campaign->startDate,
+                                           $datetime 
+                                         ),              
+        0, 
+        'start date is right' 
+    );
+            
+}
+
 sub test_can_add_campaign : Test(4) {
     my ( $self ) = @_;
 
@@ -643,13 +688,12 @@ sub test_can_delete_campaigns : Test(4) {
 
 
 
-sub test_update_campaigns_response_with_multiple_errors_doesnt_die_incorrectly : Test(2) {
+sub test_update_campaigns_response_with_multiple_errors_dies_correctly : Test(2) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
-    $ysm_ws->use_location_service(0);
 
     my @campaigns = @{ $self->common_test_data( 'test_campaigns' ) };
 
@@ -665,6 +709,41 @@ sub test_update_campaigns_response_with_multiple_errors_doesnt_die_incorrectly :
 
     ok( $die_message, 'we died' );        
     like( $die_message, qr/Message: Enumeration value "foo" is not recognized\./,'die message looks right' );
+
+    # be nice, put the statuses back
+    $campaigns[$_]->status( 'On' ) for ( 1..2 );
+}
+
+sub test_campaign_service_can_be_immortal : Test(5) {
+    my ( $self ) = @_;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new
+                                                  ->parse_config( section => $section )
+                                                  ->immortal(1)  # don't die 
+    ;
+
+    my @campaigns = @{ $self->common_test_data( 'test_campaigns' ) };
+
+    my $result = $ysm_ws->updateCampaigns( campaigns => [ $campaigns[0]->name( "updated campaign $$ 1" ),
+                                                          $campaigns[1]->status( 'foo' ),
+                                                          $campaigns[2]->status( 'bar' ),
+                                                        ],
+                                           updateAll => 'true',
+                                         );
+
+    ok( not $result );
+    ok( $ysm_ws->fault );
+    is( ref $ysm_ws->fault, 'Yahoo::Marketing::ApiFault'  );
+    is( $ysm_ws->fault->code, 'E1019' );
+    is( $ysm_ws->fault->message, 'Enumeration value "foo" is not recognized.' );
+
+
+    use Data::Dumper; print STDERR Dumper $ysm_ws->fault;
+    
+    # be nice, put the statuses back
+    $campaigns[$_]->status( 'On' ) for ( 1..2 );
 }
 
 

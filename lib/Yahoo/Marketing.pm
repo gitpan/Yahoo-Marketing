@@ -12,13 +12,13 @@ Yahoo::Marketing - an interface for Yahoo! Search Marketing's Web Services.
 
 =head1 VERSION
 
-Version 0.08
+Version 0.09
 
 =cut
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 =head1 SYNOPSIS
 
@@ -118,7 +118,7 @@ Or just the first (or only element, if only one returned object is expected) if 
 
 Suggestions for improving how multiple return values should be handled in a scalar context are welcome.
 
-If a SOAP Fault is encountered (whenever a call fails), the Yahoo::Marketing service will croak with the fault.  The error may be exposed in a future version of this module.
+If a SOAP Fault is encountered (whenever a call fails), the Yahoo::Marketing service will croak with the fault by default.  If you set the immortal option, Yahoo::Marketing will not die, $service->fault will be set to the SOAP fault.  The "immortal mode" is similar to how SOAP::Lite behaves by default.
 
 Note that all get/set methods (and many other methods) are "chainable".  That is, they return $self when used to set, so you can chain them together.  See examples of this above and below in this documentation.
 
@@ -339,6 +339,7 @@ L<http://search.cpan.org/dist/Yahoo-Marketing>
 =head1 ACKNOWLEDGEMENTS
 
 co-author Johnny Shen, C<< <shenj at yahoo-inc.com> >> without whom this wouldn't have been possible.
+Gerard Paulke C<< <paulkeg at yahoo-inc.com> >> 
 
 =head1 COPYRIGHT & LICENSE
 
@@ -347,9 +348,7 @@ The copyrights to the contents of this file are licensed under the Perl Artistic
 
 =head1 TODO
 
-I'm sure the docs could use improving - please send suggestions
-
-Error handling could use improvement - suggestions welcome
+The TODO list is empty - if you have suggestions, please file a wishlist entry in RT (link above)
 
 =cut
 

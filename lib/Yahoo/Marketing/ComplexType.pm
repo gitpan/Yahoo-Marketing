@@ -4,7 +4,7 @@ package Yahoo::Marketing::ComplexType;
 
 use strict; use warnings;
 
-use base qw/ Class::Accessor::Chained Yahoo::Marketing /;
+use base qw/ Yahoo::Marketing::DateTimeAccessor Yahoo::Marketing /;
 
 use Carp;
 use Scalar::Util qw/ blessed /;

@@ -20,8 +20,8 @@ sub test_can_create_update_for_keyword_and_set_all_fields : Test(11) {
                                                                ->phraseSearchText( 'phrase search text' )
                                                                ->text( 'text' )
                                                                ->url( 'url' )
-                                                               ->createTimestamp( 'create timestamp' )
-                                                               ->lastUpdateTimestamp( 'last update timestamp' )
+                                                               ->createTimestamp( '2008-01-06T17:51:55' )
+                                                               ->lastUpdateTimestamp( '2008-01-07T17:51:55' )
                    ;
 
     ok( $update_for_keyword );
@@ -34,8 +34,8 @@ sub test_can_create_update_for_keyword_and_set_all_fields : Test(11) {
     is( $update_for_keyword->phraseSearchText, 'phrase search text', 'can get phrase search text' );
     is( $update_for_keyword->text, 'text', 'can get text' );
     is( $update_for_keyword->url, 'url', 'can get url' );
-    is( $update_for_keyword->createTimestamp, 'create timestamp', 'can get create timestamp' );
-    is( $update_for_keyword->lastUpdateTimestamp, 'last update timestamp', 'can get last update timestamp' );
+    is( $update_for_keyword->createTimestamp, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
+    is( $update_for_keyword->lastUpdateTimestamp, '2008-01-07T17:51:55', 'can get 2008-01-07T17:51:55' );
 
 };
 

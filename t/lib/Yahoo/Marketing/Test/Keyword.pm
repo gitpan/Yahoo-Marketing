@@ -26,10 +26,10 @@ sub test_can_create_keyword_and_set_all_fields : Test(19) {
                                            ->update( 'update' )
                                            ->url( 'url' )
                                            ->watchON( 'watch on' )
-                                           ->createTimestamp( 'create timestamp' )
-                                           ->deleteTimestamp( 'delete timestamp' )
-                                           ->lastUpdateTimestamp( 'last update timestamp' )
-                                           ->sponsoredSearchMaxBidTimestamp( 'sponsored search max bid timestamp' )
+                                           ->createTimestamp( '2008-01-06T17:51:55' )
+                                           ->deleteTimestamp( '2008-01-07T17:51:55' )
+                                           ->lastUpdateTimestamp( '2008-01-08T17:51:55' )
+                                           ->sponsoredSearchMaxBidTimestamp( '2008-01-09T17:51:55' )
                    ;
 
     ok( $keyword );
@@ -48,10 +48,10 @@ sub test_can_create_keyword_and_set_all_fields : Test(19) {
     is( $keyword->update, 'update', 'can get update' );
     is( $keyword->url, 'url', 'can get url' );
     is( $keyword->watchON, 'watch on', 'can get watch on' );
-    is( $keyword->createTimestamp, 'create timestamp', 'can get create timestamp' );
-    is( $keyword->deleteTimestamp, 'delete timestamp', 'can get delete timestamp' );
-    is( $keyword->lastUpdateTimestamp, 'last update timestamp', 'can get last update timestamp' );
-    is( $keyword->sponsoredSearchMaxBidTimestamp, 'sponsored search max bid timestamp', 'can get sponsored search max bid timestamp' );
+    is( $keyword->createTimestamp, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
+    is( $keyword->deleteTimestamp, '2008-01-07T17:51:55', 'can get 2008-01-07T17:51:55' );
+    is( $keyword->lastUpdateTimestamp, '2008-01-08T17:51:55', 'can get 2008-01-08T17:51:55' );
+    is( $keyword->sponsoredSearchMaxBidTimestamp, '2008-01-09T17:51:55', 'can get 2008-01-09T17:51:55' );
 
 };
 

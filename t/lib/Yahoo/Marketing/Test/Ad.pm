@@ -26,9 +26,9 @@ sub test_can_create_ad_and_set_all_fields : Test(18) {
                                  ->title( 'title' )
                                  ->update( 'update' )
                                  ->url( 'url' )
-                                 ->createTimestamp( 'create timestamp' )
-                                 ->deleteTimestamp( 'delete timestamp' )
-                                 ->lastUpdateTimestamp( 'last update timestamp' )
+                                 ->createTimestamp( '2008-01-06T17:51:55' )
+                                 ->deleteTimestamp( '2008-01-07T17:51:55' )
+                                 ->lastUpdateTimestamp( '2008-01-08T17:51:55' )
                    ;
 
     ok( $ad );
@@ -47,9 +47,9 @@ sub test_can_create_ad_and_set_all_fields : Test(18) {
     is( $ad->title, 'title', 'can get title' );
     is( $ad->update, 'update', 'can get update' );
     is( $ad->url, 'url', 'can get url' );
-    is( $ad->createTimestamp, 'create timestamp', 'can get create timestamp' );
-    is( $ad->deleteTimestamp, 'delete timestamp', 'can get delete timestamp' );
-    is( $ad->lastUpdateTimestamp, 'last update timestamp', 'can get last update timestamp' );
+    is( $ad->createTimestamp, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
+    is( $ad->deleteTimestamp, '2008-01-07T17:51:55', 'can get 2008-01-07T17:51:55' );
+    is( $ad->lastUpdateTimestamp, '2008-01-08T17:51:55', 'can get 2008-01-08T17:51:55' );
 
 };
 

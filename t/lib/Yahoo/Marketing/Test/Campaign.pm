@@ -18,15 +18,15 @@ sub test_can_create_campaign_and_set_all_fields : Test(16) {
                                              ->campaignOptimizationON( 'campaign optimization on' )
                                              ->contentMatchON( 'content match on' )
                                              ->description( 'description' )
-                                             ->endDate( 'end date' )
+                                             ->endDate( '2008-01-05T17:51:55-06:00' )
                                              ->name( 'name' )
                                              ->sponsoredSearchON( 'sponsored search on' )
-                                             ->startDate( 'start date' )
+                                             ->startDate( '2008-01-06T17:51:55-06:00' )
                                              ->status( 'status' )
                                              ->watchON( 'watch on' )
-                                             ->createTimestamp( 'create timestamp' )
-                                             ->deleteTimestamp( 'delete timestamp' )
-                                             ->lastUpdateTimestamp( 'last update timestamp' )
+                                             ->createTimestamp( '2008-01-07T17:51:55-06:00' )
+                                             ->deleteTimestamp( '2008-01-08T17:51:55-06:00' )
+                                             ->lastUpdateTimestamp( '2008-01-09T17:51:55-06:00' )
                    ;
 
     ok( $campaign );
@@ -37,17 +37,44 @@ sub test_can_create_campaign_and_set_all_fields : Test(16) {
     is( $campaign->campaignOptimizationON, 'campaign optimization on', 'can get campaign optimization on' );
     is( $campaign->contentMatchON, 'content match on', 'can get content match on' );
     is( $campaign->description, 'description', 'can get description' );
-    is( $campaign->endDate, 'end date', 'can get end date' );
+    is( $campaign->endDate, '2008-01-05T17:51:55-06:00', 'can get end date' );
     is( $campaign->name, 'name', 'can get name' );
     is( $campaign->sponsoredSearchON, 'sponsored search on', 'can get sponsored search on' );
-    is( $campaign->startDate, 'start date', 'can get start date' );
+    is( $campaign->startDate, '2008-01-06T17:51:55-06:00', 'can get start date' );
     is( $campaign->status, 'status', 'can get status' );
     is( $campaign->watchON, 'watch on', 'can get watch on' );
-    is( $campaign->createTimestamp, 'create timestamp', 'can get create timestamp' );
-    is( $campaign->deleteTimestamp, 'delete timestamp', 'can get delete timestamp' );
-    is( $campaign->lastUpdateTimestamp, 'last update timestamp', 'can get last update timestamp' );
+    is( $campaign->createTimestamp, '2008-01-07T17:51:55-06:00', 'can get create timestamp' );
+    is( $campaign->deleteTimestamp, '2008-01-08T17:51:55-06:00', 'can get delete timestamp' );
+    is( $campaign->lastUpdateTimestamp, '2008-01-09T17:51:55-06:00', 'can get last update timestamp' );
 
 };
+
+sub test_campaign_datetime_fields_appear_to_work : Test(11) {
+
+    my $campaign = Yahoo::Marketing::Campaign->new
+                                             ->ID( 'id' )
+                                             ->endDate( '2008-01-05T17:51:55-06:00' )
+                                             ->startDate( '2008-01-06T17:51:55-06:00' )
+                                             ->createTimestamp( '2008-01-07T17:51:55-06:00' )
+                                             ->deleteTimestamp( '2008-01-08T17:51:55-06:00' )
+                                             ->lastUpdateTimestamp( '2008-01-09T17:51:55-06:00' )
+                   ;
+
+    ok( $campaign );
+
+    is( "@{[$campaign->endDate]}",             '2008-01-05T17:51:55-06:00' );
+    is( "@{[$campaign->startDate]}",           '2008-01-06T17:51:55-06:00' );
+    is( "@{[$campaign->createTimestamp]}",     '2008-01-07T17:51:55-06:00' );
+    is( "@{[$campaign->deleteTimestamp]}",     '2008-01-08T17:51:55-06:00' );
+    is( "@{[$campaign->lastUpdateTimestamp]}", '2008-01-09T17:51:55-06:00' );
+
+    ok( $campaign->endDate->UNIVERSAL::isa( 'DateTime' ) );
+    ok( $campaign->startDate->UNIVERSAL::isa( 'DateTime' ) );
+    ok( $campaign->createTimestamp()->UNIVERSAL::isa( 'DateTime' ) );
+    ok( $campaign->deleteTimestamp()->UNIVERSAL::isa( 'DateTime' ) );
+    ok( $campaign->lastUpdateTimestamp()->UNIVERSAL::isa( 'DateTime' ) );
+
+}
 
 
 

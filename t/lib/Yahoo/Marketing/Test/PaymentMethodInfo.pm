@@ -9,19 +9,23 @@ use Test::More;
 
 use Yahoo::Marketing::PaymentMethodInfo;
 
-sub test_can_create_payment_method_info_and_set_all_fields : Test(4) {
+sub test_can_create_payment_method_info_and_set_all_fields : Test(6) {
 
     my $payment_method_info = Yahoo::Marketing::PaymentMethodInfo->new
                                                                  ->ID( 'id' )
+                                                                 ->billingAddress( 'billing address' )
+                                                                 ->billingUser( 'billing user' )
                                                                  ->displayNumber( 'display number' )
-                                                                 ->expirationDate( 'expiration date' )
+                                                                 ->expirationDate( '2008-01-06T17:51:55' )
                    ;
 
     ok( $payment_method_info );
 
     is( $payment_method_info->ID, 'id', 'can get id' );
+    is( $payment_method_info->billingAddress, 'billing address', 'can get billing address' );
+    is( $payment_method_info->billingUser, 'billing user', 'can get billing user' );
     is( $payment_method_info->displayNumber, 'display number', 'can get display number' );
-    is( $payment_method_info->expirationDate, 'expiration date', 'can get expiration date' );
+    is( $payment_method_info->expirationDate, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
 
 };
 

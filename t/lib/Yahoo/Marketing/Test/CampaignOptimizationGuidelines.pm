@@ -9,7 +9,7 @@ use Test::More;
 
 use Yahoo::Marketing::CampaignOptimizationGuidelines;
 
-sub test_can_create_campaign_optimization_guidelines_and_set_all_fields : Test(21) {
+sub test_can_create_campaign_optimization_guidelines_and_set_all_fields : Test(22) {
 
     my $campaign_optimization_guidelines = Yahoo::Marketing::CampaignOptimizationGuidelines->new
                                                                                            ->CPA( 'cpa' )
@@ -19,6 +19,7 @@ sub test_can_create_campaign_optimization_guidelines_and_set_all_fields : Test(2
                                                                                            ->accountID( 'account id' )
                                                                                            ->averageConversionRate( 'average conversion rate' )
                                                                                            ->averageRevenuePerConversion( 'average revenue per conversion' )
+                                                                                           ->bidLimitHeadroom( 'bid limit headroom' )
                                                                                            ->campaignID( 'campaign id' )
                                                                                            ->conversionImportance( 'conversion importance' )
                                                                                            ->conversionMetric( 'conversion metric' )
@@ -30,8 +31,8 @@ sub test_can_create_campaign_optimization_guidelines_and_set_all_fields : Test(2
                                                                                            ->sponsoredSearchMinPositionImportance( 'sponsored search min position importance' )
                                                                                            ->taggedForConversion( 'tagged for conversion' )
                                                                                            ->taggedForRevenue( 'tagged for revenue' )
-                                                                                           ->createTimestamp( 'create timestamp' )
-                                                                                           ->lastUpdateTimestamp( 'last update timestamp' )
+                                                                                           ->createTimestamp( '2008-01-06T17:51:55' )
+                                                                                           ->lastUpdateTimestamp( '2008-01-07T17:51:55' )
                    ;
 
     ok( $campaign_optimization_guidelines );
@@ -43,6 +44,7 @@ sub test_can_create_campaign_optimization_guidelines_and_set_all_fields : Test(2
     is( $campaign_optimization_guidelines->accountID, 'account id', 'can get account id' );
     is( $campaign_optimization_guidelines->averageConversionRate, 'average conversion rate', 'can get average conversion rate' );
     is( $campaign_optimization_guidelines->averageRevenuePerConversion, 'average revenue per conversion', 'can get average revenue per conversion' );
+    is( $campaign_optimization_guidelines->bidLimitHeadroom, 'bid limit headroom', 'can get bid limit headroom' );
     is( $campaign_optimization_guidelines->campaignID, 'campaign id', 'can get campaign id' );
     is( $campaign_optimization_guidelines->conversionImportance, 'conversion importance', 'can get conversion importance' );
     is( $campaign_optimization_guidelines->conversionMetric, 'conversion metric', 'can get conversion metric' );
@@ -54,8 +56,8 @@ sub test_can_create_campaign_optimization_guidelines_and_set_all_fields : Test(2
     is( $campaign_optimization_guidelines->sponsoredSearchMinPositionImportance, 'sponsored search min position importance', 'can get sponsored search min position importance' );
     is( $campaign_optimization_guidelines->taggedForConversion, 'tagged for conversion', 'can get tagged for conversion' );
     is( $campaign_optimization_guidelines->taggedForRevenue, 'tagged for revenue', 'can get tagged for revenue' );
-    is( $campaign_optimization_guidelines->createTimestamp, 'create timestamp', 'can get create timestamp' );
-    is( $campaign_optimization_guidelines->lastUpdateTimestamp, 'last update timestamp', 'can get last update timestamp' );
+    is( $campaign_optimization_guidelines->createTimestamp, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
+    is( $campaign_optimization_guidelines->lastUpdateTimestamp, '2008-01-07T17:51:55', 'can get 2008-01-07T17:51:55' );
 
 };
 

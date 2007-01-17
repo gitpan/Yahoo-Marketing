@@ -32,6 +32,8 @@ __PACKAGE__->mk_accessors( qw/ username
                                version
                                cache
                                cache_expire_time
+                               fault
+                               immortal
                           / );
 
 
@@ -120,18 +122,19 @@ sub _location {
         return $locations->{ $self->endpoint }->{ $self->master_account };
     }
 
-    my $soap = SOAP::Lite->proxy( $self->endpoint
-                                 .'/'
-                                 .$self->version
-                                 .'/LocationService' 
-                           )
-                         ->ns( $self->uri, 'ysm' )
-                         ->default_ns( $self->uri )
-               ; 
+    my $som = $self->_soap( $self->endpoint
+                           .'/'
+                           .$self->version
+                           .'/LocationService' 
+                          )
+                   ->getMasterAccountLocation( $self->_headers );
 
-    my $som = $soap->getMasterAccountLocation( $self->_headers );
-
-    $self->_die_with_soap_fault( $som ) if ($som->fault);
+    if( $som->fault ){
+        $self->fault( $self->_get_api_fault_from_som( $som ) );
+        $self->_die_with_soap_fault( $som ) unless $self->immortal;
+        warn "we could not determine the correct location endpoint, trying with default";
+        return $self->endpoint.'/'.$self->version;
+    }
     
 
     my $location = $som->valueof( '/Envelope/Body/getMasterAccountLocationResponse/out' );
@@ -147,45 +150,42 @@ sub _location {
     return $location;
 }
 
-sub _croak_message_from_som {
+sub _get_api_fault_from_som {
     my ( $self, $som ) = @_;
 
-    my @api_faults = defined $som->faultdetail 
-                     ? map { Yahoo::Marketing::ApiFault->_new_from_hash( $_ ) }
-                           ( ref $som->faultdetail->{ApiFault} eq 'ARRAY' 
-                               ? @{ $som->faultdetail->{ApiFault} }
-                               : ( $som->faultdetail->{ApiFault} )
-                           )
-                     : Yahoo::Marketing::ApiFault->_new_from_hash( { code => 'none', message => 'none', } )
-    ;  
+    my @faults = ( defined $som->faultdetail 
+                 ? map { Yahoo::Marketing::ApiFault->_new_from_hash( $_ ) }
+                       ( ref $som->faultdetail->{ApiFault} eq 'ARRAY' 
+                           ? @{ $som->faultdetail->{ApiFault} }
+                           : ( $som->faultdetail->{ApiFault} )
+                       )
+                 : Yahoo::Marketing::ApiFault->_new_from_hash( { code => 'none', message => 'none', } )
+                 )  
+    ;
+    warn "warning, found more than 1 fault!  This is likely a bug in the web service itself, please report it"
+        if @faults > 1;
 
-    my $croak_message = <<ENDFAULT;
-SOAP FAULT!
-
-String:  @{[ $som->faultstring ]}
-ENDFAULT
-
-    foreach my $api_fault ( @api_faults ){
-        $croak_message .= <<ENDDETAIL;
-
-Code:    @{[ $api_fault->code ]}
-Message: @{[ $api_fault->message ]}
-
-ENDDETAIL
-    }
-
-    return $croak_message;
+    return $faults[0];
 }
+
 
 sub _die_with_soap_fault {
     my ( $self, $som ) = @_;
 
-    croak( $self->_croak_message_from_som( $som ) );
+    croak(<<ENDFAULT);
+SOAP FAULT!
+
+String:  @{[ $som->faultstring ]}
+
+Code:    @{[ $self->fault->code ]}
+Message: @{[ $self->fault->message ]}
+
+ENDFAULT
 }
 
 
 sub _soap {
-    my ( $self, $endpoint ) = shift;
+    my ( $self, $endpoint ) = @_;
     return SOAP::Lite->proxy( $endpoint or $self->_proxy_url )
                      ->ns( $self->uri, 'ysm' )
                      ->default_ns( $self->uri )
@@ -211,6 +211,8 @@ sub _process_soap_call {
 
     $self->wsdl_init unless defined $service_data->{ $self->_wsdl };
 
+    $self->fault(undef);
+
     # can't pull @args in as a hash, because we need to preserve the order
 
     my @soap_args;
@@ -221,7 +223,11 @@ sub _process_soap_call {
 
     my $som = $self->_soap->$method( @soap_args, $self->_headers );
 
-    $self->_die_with_soap_fault( $som ) if ($som->fault);
+    if( $som->fault ){
+        $self->fault( $self->_get_api_fault_from_som( $som ) );
+        $self->_die_with_soap_fault( $som ) unless $self->immortal;
+        return;  # only reach this if we didn't die above
+    }
 
     $self->_set_quota_from_som( $som );
     return $self->_parse_response( $som, $method );
@@ -628,13 +634,14 @@ sub _serialize_argument {
     }elsif( my $type = $self->_simple_types( $name ) ){
         return SOAP::Data->name( $name )
                          ->type( $type )
-                         ->value( $self->_escape_xml_baddies($value) ) 
+                         ->value( $self->_escape_xml_baddies("$value") )  # force it stringy for now
         ;
     }
 
     # don't do anything special
+    warn "not doing anything special with $value\n";
     return SOAP::Data->name( $name )
-                     ->value( $self->_escape_xml_baddies( $value ) );
+                     ->value( $self->_escape_xml_baddies($value) );
 }
 
 
@@ -731,6 +738,14 @@ Any service that deals with Campaigns (or Ad Groups, Ads, or Keywords) requires 
 to be set.
 
 L<http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/requests.asp#header>
+
+=head2 immortal
+
+If set to a true value, Yahoo::Marketing service objects will not die when a SOAP fault
+is encountered.  Instead, $service->fault will be set to the ApiFault returned in the 
+SOAP response.
+    
+Defaults to false.
 
 =head2 on_behalf_of_username
 

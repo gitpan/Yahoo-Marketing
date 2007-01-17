@@ -111,17 +111,20 @@ my $build = $builder->new(
         'Test::More'               => 0,
         # requires below by jeff
 
-        'perl'                     => '5.6.1',   
-        'SOAP::Lite'               => '0.66',
-        'YAML'                     => '0.01',
-        'Class::Accessor::Chained' => '0.01',
-        'Module::Build'            => '0.26',  
-        'Scalar::Util'             => '1.01',
-        'Test::Class'              => '0.10',
-        'Test::Simple'             => '0.60', # for displaying error message in tests.
-        'Cache::Cache'             => '1.01',
-        'XML::XPath'               => '1.10',
-        'Crypt::SSLeay'            => '0.40',
+        'perl'                      => '5.6.1',   
+        'SOAP::Lite'                => '0.66',
+        'YAML'                      => '0.01',
+        'Class::Accessor::Chained'  => '0.01',
+        'Module::Build'             => '0.26',  
+        'Scalar::Util'              => '1.01',
+        'Test::Class'               => '0.10',
+        'Test::Simple'              => '0.60', # for displaying error message in tests.
+        'Cache::Cache'              => '1.01',
+        'XML::XPath'                => '1.10',
+        'Crypt::SSLeay'             => '0.40',
+        'DateTime'                  => '0.01',
+        'DateTime::Format::ISO8601' => '0.01',
+        'DateTime::Format::W3CDTF'  => '0.01',
     },
     add_to_cleanup                 => [ 'Yahoo-Marketing-*' ],
     # see http://perlmonks.org/index.pl?node_id=458282

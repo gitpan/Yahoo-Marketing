@@ -1,6 +1,6 @@
 ---
 name: Yahoo-Marketing
-version: 0.08
+version: 0.09
 author:
   - 'Jeff Lavallee <jeff@zeroclue.com>'
 abstract: an interface for Yahoo! Search Marketing's Web Services.
@@ -9,6 +9,9 @@ requires:
   Cache::Cache: 1.01
   Class::Accessor::Chained: 0.01
   Crypt::SSLeay: 0.40
+  DateTime: 0.01
+  DateTime::Format::ISO8601: 0.01
+  DateTime::Format::W3CDTF: 0.01
   Module::Build: 0.26
   SOAP::Lite: 0.66
   Scalar::Util: 1.01
@@ -25,7 +28,7 @@ build_requires:
 provides:
   Yahoo::Marketing:
     file: lib/Yahoo/Marketing.pm
-    version: 0.08
+    version: 0.09
   Yahoo::Marketing::Account:
     file: lib/Yahoo/Marketing/Account.pm
   Yahoo::Marketing::AccountService:
@@ -90,6 +93,8 @@ provides:
     file: lib/Yahoo/Marketing/ComplexType.pm
   Yahoo::Marketing::CreditCardInfo:
     file: lib/Yahoo/Marketing/CreditCardInfo.pm
+  Yahoo::Marketing::DateTimeAccessor:
+    file: lib/Yahoo/Marketing/DateTimeAccessor.pm
   Yahoo::Marketing::EditorialReasons:
     file: lib/Yahoo/Marketing/EditorialReasons.pm
   Yahoo::Marketing::Error:
@@ -142,8 +147,6 @@ provides:
     file: lib/Yahoo/Marketing/PageRelatedKeywordRequestType.pm
   Yahoo::Marketing::PaymentMethodInfo:
     file: lib/Yahoo/Marketing/PaymentMethodInfo.pm
-  Yahoo::Marketing::PendingKeyword:
-    file: lib/Yahoo/Marketing/PendingKeyword.pm
   Yahoo::Marketing::RangeDefinitionRequestType:
     file: lib/Yahoo/Marketing/RangeDefinitionRequestType.pm
   Yahoo::Marketing::RangeDefinitionResponseType:

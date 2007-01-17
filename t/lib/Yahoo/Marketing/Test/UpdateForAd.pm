@@ -20,8 +20,8 @@ sub test_can_create_update_for_ad_and_set_all_fields : Test(11) {
                                                      ->shortDescription( 'short description' )
                                                      ->title( 'title' )
                                                      ->url( 'url' )
-                                                     ->createTimestamp( 'create timestamp' )
-                                                     ->lastUpdateTimestamp( 'last update timestamp' )
+                                                     ->createTimestamp( '2008-01-06T17:51:55' )
+                                                     ->lastUpdateTimestamp( '2008-01-07T17:51:55' )
                    ;
 
     ok( $update_for_ad );
@@ -34,8 +34,8 @@ sub test_can_create_update_for_ad_and_set_all_fields : Test(11) {
     is( $update_for_ad->shortDescription, 'short description', 'can get short description' );
     is( $update_for_ad->title, 'title', 'can get title' );
     is( $update_for_ad->url, 'url', 'can get url' );
-    is( $update_for_ad->createTimestamp, 'create timestamp', 'can get create timestamp' );
-    is( $update_for_ad->lastUpdateTimestamp, 'last update timestamp', 'can get last update timestamp' );
+    is( $update_for_ad->createTimestamp, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
+    is( $update_for_ad->lastUpdateTimestamp, '2008-01-07T17:51:55', 'can get 2008-01-07T17:51:55' );
 
 };
 

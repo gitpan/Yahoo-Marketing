@@ -33,6 +33,7 @@ lib/Yahoo/Marketing/Capability.pm
 lib/Yahoo/Marketing/CombinedAccountStatus.pm
 lib/Yahoo/Marketing/ComplexType.pm
 lib/Yahoo/Marketing/CreditCardInfo.pm
+lib/Yahoo/Marketing/DateTimeAccessor.pm
 lib/Yahoo/Marketing/EditorialReasons.pm
 lib/Yahoo/Marketing/Error.pm
 lib/Yahoo/Marketing/ErrorType.pm
@@ -59,7 +60,6 @@ lib/Yahoo/Marketing/MasterAccount.pm
 lib/Yahoo/Marketing/MasterAccountService.pm
 lib/Yahoo/Marketing/PageRelatedKeywordRequestType.pm
 lib/Yahoo/Marketing/PaymentMethodInfo.pm
-lib/Yahoo/Marketing/PendingKeyword.pm
 lib/Yahoo/Marketing/RangeDefinitionRequestType.pm
 lib/Yahoo/Marketing/RangeDefinitionResponseType.pm
 lib/Yahoo/Marketing/RangeDefinitionType.pm
@@ -188,7 +188,6 @@ t/lib/Yahoo/Marketing/Test/MasterAccount.pm
 t/lib/Yahoo/Marketing/Test/MasterAccountService.pm
 t/lib/Yahoo/Marketing/Test/PageRelatedKeywordRequestType.pm
 t/lib/Yahoo/Marketing/Test/PaymentMethodInfo.pm
-t/lib/Yahoo/Marketing/Test/PendingKeyword.pm
 t/lib/Yahoo/Marketing/Test/PostTest.pm
 t/lib/Yahoo/Marketing/Test/RangeDefinitionRequestType.pm
 t/lib/Yahoo/Marketing/Test/RangeDefinitionResponseType.pm
@@ -210,7 +209,6 @@ t/master_account.t
 t/master_account_service.t
 t/page_related_keyword_request_type.t
 t/payment_method_info.t
-t/pending_keyword.t
 t/pod-coverage.t
 t/pod.t
 t/range_definition_request_type.t

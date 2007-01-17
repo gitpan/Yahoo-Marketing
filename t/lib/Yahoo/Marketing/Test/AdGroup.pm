@@ -24,11 +24,11 @@ sub test_can_create_ad_group_and_set_all_fields : Test(18) {
                                             ->sponsoredSearchON( 'sponsored search on' )
                                             ->status( 'status' )
                                             ->watchON( 'watch on' )
-                                            ->contentMatchMaxBidTimestamp( 'content match max bid timestamp' )
-                                            ->createTimestamp( 'create timestamp' )
-                                            ->deleteTimestamp( 'delete timestamp' )
-                                            ->lastUpdateTimestamp( 'last update timestamp' )
-                                            ->sponsoredSearchMaxBidTimestamp( 'sponsored search max bid timestamp' )
+                                            ->contentMatchMaxBidTimestamp( '2008-01-06T17:51:55' )
+                                            ->createTimestamp( '2008-01-07T17:51:55' )
+                                            ->deleteTimestamp( '2008-01-08T17:51:55' )
+                                            ->lastUpdateTimestamp( '2008-01-09T17:51:55' )
+                                            ->sponsoredSearchMaxBidTimestamp( '2008-01-10T17:51:55' )
                    ;
 
     ok( $ad_group );
@@ -45,11 +45,11 @@ sub test_can_create_ad_group_and_set_all_fields : Test(18) {
     is( $ad_group->sponsoredSearchON, 'sponsored search on', 'can get sponsored search on' );
     is( $ad_group->status, 'status', 'can get status' );
     is( $ad_group->watchON, 'watch on', 'can get watch on' );
-    is( $ad_group->contentMatchMaxBidTimestamp, 'content match max bid timestamp', 'can get content match max bid timestamp' );
-    is( $ad_group->createTimestamp, 'create timestamp', 'can get create timestamp' );
-    is( $ad_group->deleteTimestamp, 'delete timestamp', 'can get delete timestamp' );
-    is( $ad_group->lastUpdateTimestamp, 'last update timestamp', 'can get last update timestamp' );
-    is( $ad_group->sponsoredSearchMaxBidTimestamp, 'sponsored search max bid timestamp', 'can get sponsored search max bid timestamp' );
+    is( $ad_group->contentMatchMaxBidTimestamp, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
+    is( $ad_group->createTimestamp, '2008-01-07T17:51:55', 'can get 2008-01-07T17:51:55' );
+    is( $ad_group->deleteTimestamp, '2008-01-08T17:51:55', 'can get 2008-01-08T17:51:55' );
+    is( $ad_group->lastUpdateTimestamp, '2008-01-09T17:51:55', 'can get 2008-01-09T17:51:55' );
+    is( $ad_group->sponsoredSearchMaxBidTimestamp, '2008-01-10T17:51:55', 'can get 2008-01-10T17:51:55' );
 
 };
 
