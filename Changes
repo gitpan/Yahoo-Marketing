@@ -33,7 +33,7 @@ Revision history for Yahoo-Marketing
         Fix for DateTime::Format::W3CDTF being used
         MasterAccountService tests fixed
 
-0.09    16 January 2007
+0.09    17 January 2007
         Added immortal option to prevent dying on SOAP faults.
         Added automatic handling of Date/Timestamp fields
             - DateTime objects can now be passed in directly
@@ -41,4 +41,6 @@ Revision history for Yahoo-Marketing
             They should stringify correctly so this functionality
             should be more or less transparent
                 
-
+0.10    15 March 2007
+        Added work around for accountID in header for getMasterAccountLocation call
+	Missing DateTime::Format:: prereqs added

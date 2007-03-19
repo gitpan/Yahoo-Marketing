@@ -71,6 +71,16 @@ See perldoc Yahoo::Marketing::Account
                          ...::User
                          ...::UserAuthorization
 
+=head2 user_setable_attributes
+
+Returns the name of all attributes that are not read-only in EWS
+
+=head2 read_only_attributes
+
+Returns the name of all attributes that are read-only in EWS
+
+
+
 =cut 
 
 
@@ -96,9 +106,20 @@ sub _new_from_hash {
     return $new_obj;
 }
 
+sub user_setable_attributes {
+    return shift->_user_setable_attributes;
+}
+
+sub read_only_attributes {
+    return shift->_read_only_attributes;
+}
 
 sub _user_setable_attributes {
     confess "Must implement _user_setable_attributes in child class!\n";
+}
+
+sub _read_only_attributes {
+    confess "Must implement _read_only_attributes in child class!\n";
 }
 
 

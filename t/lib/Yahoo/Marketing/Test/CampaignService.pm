@@ -399,7 +399,7 @@ sub test_can_delete_campaign : Test(2) {
     is( $fetched_campaign->status, 'Deleted', 'campaign has Deleted status' );
 }
 
-sub test_can_set_get_delete_geographic_location_for_campaign : Test(16) {
+sub test_can_set_get_delete_geographic_location_for_campaign : Test(18) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -410,16 +410,18 @@ sub test_can_set_get_delete_geographic_location_for_campaign : Test(16) {
 
     my $response = $ysm_ws->setGeographicLocationForCampaign(
         campaignID => $campaign->ID,
-        geoStrings => [ 'new york' ],
+        geoStrings => [ 'springfield' ],
     );
 
     ok( $response );
 
-    is( ref $response, 'Yahoo::Marketing::SetGeographicLocationResponse' );
+    isa_ok( $response, 'Yahoo::Marketing::SetGeographicLocationResponse' );
     is( $response->setSucceeded, 'false' );
     ok( not $response->stringsWithNoMatches );
-    is( ref ($response->ambiguousMatches->[0]), 'Yahoo::Marketing::AmbiguousGeoMatch' );
-    is( $response->ambiguousMatches->[0]->geoString, 'new york' );
+    ok( $response->ambiguousMatches );
+    ok( ref $response->ambiguousMatches->[0] );
+    isa_ok( $response->ambiguousMatches->[0], 'Yahoo::Marketing::AmbiguousGeoMatch' );
+    is( $response->ambiguousMatches->[0]->geoString, 'springfield' );
     ok( @{ $response->ambiguousMatches->[0]->possibleMatches } );
 
     my $new_response = $ysm_ws->setGeographicLocationForCampaign(
@@ -437,7 +439,7 @@ sub test_can_set_get_delete_geographic_location_for_campaign : Test(16) {
     );
 
     ok( @locations );
-    like( $locations[0], qr/New York/ );
+    like( $locations[0], qr/Springfield/ );
 
     ok ( $ysm_ws->deleteGeographicLocationFromCampaign( campaignID => $campaign->ID ) );
 
@@ -740,8 +742,6 @@ sub test_campaign_service_can_be_immortal : Test(5) {
     is( $ysm_ws->fault->message, 'Enumeration value "foo" is not recognized.' );
 
 
-    use Data::Dumper; print STDERR Dumper $ysm_ws->fault;
-    
     # be nice, put the statuses back
     $campaigns[$_]->status( 'On' ) for ( 1..2 );
 }

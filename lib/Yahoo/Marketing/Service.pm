@@ -127,7 +127,7 @@ sub _location {
                            .$self->version
                            .'/LocationService' 
                           )
-                   ->getMasterAccountLocation( $self->_headers );
+                   ->getMasterAccountLocation( $self->_headers( no_account => 1 ) );
 
     if( $som->fault ){
         $self->fault( $self->_get_api_fault_from_som( $som ) );
@@ -315,7 +315,7 @@ sub _is_special_case {
 
 
 sub _headers {
-    my ( $self ) = @_;
+    my ( $self, %args ) = @_;
 
     confess "must set username and password"
         unless defined $self->username and defined $self->password;
@@ -332,7 +332,7 @@ sub _headers {
                          ->uri( $self->uri )
                          ->prefix('')
              ,
-             $self->_add_account_to_header
+             ( $self->_add_account_to_header and not $args{ no_account } )
                ? SOAP::Header->name('accountID')
                              ->type('string')
                              ->value( $self->account )

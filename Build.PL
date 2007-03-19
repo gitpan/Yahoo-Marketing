@@ -84,7 +84,7 @@ Please make sure they're properly installed on your system.
                      my $build = Module::Build->current;
                      $build->notes(run_post_tests => '') unless $run_post;
                      print STDERR "\nNOTE: we can run tests that will connect to Yahoo! Marketing's "
-                                 ."\nEWS, verifying your login credentials and more completely test "
+                                 ."\nEWS, verifying your login credentials and more completely testing "
                                  ."\nthat this package is performing correctly.  If you would like to "
                                  ."\nrun these tests, please use perl Build posttest."
                                  ."\n\n"
@@ -111,20 +111,19 @@ my $build = $builder->new(
         'Test::More'               => 0,
         # requires below by jeff
 
-        'perl'                      => '5.6.1',   
-        'SOAP::Lite'                => '0.66',
-        'YAML'                      => '0.01',
-        'Class::Accessor::Chained'  => '0.01',
-        'Module::Build'             => '0.26',  
-        'Scalar::Util'              => '1.01',
-        'Test::Class'               => '0.10',
-        'Test::Simple'              => '0.60', # for displaying error message in tests.
-        'Cache::Cache'              => '1.01',
-        'XML::XPath'                => '1.10',
-        'Crypt::SSLeay'             => '0.40',
-        'DateTime'                  => '0.01',
-        'DateTime::Format::ISO8601' => '0.01',
-        'DateTime::Format::W3CDTF'  => '0.01',
+        'perl'                       => '5.6.1',   
+        'SOAP::Lite'                 => '0.66',
+        'YAML'                       => '0.01',
+        'Class::Accessor::Chained'   => '0.01',
+        'Module::Build'              => '0.26',  
+        'Scalar::Util'               => '1.01',
+        'Test::Class'                => '0.10',
+        'Test::Simple'               => '0.60', # for displaying error message in tests.
+        'Cache::Cache'               => '1.01',
+        'XML::XPath'                 => '1.10',
+        'Crypt::SSLeay'              => '0.40',
+	'DateTime::Format::ISO8601'  => 0,
+	'DateTime::Format::W3CDTF'   => 0,
     },
     add_to_cleanup                 => [ 'Yahoo-Marketing-*' ],
     # see http://perlmonks.org/index.pl?node_id=458282
