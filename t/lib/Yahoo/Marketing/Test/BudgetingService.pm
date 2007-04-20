@@ -12,7 +12,6 @@ use Yahoo::Marketing::BudgetingService;
 
 my $section = 'sandbox';
 
-
 sub test_account_daily_spend_limit : Test(4) {
     my $self = shift;
 
@@ -22,7 +21,7 @@ sub test_account_daily_spend_limit : Test(4) {
 
     $ysm_ws->updateAccountDailySpendLimit(
                  accountID => $ysm_ws->account,
-                 amount    => '100.005',
+                 amount    => '100.01',
              );
 
     my $spend_status = $ysm_ws->getAccountDailySpendLimitStatus( accountID => $ysm_ws->account );
@@ -54,7 +53,7 @@ sub test_campaign_daily_spend_limit : Test(7) {
 
     $ysm_ws->updateCampaignDailySpendLimit(
                  campaignID => $campaign->ID,
-                 amount     => '200.011',
+                 amount     => '200.01',
              );
 
     $ysm_ws->updateCampaignDailySpendLimitStatus(

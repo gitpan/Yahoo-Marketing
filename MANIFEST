@@ -113,6 +113,7 @@ t/campaign_optimization_guidelines_response.t
 t/campaign_response.t
 t/campaign_service.t
 t/capability.t
+t/combined_account_status.t
 t/credit_card_info.t
 t/error.t
 t/error_type.t
@@ -163,6 +164,7 @@ t/lib/Yahoo/Marketing/Test/CampaignOptimizationGuidelinesResponse.pm
 t/lib/Yahoo/Marketing/Test/CampaignResponse.pm
 t/lib/Yahoo/Marketing/Test/CampaignService.pm
 t/lib/Yahoo/Marketing/Test/Capability.pm
+t/lib/Yahoo/Marketing/Test/CombinedAccountStatus.pm
 t/lib/Yahoo/Marketing/Test/CreditCardInfo.pm
 t/lib/Yahoo/Marketing/Test/Error.pm
 t/lib/Yahoo/Marketing/Test/ErrorType.pm

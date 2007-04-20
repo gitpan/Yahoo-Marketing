@@ -42,7 +42,7 @@ sub test_get_page_related_keywords : Test(5) {
     foreach my $related_keyword_type ( @{$result->relatedKeywords} ) {
         like( $related_keyword_type->common, qr/laptop/ );
     }
-};
+}
 
 sub test_get_related_keywords : Test(5) {
     my ( $self ) = @_;
@@ -69,7 +69,28 @@ sub test_get_related_keywords : Test(5) {
     foreach my $related_keyword_type ( @{$result->relatedKeywords} ) {
         like( $related_keyword_type->common, qr/laptop/ );
     }
-};
+}
+
+sub test_get_related_keywords_works_for_no_results : Test(3) {
+    my ( $self ) = @_;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $related_keyword_request_type = Yahoo::Marketing::RelatedKeywordRequestType->new
+        ->market( 'US' )
+        ->maxKeywords( '3' )
+        ->positiveKeywords( [ 'pandas bears llamas' ] )
+    ;
+
+    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
+
+    my $result = $ysm_ws->getRelatedKeywords(
+        relatedKeywordRequest => $related_keyword_request_type,
+    );
+
+    ok( $result );
+    is( scalar @{$result->relatedKeywords}, 0 );
+}
 
 sub test_get_range_definitions : Test(3) {
     my ( $self ) = @_;
@@ -78,7 +99,8 @@ sub test_get_range_definitions : Test(3) {
 
     my $range_definition_request_type = Yahoo::Marketing::RangeDefinitionRequestType->new
         ->market( 'US' )
-        ->rangeName( [ 'Searches' ] );
+        ->rangeName( [ 'Searches' ] )
+    ;
 
     my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
 

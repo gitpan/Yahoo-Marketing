@@ -4,7 +4,6 @@
 
 use strict; use warnings;
 
-#use Test::More skip_all => 'AdService->addAd not working: http://tracker.corp.yahoo.com/show_bug.cgi?id=14762';
 
 use lib 't/lib';
 use Yahoo::Marketing::Test::AdService;

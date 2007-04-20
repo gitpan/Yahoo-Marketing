@@ -4,10 +4,8 @@
 
 use strict; use warnings;
 
-use Test::More skip_all => 'BidInformationService not available in sandbox';
+use lib 't/lib';
+use Yahoo::Marketing::Test::BidInformationService;
 
-#use lib 't/lib';
-#use Yahoo::Marketing::Test::BidInformationService;
-
-#Test::Class->runtests;
+Test::Class->runtests;
 

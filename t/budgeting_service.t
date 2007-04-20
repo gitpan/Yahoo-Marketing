@@ -4,11 +4,9 @@
 
 use strict; use warnings;
 
-use Test::More skip_all => 'budgeting service not available in the sandbox';
+use lib 't/lib';
+use Yahoo::Marketing::Test::BudgetingService;
 
-#use lib 't/lib';
-#use Yahoo::Marketing::Test::BudgetingService;
-#
 #use SOAP::Lite +trace => [qw/ debug method fault /];
-#Test::Class->runtests;
+Test::Class->runtests;
 

@@ -12,13 +12,14 @@ Yahoo::Marketing - an interface for Yahoo! Search Marketing's Web Services.
 
 =head1 VERSION
 
-Version 0.10
+Version 1.01
 
 =cut
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '0.10';
+our $VERSION = '1.01';
+
 
 =head1 SYNOPSIS
 
@@ -264,7 +265,7 @@ On windows, using double quotes instead of single quotes should work.
 Config files are expected to be in YAML format.  See perldoc YAML.
 
 default_account is optional.  If present, it will be set when a config file
-is loaded *only if an account has not already been set!*
+is loaded B<only if an account has not already been set!>
 
  ---
  default:
@@ -303,7 +304,7 @@ Jeff Lavallee, C<< <jeff at zeroclue.com> >>
 =head1 BUGS
 
 Please report any bugs or feature requests to
-C<bug-yahoo-searchmarketingws at rt.cpan.org>, or through the web interface at
+C<bug-yahoo-marketing at rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Yahoo-Marketing>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
@@ -339,7 +340,7 @@ L<http://search.cpan.org/dist/Yahoo-Marketing>
 =head1 ACKNOWLEDGEMENTS
 
 co-author Johnny Shen, C<< <shenj at yahoo-inc.com> >> without whom this wouldn't have been possible.
-Gerard Paulke C<< <paulkeg at yahoo-inc.com> >> 
+Also Gerard Paulke C<< <paulkeg at yahoo-inc.com> >>.
 
 =head1 COPYRIGHT & LICENSE
 

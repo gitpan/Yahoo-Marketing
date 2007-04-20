@@ -7,11 +7,11 @@ use strict; use warnings;
 use base qw/ Class::Accessor::Chained Yahoo::Marketing /;
 
 use Carp;
-use Cache::FileCache;
 use YAML qw/DumpFile LoadFile Dump/;
-use SOAP::Lite on_action => sub { sprintf '' };
 use XML::XPath;
+use SOAP::Lite on_action => sub { sprintf '' };
 use Scalar::Util qw/ blessed /;
+use Cache::FileCache;
 use Yahoo::Marketing::ApiFault;
 
 our $service_data;
@@ -184,12 +184,20 @@ ENDFAULT
 }
 
 
+# not using memoize yet
+our %_soap;
 sub _soap {
     my ( $self, $endpoint ) = @_;
-    return SOAP::Lite->proxy( $endpoint or $self->_proxy_url )
-                     ->ns( $self->uri, 'ysm' )
-                     ->default_ns( $self->uri )
+
+    $endpoint ||= $self->_proxy_url;
+
+    $_soap{ $endpoint } 
+        ||= SOAP::Lite->proxy( $endpoint )
+                         ->ns( $self->uri, 'ysm' )
+                         ->default_ns( $self->uri )
     ;
+
+    return $_soap{ $endpoint };
 }
 
 our $AUTOLOAD;
@@ -639,7 +647,6 @@ sub _serialize_argument {
     }
 
     # don't do anything special
-    warn "not doing anything special with $value\n";
     return SOAP::Data->name( $name )
                      ->value( $self->_escape_xml_baddies($value) );
 }

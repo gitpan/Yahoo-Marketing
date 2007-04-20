@@ -41,6 +41,14 @@ Revision history for Yahoo-Marketing
             They should stringify correctly so this functionality
             should be more or less transparent
                 
-0.10    15 March 2007
+0.10    19 March 2007
         Added work around for accountID in header for getMasterAccountLocation call
-	Missing DateTime::Format:: prereqs added
+        Missing DateTime::Format:: prereqs added
+                
+1.01    20 April 2007
+        Reuse SOAP::Lite objects to prevent leaking memory
+        Fixed bug email address in docs
+        Fix for getRelatedKeywords when no related keywords are returned
+        Major version # bumped.  Going forward, the major version # of Yahoo::Marketing will correspond to the major version of EWS that the release is associated with.
+
+

@@ -15,10 +15,9 @@ use Yahoo::Marketing::MasterAccount;
 use Yahoo::Marketing::CreditCardInfo;
 use Yahoo::Marketing::MasterAccountService;
 
-#use SOAP::Lite +trace => [qw/ debug method fault /];
+# use SOAP::Lite +trace => [qw/ debug method fault /];
 
 my $section = 'sandbox';
-
 
 sub test_get_master_account : Test(7) {
     my $self = shift;
@@ -49,7 +48,7 @@ sub test_get_master_account_status : Test(1) {
     ok( $master_account_status =~ /^(Active|Inactive)$/, 'master account status is right' );
 }
 
-sub test_update_master_account : Test(6) {
+sub test_update_master_account : Test(4) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -61,32 +60,28 @@ sub test_update_master_account : Test(6) {
     my $old_tracking_on = $master_account->trackingON;
 
     $ysm_ws->updateMasterAccount(
-        masterAccount => $master_account->name( "new name $$" )
-                                        ->trackingON( $old_tracking_on eq 'false' ? 'true' : 'false' )
-                                        ->timezone('America/Los_Angeles')
+        masterAccount => $master_account->trackingON( $old_tracking_on eq 'false' ? 'true' : 'false' )
         ,
     );
 
     my $fetched_master_account = $ysm_ws->getMasterAccount( masterAccountID => $ysm_ws->master_account );
 
     ok( $fetched_master_account );
-    is( $fetched_master_account->name, "new name $$", 'name is right' );
     is( $fetched_master_account->trackingON, $old_tracking_on eq 'false' ? 'true' : 'false', 'trackingON is right' );
 
     $ysm_ws->updateMasterAccount(
-        masterAccount => $master_account->name( $old_name )
-                                        ->trackingON( $old_tracking_on ),
+        masterAccount => $master_account->trackingON( $old_tracking_on ),
     );
 
     $fetched_master_account = $ysm_ws->getMasterAccount( masterAccountID => $ysm_ws->master_account );
 
     ok( $fetched_master_account );
-    is( $fetched_master_account->name, $old_name, 'name changed back' );
     is( $fetched_master_account->trackingON, $old_tracking_on, 'trackingON changed back' );
 
 }
 
-
+=skip
+# we skip addNewCustomer test, because evry time run test, it will create a new masterAccount and cannot delete it.
 sub _make_username {
     my $time = time();
     return 'tu'.substr( $time, length($time) - 8, length( $time ) );
@@ -164,6 +159,7 @@ sub test_add_new_customer : Test(8) {
     is( $master_account->trackingON,  'false', 'Tracking is not on' );
 }
 
+=cut
 
 1;
 

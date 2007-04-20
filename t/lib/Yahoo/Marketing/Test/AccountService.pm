@@ -20,7 +20,21 @@ use Yahoo::Marketing::CreditCardInfo;
 my $section = 'sandbox';
 
 
-sub test_add_money_and_get_account_balance : Test(4) {
+sub test_get_account_balance : Test(2) {
+    my $self = shift;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
+
+    my $balance = $ysm_ws->getAccountBalance(
+        accountID => $ysm_ws->account,
+    );
+    ok( $balance );
+    like( $balance, qr/^\d+\.\d+$/, 'looks like a float number' );
+}
+
+sub test_add_money_and_get_account_balance : Test(5) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -33,6 +47,17 @@ sub test_add_money_and_get_account_balance : Test(4) {
     ok( $balance );
     like( $balance, qr/^\d+\.\d+$/, 'looks like a float number' );
 
+    my $payment_method_id;
+    ok( $payment_method_id = $ysm_ws->getActiveCreditCard(
+            accountID => $ysm_ws->account,
+        )
+    );
+
+    #diag("paymentMethodId: $payment_method_id");
+
+    return "no active payment method, skipping addMoney tests"
+        if $payment_method_id == -1;
+    
     $ysm_ws->addMoney(
         accountID => $ysm_ws->account,
         amount    => '108.01',
@@ -54,10 +79,17 @@ sub test_get_and_set_charge_amount : Test(3) {
 
     my $charge_amount = $ysm_ws->getChargeAmount( accountID => $ysm_ws->account );
     ok( defined( $charge_amount ) );
+
+    #diag("charge amount: $charge_amount");
+
+    return "charge amount is 0, skipping setChargeAmount tests"
+        if $charge_amount == 0;
+    
     $ysm_ws->setChargeAmount(
         accountID    => $ysm_ws->account,
         chargeAmount => '300',
     );
+
     $charge_amount = $ysm_ws->getChargeAmount( accountID => $ysm_ws->account );
     is( $charge_amount, 300 );
 
@@ -82,79 +114,40 @@ sub test_get_and_set_active_credit_card : Test(2) {
 
     my $user_service = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
     my @payment_methods = $user_service->getPaymentMethods;
-    # must at least have one payment_method
-    if ( scalar @payment_methods == 1 ) {
-        my $billing_user = Yahoo::Marketing::BillingUser->new
-            ->email( 'name@domain.ext' )
-            ->firstName( 'Firstname' )
-            ->lastName( 'Lastname' )
-            ->phone( '818-000-0000' )
-            ;
-        my $address = Yahoo::Marketing::Address->new
-            ->address1( '123 Main St.' )
-            ->city( 'Springfield' )
-            ->state( 'CA' )
-            ->country( 'US' )
-            ->postalCode( '93265' )
-            ;
-        my $credit_card = Yahoo::Marketing::CreditCardInfo->new
-            ->cardNumber( '4024007171205718' )
-            ->cardType( 'VISA' )
-            ->expMonth( '8' )
-            ->expYear( '2018' )
-            ->securityCode( '505' )
-            ;
 
-        my $new_payment_method_id = $user_service->addCreditCard(
-            billingUserInfo => $billing_user,
-            billingAddress  => $address,
-            cc              => $credit_card,
-        );
-
-        @payment_methods = $user_service->getPaymentMethods;
-    }
-
-    my $another_payment_method;
-    foreach (@payment_methods) {
-        next if $_->ID == $active_payment_method_id;
-        $another_payment_method = $_;
-    }
+    return "no payment methods, skipping setActiveCreditCard tests"
+        if @payment_methods < 1;
 
     $ysm_ws->setActiveCreditCard(
         accountID       => $ysm_ws->account,
-        paymentMethodID => $another_payment_method->ID,
+        paymentMethodID => $payment_methods[0]->ID,
     );
-    is( $ysm_ws->getActiveCreditCard( accountID => $ysm_ws->account ), $another_payment_method->ID, 'payment method id is right' );
+    is( $ysm_ws->getActiveCreditCard( accountID => $ysm_ws->account ), $payment_methods[0]->ID, 'payment method id is right' );
 
 }
 
-sub test_set_get_and_delete_continent_block_list : Test(8) {
+
+
+sub test_set_get_and_delete_continent_block_list : Test(9) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
-    $ysm_ws->deleteContinentBlockListFromAccount(
-        accountID => $ysm_ws->account,
-    );
+    local $TODO = 'setContinentBlockListForAccount not yet instantaneous';
 
     my @continents;
-    eval {
-        @continents = $ysm_ws->getContinentBlockListForAccount(
-            accountID => $ysm_ws->account,
-        );
-    };
-    ok( $@ =~ /does not exist/ );
 
     ok( $ysm_ws->setContinentBlockListForAccount(
         accountID  => $ysm_ws->account,
-        continents => [ qw(Africa) ],
+        continents => [ 'Africa' ],
     ) );
 
     @continents = $ysm_ws->getContinentBlockListForAccount(
         accountID => $ysm_ws->account,
     );
+
     ok( @continents );
     is( $continents[0], 'Africa' );
 
@@ -166,10 +159,24 @@ sub test_set_get_and_delete_continent_block_list : Test(8) {
     @continents = $ysm_ws->getContinentBlockListForAccount(
         accountID => $ysm_ws->account,
     );
+
     ok( @continents );
-    ok( grep { $_ eq 'Europe' } @continents );
-    ok( grep { $_ eq 'Asia' } @continents );
+    ok( grep { $_ eq 'Europe'    } @continents );
+    ok( grep { $_ eq 'Asia'      } @continents );
+    ok( grep { $_ eq 'Australia' } @continents );
+
+    $ysm_ws->deleteContinentBlockListFromAccount(
+        accountID => $ysm_ws->account,
+    );
+
+    eval {
+        @continents = $ysm_ws->getContinentBlockListForAccount(
+            accountID => $ysm_ws->account,
+        );
+    };
+    ok( $@ =~ /does not exist/ );
 }
+
 
 sub test_get_account : Test(3) {
     my $self = shift;
@@ -251,6 +258,7 @@ sub test_update_account : Test(7) {
     is( $account->displayURL, $display_url, 'displayURL is right' );
 }
 
+
 sub test_update_account_status : Test(3) {
     my $self = shift;
 
@@ -273,5 +281,7 @@ sub test_update_account_status : Test(3) {
     );
     is( $ysm_ws->getAccountStatus( accountID => $ysm_ws->account )->accountStatus, $account_status->accountStatus, 'change back to old status' );
 }
+
+
 
 1;

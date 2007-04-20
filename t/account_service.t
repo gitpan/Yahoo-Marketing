@@ -4,12 +4,10 @@
 
 use strict; use warnings;
 
-use Test::More skip_all => 'account service not available in sandbox';
+use lib 't/lib';
 
-#use lib 't/lib';
+use Yahoo::Marketing::Test::AccountService;
 
-#use Yahoo::Marketing::Test::AccountService;
-
-#use SOAP::Lite +trace => [qw/ debug method fault /];
-#Test::Class->runtests;
+#use SOAP::Lite +trace => [qw/  debug fault /];
+Test::Class->runtests;
 

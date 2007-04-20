@@ -17,7 +17,8 @@ use Yahoo::Marketing::UserManagementService;
 
 my $section = 'sandbox';
 
-
+=skip
+# we dont have additional user to test.
 sub test_get_and_add_and_delete_authorization_for_user : Test(7) {
     my $self = shift;
 
@@ -83,6 +84,7 @@ sub test_get_and_add_and_delete_authorization_for_user : Test(7) {
              ), 'can add authorization' );
 }
 
+# skip: we dont have credit card setup to test.
 sub test_add_credit_card : Test(3) {
     my $self = shift;
 
@@ -140,6 +142,7 @@ sub test_add_credit_card : Test(3) {
     );
 }
 
+# skip: we cannot delete a user, so dont add new one.
 sub test_add_user : Test(1) {
     my $self = shift;
 
@@ -167,6 +170,7 @@ sub test_add_user : Test(1) {
     is( $ysm_ws->getUserStatus( username => $new_user_name ), 'Staged', 'status is right' );
 }
 
+# skip: we dont have additional user to test.
 sub test_enable_disable_user_and_get_user_status : Test(4) {
     my $self = shift;
 
@@ -181,6 +185,45 @@ sub test_enable_disable_user_and_get_user_status : Test(4) {
     ok( $ysm_ws->enableUser( username => $self->common_test_data( 'test_user' ) ), 'can enable user' );
     is( $ysm_ws->getUserStatus( username => $self->common_test_data( 'test_user' ) ), 'Active', 'status is right' );
 }
+
+=cut
+
+sub test_get_authorizations : Test(4) {
+    my $self = shift;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+
+    my @auth = $ysm_ws->getAuthorizationsForUser( username => $ysm_ws->username );
+    ok( @auth, 'can get authorization' );
+    ok( ( grep { $_->role->name eq 'MasterAccountAdministrator' } @auth ), 'can find right authorization for user' );
+
+    my @user_auths = $ysm_ws->getAuthorizedUsersByMasterAccountID;
+    my $find = 0;
+    foreach my $user_auth ( @user_auths ) {
+        if ( $user_auth->username eq $ysm_ws->username and 
+                 $user_auth->role->name eq 'MasterAccountAdministrator' ) {
+            $find = 1;
+            last;
+        }
+    }
+    is( $find, 1, 'find authorized user in master account' );
+
+    @user_auths = $ysm_ws->getAuthorizedUsersByAccountID( accountIDs => [ $ysm_ws->account ] );
+
+    $find = 0;
+    foreach my $user_auth ( @user_auths ) {
+        if ( $user_auth->username eq $self->common_test_data( 'test_user' ) and 
+                 $user_auth->role->name eq 'AccountManager' ) {
+            $find = 1;
+            last;
+        }
+    }
+    is( $find, 0, 'should not find authorized user in account' );
+
+}
+
 
 sub test_get_available_roles_by_account_id : Test(2) {
     my $self = shift;
@@ -203,6 +246,7 @@ sub test_get_available_roles_by_account_id : Test(2) {
     is( join('', sort {$a cmp $b} map { $_->name } @roles), 'AccountManagerAnalystCampaignManager', 'roles are right' );
 }
 
+
 sub test_get_capabilities_for_role : Test(1) {
     my $self = shift;
 
@@ -216,31 +260,36 @@ sub test_get_capabilities_for_role : Test(1) {
     ok( @capabilities, 'capabilities are right' );
 }
 
-sub test_get_and_update_my_address : Test(3) {
+
+sub test_get_and_update_my_address : Test(2) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
-    my $address = $ysm_ws->getMyAddress;
-
-    ok( $address );
-
-    my $new_address = $address;
-    $ysm_ws->updateMyAddress(
-        address => $new_address->address1( '789 Grand Ave' ),
-        updateAll => 'false',
-    );
-
-    is( $ysm_ws->getMyAddress->address1, '789 Grand Ave', 'address is right' );
+    my $address = Yahoo::Marketing::Address->new
+                                           ->address1( '789 Grand Ave' )
+                                           ->city('Burbank')
+                                           ->state('CA')
+                                           ->country('US')
+                                           ->postalCode('91504');
 
     $ysm_ws->updateMyAddress(
         address => $address,
         updateAll => 'true',
     );
 
-    is( $ysm_ws->getMyAddress->address1, $address->address1, 'address is right' );
+    is( $ysm_ws->getMyAddress->address1, '789 Grand Ave', 'address is right' );
+
+    my $new_address = Yahoo::Marketing::Address->new->address1( '123 Hollywood Blvd' );
+    $ysm_ws->updateMyAddress(
+        address => $new_address,
+        updateAll => 'false',
+    );
+
+    is( $ysm_ws->getMyAddress->address1, $new_address->address1, 'address is right' );
 }
+
 
 sub test_get_my_authorization : Test(2) {
     my $self = shift;
@@ -260,7 +309,8 @@ sub test_get_my_authorization : Test(2) {
     ok( $found, 'get auth right' );
 }
 
-sub test_get_and_update_my_user_info : Test(6) {
+
+sub test_get_and_update_my_user_info : Test(5) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -274,84 +324,82 @@ sub test_get_and_update_my_user_info : Test(6) {
         userInfo => $user->workPhone( '212-555-7890' ),
         updateAll => 'false',
     );
-    $ysm_ws->updateMyEmail( email => 'test@yahoo-inc.com' );
+
     my $fetched_user = $ysm_ws->getMyUserInfo;
 
     is( $fetched_user->workPhone, '212-555-7890', 'work phone updated' );
-    is( $fetched_user->email, 'test@yahoo-inc.com' );
-    is( $ysm_ws->getUserEmail( username => $ysm_ws->username ), 'test@yahoo-inc.com', 'email is right' );
+    is( $fetched_user->email, 'lavallej@yahoo-inc.com' );
+    is( $ysm_ws->getUserEmail( username => $ysm_ws->username ), 'lavallej@yahoo-inc.com', 'email is right' );
 
     $ysm_ws->updateMyUserInfo(
         userInfo => $user,
-        updateAll => 'true',
+        updateAll => 'false',
     );
     my $fetched_user2 = $ysm_ws->getMyUserInfo;
 
     is( $fetched_user2->workPhone, $user->workPhone, 'work phone update right' );
-    is( $fetched_user2->email, $user->email, 'email is right' );
 }
+
 
 sub test_get_and_update_user_address : Test(3) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
 
-    return 'no other active user we can test on this function.' unless $self->common_test_data( 'test_user' );
-
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
-    my $address = $ysm_ws->getUserAddress( username => $self->common_test_data( 'test_user' ) );
+    my $address = $ysm_ws->getUserAddress( username => $ysm_ws->username );
 
     ok( $address );
 
     my $new_address = $address;
     $ysm_ws->updateUserAddress(
-        username => $self->common_test_data( 'test_user' ),
+        username => $ysm_ws->username,
         address => $new_address->address1( '789 Grand Ave' ),
         updateAll => 'false',
     );
 
-    is( $ysm_ws->getUserAddress( username => $self->common_test_data( 'test_user' ) )->address1, '789 Grand Ave', 'address is right' );
+    is( $ysm_ws->getUserAddress( username => $ysm_ws->username )->address1, '789 Grand Ave', 'address is right' );
 
     $ysm_ws->updateUserAddress(
-        username => $self->common_test_data( 'test_user' ),
+        username => $ysm_ws->username,
         address => $address,
-        updateAll => 'true',
+        updateAll => 'false',
     );
 
-    is( $ysm_ws->getUserAddress( username => $self->common_test_data( 'test_user' ) )->address1, $address->address1, 'address is right' );
+    is( $ysm_ws->getUserAddress( username => $ysm_ws->username )->address1, $address->address1, 'address is right' );
 }
+
 
 sub test_get_and_update_user_info : Test(3) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
 
-    return 'no other active user we can test on this function.' unless $self->common_test_data( 'test_user' );
-
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
-    my $user = $ysm_ws->getUserInfo( username => $self->common_test_data( 'test_user' ) );
+    my $user = $ysm_ws->getUserInfo( username => $ysm_ws->username );
 
     ok( $user );
 
     my $new_user = $user;
     $ysm_ws->updateUserInfo(
-        username => $self->common_test_data( 'test_user' ),
+        username => $ysm_ws->username,
         userInfo => $new_user->workPhone( '818-555-7890' )->email( 'test@yahoo-inc.com' ),
         updateAll => 'true',
     );
-    my $fetched_user = $ysm_ws->getUserInfo( username => $self->common_test_data( 'test_user' ) );
+    my $fetched_user = $ysm_ws->getUserInfo( username => $ysm_ws->username );
 
     is( $fetched_user->workPhone, '818-555-7890', 'work phone is right' );
 
     $ysm_ws->updateUserInfo(
-        username => $self->common_test_data( 'test_user' ),
+        username => $ysm_ws->username,
         userInfo => $user,
-        updateAll => 'true',
+        updateAll => 'false',
     );
-    my $fetched_user2 = $ysm_ws->getUserInfo( username => $self->common_test_data( 'test_user' ) );
+    my $fetched_user2 = $ysm_ws->getUserInfo( username => $ysm_ws->username );
 
     is( $fetched_user2->workPhone, $user->workPhone, 'phone is right' );
 }
+
 
 sub test_test_username : Test(2) {
     my $self = shift;
@@ -366,6 +414,8 @@ sub test_test_username : Test(2) {
     # we hope this randomish username is available
     is( $ysm_ws->testUsername( username => $self->_make_username ), 'true', 'randomish username is available' );
 }
+
+
 
 sub startup_test_user_management_service : Test(startup) {
     my $self = shift;

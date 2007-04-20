@@ -42,15 +42,19 @@ sub _new_from_hash {
             $obj->$key( $response_status_type );
         }
         elsif ( $key eq 'relatedKeywords' ) {
-            my @array;
-            foreach my $item ( ref $hash->{ $key }{'RelatedKeywordType'} eq 'ARRAY' ? @{ $hash->{ $key }{'RelatedKeywordType'} } : ( $hash->{ $key }{'RelatedKeywordType'} || () ) ) {
-                my $related_keyword_type = Yahoo::Marketing::RelatedKeywordType->new->_new_from_hash( $item );
-                push @array, $related_keyword_type;
+            if( $hash->{ $key } ){
+                my @array;
+                foreach my $item ( ref $hash->{ $key }{'RelatedKeywordType'} eq 'ARRAY' ? @{ $hash->{ $key }{'RelatedKeywordType'} } : ( $hash->{ $key }{'RelatedKeywordType'} || () ) ) {
+                    my $related_keyword_type = Yahoo::Marketing::RelatedKeywordType->new->_new_from_hash( $item );
+                    push @array, $related_keyword_type;
+                }
+                $obj->$key( @array ? \@array : [] );
+            }else{
+                $obj->$key( [] );
             }
-            $obj->$key( @array ? \@array : undef );
         }
         elsif ( $key eq 'notes' ) {
-	    $obj->$key( $hash->{$key} ? $hash->{$key}->{string} : undef );
+            $obj->$key( $hash->{$key} ? $hash->{$key}->{string} : undef );
         }
         else {
             $obj->$key( $hash->{ $key } );
