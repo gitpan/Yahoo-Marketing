@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Account;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -27,7 +27,7 @@ sub _user_setable_attributes {
                  sitePassword
                  siteUserName
                  sponsoredSearchON
-                 vatCode
+                 vatRegistrationNumber
                  websiteURL
             /  );
 }
@@ -73,7 +73,7 @@ Creates a new instance
     sitePassword
     siteUserName
     sponsoredSearchON
-    vatCode
+    vatRegistrationNumber
     websiteURL
 
 =back

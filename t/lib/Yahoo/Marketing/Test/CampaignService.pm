@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::CampaignService;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -53,18 +53,20 @@ sub test_get_campaign : Test(3) {
     is( $fetched_campaign->ID,   $campaign->ID,   'ID is right' );
 }
 
-sub test_update_campaign : Test(21) {
+sub test_update_campaign : Test(22) {
     my ( $self ) = @_;
     return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
     my $formatter = DateTime::Format::W3CDTF->new;
-    my $datetime = DateTime->now;
-    $datetime->set_time_zone( 'America/Chicago' );
+    my $start_datetime = DateTime->now;
+    $start_datetime->set_time_zone( 'America/Chicago' );
+    $start_datetime->add( days => 2 );
 
-    my $start_datetime = $formatter->format_datetime( $datetime );
-
+    my $end_datetime = DateTime->now;
+    $end_datetime->set_time_zone( 'America/Chicago' );
+    $end_datetime->add( years => 2 );
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
     my $update_campaign_response = $ysm_ws->updateCampaign( 
@@ -73,7 +75,8 @@ sub test_update_campaign : Test(21) {
                                                               ->contentMatchON( 'true' ) 
                                                               ->advancedMatchON( 'true' ) 
                                                               ->sponsoredSearchON( 'true' ) 
-                                                              ->startDate( $start_datetime ),
+                                                              ->startDate( $start_datetime )
+                                                              ->endDate( $end_datetime ),
                                         updateAll => 'true',
                                     );
 
@@ -82,13 +85,13 @@ sub test_update_campaign : Test(21) {
     my $updated_campaign = $update_campaign_response->campaign;
     ok( $updated_campaign);
     is( $updated_campaign->name,                    "updated campaign $$", 'name is right' );
-    is( $updated_campaign->ID,                      $campaign->ID,   'ID is right' );
-    is( $updated_campaign->watchON,                 'true',          'watch on is true' );
-    is( $updated_campaign->contentMatchON,          'true',          'content match on is true' );
-    is( $updated_campaign->advancedMatchON,         'true',          'advanced match on is true' );
-    is( $updated_campaign->sponsoredSearchON,       'true',          'sponsored search  on is true' );
-    is( DateTime->compare( $formatter->parse_datetime( $updated_campaign->startDate ),
-                           $datetime ),             0,               'start date is right' );
+    is( $updated_campaign->ID,                      $campaign->ID,         'ID is right' );
+    is( $updated_campaign->watchON,                 'true',                'watch on is true' );
+    is( $updated_campaign->contentMatchON,          'true',                'content match on is true' );
+    is( $updated_campaign->advancedMatchON,         'true',                'advanced match on is true' );
+    is( $updated_campaign->sponsoredSearchON,       'true',                'sponsored search  on is true' );
+    is( DateTime->compare( $updated_campaign->startDate, $start_datetime ), 0,   'start date is right' );
+    is( DateTime->compare( $updated_campaign->endDate,   $end_datetime ),   0,   'end date is right' );
 
     is( $ysm_ws->last_command_group, 'Marketing', 'last command group gets set correctly' );
     like( $ysm_ws->remaining_quota, qr/^\d+$/, 'remaining quota looks right' );
@@ -106,8 +109,7 @@ sub test_update_campaign : Test(21) {
     is( $updated_campaign->advancedMatchON,         'false',          'advanced match on is false' );
     is( $updated_campaign->sponsoredSearchON,       'true',          'sponsored search  on is false' );
 
-    $datetime->subtract( years => 1 );
-    $start_datetime = $formatter->format_datetime( $datetime );
+    $start_datetime->subtract( years => 1 );
 
     $update_campaign_response = $ysm_ws->updateCampaign( campaign  => $updated_campaign->startDate( $start_datetime ), 
                                                          updateAll => 'true',
@@ -492,7 +494,7 @@ sub test_set_get_delete_geographic_location_for_campaign_doesnt_fail_for_bad_loc
 
     is( ref $response, 'Yahoo::Marketing::SetGeographicLocationResponse' );
     is( $response->setSucceeded, 'false' );
-    is( $response->stringsWithNoMatches, $silly_geo_string );
+    is( $response->stringsWithNoMatches->[0], $silly_geo_string );
 
     ok( not $response->ambiguousMatches );
 }
@@ -532,10 +534,7 @@ sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(5) {
                        optimizationGuidelines => $campaignOptimizationGuidelines,
                    );
 
-    {
-        local $TODO = 'setOptimizationGuidelinesForCampaign has issues...';
-        is( $response->operationSucceeded, 'true' );
-    }
+    is( $response->operationSucceeded, 'true' );
 
     my $updated_campaign_optimization_guidelines = $response->campaignOptimizationGuidelines;
 
@@ -623,7 +622,7 @@ sub test_add_campaigns_doesnt_add_if_one_is_bad : Test(3) {
 
     eval { $ysm_ws->addCampaigns( campaigns => [ $campaign1, $campaign2, $campaign3 ] ); };
 
-    like( $@, qr/A required field startDate is missing/m, 'add campaigns fails as expected' );
+    like( $@, qr/A required field .*is missing or empty/, 'add campaigns fails as expected' );
     my @campaigns = $ysm_ws->getCampaignsByAccountID(
         accountID      => $ysm_ws->account,
         includeDeleted => 'false',

@@ -31,6 +31,8 @@ lib/Yahoo/Marketing/CampaignResponse.pm
 lib/Yahoo/Marketing/CampaignService.pm
 lib/Yahoo/Marketing/Capability.pm
 lib/Yahoo/Marketing/CombinedAccountStatus.pm
+lib/Yahoo/Marketing/Company.pm
+lib/Yahoo/Marketing/CompanyService.pm
 lib/Yahoo/Marketing/ComplexType.pm
 lib/Yahoo/Marketing/CreditCardInfo.pm
 lib/Yahoo/Marketing/DateTimeAccessor.pm
@@ -49,6 +51,9 @@ lib/Yahoo/Marketing/ForecastResponseData.pm
 lib/Yahoo/Marketing/ForecastService.pm
 lib/Yahoo/Marketing/Keyword.pm
 lib/Yahoo/Marketing/KeywordEditorialReasons.pm
+lib/Yahoo/Marketing/KeywordInfoRequestType.pm
+lib/Yahoo/Marketing/KeywordInfoResponseType.pm
+lib/Yahoo/Marketing/KeywordInfoType.pm
 lib/Yahoo/Marketing/KeywordOptimizationGuidelines.pm
 lib/Yahoo/Marketing/KeywordOptimizationGuidelinesResponse.pm
 lib/Yahoo/Marketing/KeywordRejectionReasons.pm
@@ -114,6 +119,8 @@ t/campaign_response.t
 t/campaign_service.t
 t/capability.t
 t/combined_account_status.t
+t/company.t
+t/company_service.t
 t/credit_card_info.t
 t/error.t
 t/error_type.t
@@ -130,6 +137,9 @@ t/forecast_response_data.t
 t/forecast_service.t
 t/keyword.t
 t/keyword_editorial_reasons.t
+t/keyword_info_request_type.t
+t/keyword_info_response_type.t
+t/keyword_info_type.t
 t/keyword_optimization_guidelines.t
 t/keyword_optimization_guidelines_response.t
 t/keyword_rejection_reasons.t
@@ -165,6 +175,8 @@ t/lib/Yahoo/Marketing/Test/CampaignResponse.pm
 t/lib/Yahoo/Marketing/Test/CampaignService.pm
 t/lib/Yahoo/Marketing/Test/Capability.pm
 t/lib/Yahoo/Marketing/Test/CombinedAccountStatus.pm
+t/lib/Yahoo/Marketing/Test/Company.pm
+t/lib/Yahoo/Marketing/Test/CompanyService.pm
 t/lib/Yahoo/Marketing/Test/CreditCardInfo.pm
 t/lib/Yahoo/Marketing/Test/Error.pm
 t/lib/Yahoo/Marketing/Test/ErrorType.pm
@@ -180,6 +192,9 @@ t/lib/Yahoo/Marketing/Test/ForecastResponseData.pm
 t/lib/Yahoo/Marketing/Test/ForecastService.pm
 t/lib/Yahoo/Marketing/Test/Keyword.pm
 t/lib/Yahoo/Marketing/Test/KeywordEditorialReasons.pm
+t/lib/Yahoo/Marketing/Test/KeywordInfoRequestType.pm
+t/lib/Yahoo/Marketing/Test/KeywordInfoResponseType.pm
+t/lib/Yahoo/Marketing/Test/KeywordInfoType.pm
 t/lib/Yahoo/Marketing/Test/KeywordOptimizationGuidelines.pm
 t/lib/Yahoo/Marketing/Test/KeywordOptimizationGuidelinesResponse.pm
 t/lib/Yahoo/Marketing/Test/KeywordRejectionReasons.pm

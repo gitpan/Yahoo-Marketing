@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::KeywordService;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -164,7 +164,7 @@ sub test_can_get_keywords : Test(21) {
     }
 }
 
-sub test_can_get_keywords_by_account_id : Test(28) {
+sub test_can_get_keywords_by_account_id : Test(35) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -191,7 +191,7 @@ sub test_can_get_keywords_by_account_id : Test(28) {
 }
 
 
-sub test_can_get_keywords_by_ad_group_id : Test(28) {
+sub test_can_get_keywords_by_ad_group_id : Test(35) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -219,7 +219,7 @@ sub test_can_get_keywords_by_ad_group_id : Test(28) {
 }
 
 
-sub test_can_get_keywords_by_ad_group_id_by_editorial_status : Test(28) {
+sub test_can_get_keywords_by_ad_group_id_by_editorial_status : Test(35) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -252,7 +252,7 @@ sub test_can_get_keywords_by_ad_group_id_by_editorial_status : Test(28) {
 }
 
 
-sub test_can_get_keywords_by_ad_group_id_by_status : Test(28) {
+sub test_can_get_keywords_by_ad_group_id_by_status : Test(35) {
     my ( $self ) = @_;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -306,10 +306,7 @@ sub test_can_get_and_set_optimization_guidelines_for_keyword : Test(2) {
                        optimizationGuidelines => $keyword_optimization_guidelines 
                    );
 
-    {
-        local $TODO = 'setOptimizationGuidelinesForKeyword having issues...';
-        is( $response->operationSucceeded, 'true' );
-    }
+    is( $response->operationSucceeded, 'true' );
 
     is( $response->keywordOptimizationGuidelines->sponsoredSearchMaxBid, '9.99' );
 }
@@ -355,6 +352,9 @@ sub test_can_get_editorial_reasons_for_keyword : Test(7) {
         updateAll => 'false',
     );
     ok( $response );
+
+    return "update was not rejected" unless $response->errors;
+
     ok( $response->errors );
     like( $response->errors->[0]->message, qr/rejected/ );
 

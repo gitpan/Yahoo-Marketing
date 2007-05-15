@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::MasterAccountService;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -13,9 +13,8 @@ use Yahoo::Marketing::Account;
 use Yahoo::Marketing::BillingUser;
 use Yahoo::Marketing::MasterAccount;
 use Yahoo::Marketing::CreditCardInfo;
+use Yahoo::Marketing::CompanyService;
 use Yahoo::Marketing::MasterAccountService;
-
-# use SOAP::Lite +trace => [qw/ debug method fault /];
 
 my $section = 'sandbox';
 
@@ -35,6 +34,25 @@ sub test_get_master_account : Test(7) {
     ok( $master_account->name );
     is( $master_account->signupStatus, 'Success', 'signupStatus is Success' );
     ok( $master_account->trackingON =~ /^(false|true)$/ );
+}
+
+sub test_get_master_accounts_by_company_id : Test(4) {
+    my $self = shift;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $company_ws = Yahoo::Marketing::CompanyService->new->parse_config( section => $section );
+
+    my $company = $company_ws->getCompany;
+
+    my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
+
+    my @master_accounts = $ysm_ws->getMasterAccountsByCompanyID( companyID => $company->companyID );
+
+    ok( @master_accounts );
+    ok( @master_accounts >= 1, 'at least one master account' );
+    ok( ( scalar grep { $_->companyID == $company->companyID } @master_accounts ) == @master_accounts, 'all master accounts have same, correct company ID' );
+    ok( ( grep { $_->ID == $ysm_ws->master_account } @master_accounts ) == 1, 'only 1 master account matching the one we started with' );
 }
 
 sub test_get_master_account_status : Test(1) {
@@ -60,8 +78,7 @@ sub test_update_master_account : Test(4) {
     my $old_tracking_on = $master_account->trackingON;
 
     $ysm_ws->updateMasterAccount(
-        masterAccount => $master_account->trackingON( $old_tracking_on eq 'false' ? 'true' : 'false' )
-        ,
+        masterAccount => $master_account->trackingON( $old_tracking_on eq 'false' ? 'true' : 'false' ),
     );
 
     my $fetched_master_account = $ysm_ws->getMasterAccount( masterAccountID => $ysm_ws->master_account );
@@ -80,8 +97,6 @@ sub test_update_master_account : Test(4) {
 
 }
 
-=skip
-# we skip addNewCustomer test, because evry time run test, it will create a new masterAccount and cannot delete it.
 sub _make_username {
     my $time = time();
     return 'tu'.substr( $time, length($time) - 8, length( $time ) );
@@ -92,6 +107,8 @@ sub test_add_new_customer : Test(8) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
+
+    return 'not running addNewCustomer test to prevent creatinga new master account for each test run';
 
     my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
 

@@ -1,5 +1,5 @@
 package Yahoo::Marketing::MasterAccount;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -15,7 +15,9 @@ Yahoo::Marketing::MasterAccount - an object to represent a Yahoo Marketing Maste
 sub _user_setable_attributes {
     return ( qw/ 
                  ID
+                 companyID
                  currencyID
+                 marketID
                  name
                  signupStatus
                  taggingON
@@ -53,7 +55,9 @@ Creates a new instance
 =over 8
 
     ID
+    companyID
     currencyID
+    marketID
     name
     signupStatus
     taggingON

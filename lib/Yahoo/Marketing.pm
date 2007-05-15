@@ -1,5 +1,5 @@
 package Yahoo::Marketing;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use warnings;
@@ -12,18 +12,20 @@ Yahoo::Marketing - an interface for Yahoo! Search Marketing's Web Services.
 
 =head1 VERSION
 
-Version 1.01
+Version 2.01
 
 =cut
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '1.01';
+our $VERSION = '2.01';
 
 
 =head1 SYNOPSIS
 
 This collection of modules makes interacting with Yahoo! Search Marketing's Web Services as easy as possible.
+
+B<Note that this version (2.x) is intended to be used with V2 of the marketing web services.>
 
 Sample Usage:
 
@@ -64,6 +66,10 @@ Sample Usage:
 
     my $added_keyword = $keyword_response->keyword;
     ...
+
+=head1 VERSIONING
+
+This version of Yahoo::Marketing is intended to be used with V2 of Yahoo's Marketing API.  If you need to access both V1 and V2 simultaneously, you'll need to install 2 versions of Yahoo::Marketing.  In order to have 2 versions of the same perl module installed, you'll need to put one in a non-standard location, for example ~/perl/.  See perldoc CPAN for more information.
 
 =head1 OVERVIEW
 
@@ -274,18 +280,18 @@ is loaded B<only if an account has not already been set!>
    license: your-ews-license
    master_account: 98765432
    password: secretpassword
-   uri: http://marketing.ews.yahooapis.com/V1
+   uri: http://marketing.ews.yahooapis.com/V2
    username: defaultusername
-   version: V1
+   version: V2
  sandbox:
    default_account: 21921327 
    endpoint: https://sandbox.marketing.ews.yahooapis.com/services
    license: 90837ada-3b26-c2e5-6d59-61d7f2fb578e
    master_account: 21921326 
    password: mypassword
-   uri: http://marketing.ews.yahooapis.com/V1
+   uri: http://marketing.ews.yahooapis.com/V2
    username: mytestusername
-   version: V1
+   version: V2
 
 
 =head1 DEBUGGING
@@ -344,7 +350,7 @@ Also Gerard Paulke C<< <paulkeg at yahoo-inc.com> >>.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 =head1 TODO

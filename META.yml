@@ -1,6 +1,6 @@
 ---
 name: Yahoo-Marketing
-version: 1.01
+version: 2.01
 author:
   - 'Jeff Lavallee <jeff@zeroclue.com>'
 abstract: an interface for Yahoo! Search Marketing's Web Services.
@@ -29,7 +29,7 @@ build_requires:
 provides:
   Yahoo::Marketing:
     file: lib/Yahoo/Marketing.pm
-    version: 1.01
+    version: 2.01
   Yahoo::Marketing::Account:
     file: lib/Yahoo/Marketing/Account.pm
   Yahoo::Marketing::AccountService:
@@ -90,6 +90,10 @@ provides:
     file: lib/Yahoo/Marketing/Capability.pm
   Yahoo::Marketing::CombinedAccountStatus:
     file: lib/Yahoo/Marketing/CombinedAccountStatus.pm
+  Yahoo::Marketing::Company:
+    file: lib/Yahoo/Marketing/Company.pm
+  Yahoo::Marketing::CompanyService:
+    file: lib/Yahoo/Marketing/CompanyService.pm
   Yahoo::Marketing::ComplexType:
     file: lib/Yahoo/Marketing/ComplexType.pm
   Yahoo::Marketing::CreditCardInfo:
@@ -126,6 +130,12 @@ provides:
     file: lib/Yahoo/Marketing/Keyword.pm
   Yahoo::Marketing::KeywordEditorialReasons:
     file: lib/Yahoo/Marketing/KeywordEditorialReasons.pm
+  Yahoo::Marketing::KeywordInfoRequestType:
+    file: lib/Yahoo/Marketing/KeywordInfoRequestType.pm
+  Yahoo::Marketing::KeywordInfoResponseType:
+    file: lib/Yahoo/Marketing/KeywordInfoResponseType.pm
+  Yahoo::Marketing::KeywordInfoType:
+    file: lib/Yahoo/Marketing/KeywordInfoType.pm
   Yahoo::Marketing::KeywordOptimizationGuidelines:
     file: lib/Yahoo/Marketing/KeywordOptimizationGuidelines.pm
   Yahoo::Marketing::KeywordOptimizationGuidelinesResponse:

@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::UserManagementService;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -310,7 +310,7 @@ sub test_get_my_authorization : Test(2) {
 }
 
 
-sub test_get_and_update_my_user_info : Test(5) {
+sub test_get_and_update_my_user_info : Test(3) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -320,16 +320,16 @@ sub test_get_and_update_my_user_info : Test(5) {
 
     ok( $user, 'can get my user info' );
 
+    my $phone = '212-555-'.substr($$,0,4);
+
     $ysm_ws->updateMyUserInfo(
-        userInfo => $user->workPhone( '212-555-7890' ),
+        userInfo  => $user->workPhone( $phone ),
         updateAll => 'false',
     );
 
     my $fetched_user = $ysm_ws->getMyUserInfo;
 
-    is( $fetched_user->workPhone, '212-555-7890', 'work phone updated' );
-    is( $fetched_user->email, 'lavallej@yahoo-inc.com' );
-    is( $ysm_ws->getUserEmail( username => $ysm_ws->username ), 'lavallej@yahoo-inc.com', 'email is right' );
+    is( $fetched_user->workPhone, $phone, 'work phone updated' );
 
     $ysm_ws->updateMyUserInfo(
         userInfo => $user,

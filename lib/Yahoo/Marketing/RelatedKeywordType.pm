@@ -1,5 +1,5 @@
 package Yahoo::Marketing::RelatedKeywordType;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -31,22 +31,6 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
                            __PACKAGE__->_read_only_attributes
                          );
 
-
-sub _new_from_hash {
-    my ( $self, $hash ) = @_;
-
-    my $obj = __PACKAGE__->new;
-    foreach my $key ( keys %$hash ) {
-        if ( $key eq 'rangeValue' ) {
-            my $range_value_type = Yahoo::Marketing::RangeValueType->new->_new_from_hash( $hash->{$key} );
-            $obj->$key( $range_value_type );
-        }
-        else {
-            $obj->$key( $hash->{ $key } );
-        }
-    }
-    return $obj;
-}
 
 
 1;

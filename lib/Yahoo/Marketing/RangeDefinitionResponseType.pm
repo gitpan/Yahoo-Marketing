@@ -1,5 +1,5 @@
 package Yahoo::Marketing::RangeDefinitionResponseType;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -30,29 +30,6 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
                            __PACKAGE__->_read_only_attributes
                          );
 
-sub _new_from_hash {
-    my ( $self, $hash ) = @_;
-
-    my $obj = __PACKAGE__->new;
-    foreach my $key ( keys %$hash ) {
-        if ( $key eq 'responseStatus' ) {
-            my $response_status_type = Yahoo::Marketing::ResponseStatusType->new->_new_from_hash( $hash->{$key} );
-            $obj->$key( $response_status_type );
-        }
-        elsif ( $key eq 'rangeDefinition' ) {
-            my @array;
-            foreach my $item (ref $hash->{ $key }{'RangeDefinitionType'} eq 'ARRAY' ? @{ $hash->{ $key }{'RangeDefinitionType'} } : ( $hash->{ $key }{'RangeDefinitionType'} || () ) ) {
-                my $range_definition_type = Yahoo::Marketing::RangeDefinitionType->new->_new_from_hash( $item );
-                push @array, $range_definition_type;
-            }
-            $obj->$key( @array ? \@array : undef );
-        }
-        else {
-            $obj->$key( $hash->{ $key } );
-        }
-    }
-    return $obj;
-}
 
 
 1;

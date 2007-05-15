@@ -1,5 +1,5 @@
 package Yahoo::Marketing::RelatedKeywordResponseType;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -30,38 +30,6 @@ sub _read_only_attributes {
 __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes, 
                            __PACKAGE__->_read_only_attributes
                          );
-
-
-sub _new_from_hash {
-    my ( $self, $hash ) = @_;
-
-    my $obj = __PACKAGE__->new;
-    foreach my $key ( keys %$hash ) {
-        if ( $key eq 'responseStatus' ) {
-            my $response_status_type = Yahoo::Marketing::ResponseStatusType->new->_new_from_hash( $hash->{$key} );
-            $obj->$key( $response_status_type );
-        }
-        elsif ( $key eq 'relatedKeywords' ) {
-            if( $hash->{ $key } ){
-                my @array;
-                foreach my $item ( ref $hash->{ $key }{'RelatedKeywordType'} eq 'ARRAY' ? @{ $hash->{ $key }{'RelatedKeywordType'} } : ( $hash->{ $key }{'RelatedKeywordType'} || () ) ) {
-                    my $related_keyword_type = Yahoo::Marketing::RelatedKeywordType->new->_new_from_hash( $item );
-                    push @array, $related_keyword_type;
-                }
-                $obj->$key( @array ? \@array : [] );
-            }else{
-                $obj->$key( [] );
-            }
-        }
-        elsif ( $key eq 'notes' ) {
-            $obj->$key( $hash->{$key} ? $hash->{$key}->{string} : undef );
-        }
-        else {
-            $obj->$key( $hash->{ $key } );
-        }
-    }
-    return $obj;
-}
 
 
 

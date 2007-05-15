@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::AdService;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -41,6 +41,7 @@ sub shutdown_test_ad_service : Test(shutdown) {
     $self->cleanup_ad_group;
     $self->cleanup_campaign;
 };
+
 
 
 sub test_can_add_ad : Test(4) {
@@ -231,6 +232,28 @@ sub test_get_status_for_ad : Test(1) {
 
     is( $ysm_ws->getStatusForAd( adID => $ad->ID ), 'On', 'status is On' );
 }
+
+
+sub test_update_url_for_ad : Test(4) {
+    my ( $self ) = @_;
+
+    return 'not running post tests' unless $self->run_post_tests;
+
+    my $ad = $self->common_test_data( 'test_ad' );
+
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+
+    my $updated_ad = $ysm_ws->setAdUrl( adID => $ad->ID, url => "http://yahoo.com/$$" )->ad;  # note that we grab the ad out of the response here
+
+    ok( $updated_ad );
+    is( $updated_ad->url, "http://yahoo.com/$$" );
+
+    $updated_ad = $ysm_ws->setAdUrl( adID => $ad->ID, url => "http://yahoo.com/$$/bar" )->ad;
+
+    ok( $updated_ad );
+    is( $updated_ad->url, "http://yahoo.com/$$/bar" );
+}
+
 
 sub test_update_status_for_ad : Test(4) {
     my ( $self ) = @_;
@@ -608,6 +631,7 @@ sub test_update_ad : Test(10) {
     like( $fetched_ad->description,      qr/^[Hh]ere's some lame long description\. Not too long though\.$/, 'long description is updated' );
     like( $fetched_ad->shortDescription, qr/^[Hh]ere's some lame short description\.?$/, 'short description is updated' );
 }
+
 
 
 1;

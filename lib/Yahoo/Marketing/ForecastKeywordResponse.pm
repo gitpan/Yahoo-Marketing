@@ -1,5 +1,5 @@
 package Yahoo::Marketing::ForecastKeywordResponse;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -30,30 +30,6 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
                            __PACKAGE__->_read_only_attributes
                          );
 
-
-sub _new_from_hash {
-    my ( $self, $hash ) = @_;
-
-    my $obj = __PACKAGE__->new;
-    foreach my $key ( keys %$hash ) {
-        if ( $key eq 'customizedResponseByAdGroup' or $key eq 'defaultResponseByAdGroup' ) {
-            my $forecast_response_data = Yahoo::Marketing::ForecastResponseData->new->_new_from_hash( $hash->{$key} );
-            $obj->$key( $forecast_response_data );
-        }
-        elsif ( ( $key eq 'landscapeByAdGroup' or $key eq 'customizedResponseByAdGroup' ) and $hash->{ $key } ) {
-            my @array;
-            foreach my $item ( ref $hash->{ $key }{ 'ForecastResponseData' } eq 'ARRAY' 
-                             ? @{ $hash->{ $key }{ 'ForecastResponseData' } } 
-                             : ( $hash->{ $key }{ 'ForecastResponseData' } || () ) 
-                             ) {
-                my $forecast_response_data = Yahoo::Marketing::ForecastResponseData->new->_new_from_hash( $item );
-                push @array, $forecast_response_data;
-            }
-            $obj->$key( @array ? \@array : undef );
-        }
-    }
-    return $obj;
-}
 
 1;
 =head1 SYNOPSIS

@@ -11,8 +11,8 @@ my $builder = Module::Build->subclass(
                  our $run_post;  
 
                  my %config_defaults = ( endpoint => 'https://sandbox.marketing.ews.yahooapis.com/services',
-                                         uri      => 'http://marketing.ews.yahooapis.com/V1',
-                                         version  => 'V1',
+                                         uri      => 'http://marketing.ews.yahooapis.com/V2',
+                                         version  => 'V2',
                                        );
 
                  sub ACTION_posttest {

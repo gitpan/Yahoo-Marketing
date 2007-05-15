@@ -1,5 +1,5 @@
 #!perl 
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -78,7 +78,7 @@ SKIP: {
                 );
                 if( @ads ){
                     $ad_service->deleteAds( adIDs => [ map { $_->ID } @ads ], );
-                    diag( ( scalar @ads ) . "ads have been deleted successfully." );
+                    diag( ( scalar @ads ) . " ads have been deleted successfully." );
                 }
             }
 

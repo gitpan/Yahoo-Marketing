@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::ForecastService;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -62,7 +62,7 @@ sub test_get_forecast_for_keyword : Test(15) {
 }
 
 
-sub test_get_forecast_for_keywords : Test(18) {
+sub test_get_forecast_for_keywords : Test(16) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
@@ -95,11 +95,8 @@ sub test_get_forecast_for_keywords : Test(18) {
                           );
     ok( $result );
 
-    my $customized_response_by_ad_group = $result->customizedResponseByAdGroup;
-    ok( $customized_response_by_ad_group );
     # customized_response_by_ad_group should be empty, since we didnot override in forecastKeywords.
-    ok( !$customized_response_by_ad_group->impressions );
-    ok( !$customized_response_by_ad_group->maxBid );
+    ok( not $result->customizedResponseByAdGroup );
 
     my $default_response_by_ad_group = $result->defaultResponseByAdGroup;
     if( $default_response_by_ad_group and defined $default_response_by_ad_group->impressions ){

@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Service;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings; 
@@ -44,9 +44,9 @@ sub new {
     $args{ use_wsse_security_headers } = 1       unless exists $args{ use_wsse_security_headers };
     $args{ use_location_service }      = 1       unless exists $args{ use_location_service };
     $args{ cache_expire_time }         = '1 day' unless exists $args{ cache_expire_time };
-    $args{ version }                   = 'V1'    unless exists $args{ version };
+    $args{ version }                   = 'V2'    unless exists $args{ version };
 
-    $args{ uri } = 'http://marketing.ews.yahooapis.com/V1' 
+    $args{ uri } = 'http://marketing.ews.yahooapis.com/V2' 
         unless exists $args{ uri };
 
     my $self = bless \%args, $class;
@@ -77,7 +77,7 @@ sub parse_config {
 
     my $config = LoadFile( $args{ path } );
 
-    foreach my $config_setting ( qw/ username password master_account license endpoint uri / ){
+    foreach my $config_setting ( qw/ username password master_account license endpoint uri version / ){
         my $value = $config->{ $args{ 'section' } }->{ $config_setting };
         croak "no configuration value found for $config_setting in $args{ path }\n" 
             unless $value;
@@ -117,9 +117,9 @@ sub _location {
     my $locations = $self->cache->get( 'locations' );
 
     if( $locations 
-    and $locations->{ $self->endpoint }
-    and $locations->{ $self->endpoint }->{ $self->master_account } ){
-        return $locations->{ $self->endpoint }->{ $self->master_account };
+    and $locations->{ $self->version }->{ $self->endpoint }
+    and $locations->{ $self->version }->{ $self->endpoint }->{ $self->master_account } ){
+        return $locations->{ $self->version }->{ $self->endpoint }->{ $self->master_account };
     }
 
     my $som = $self->_soap( $self->endpoint
@@ -143,7 +143,7 @@ sub _location {
 
     $location .= '/'.$self->version;
 
-    $locations->{ $self->endpoint }->{ $self->master_account } = $location ;
+    $locations->{ $self->version }->{ $self->endpoint }->{ $self->master_account } = $location ;
 
     $self->cache->set( 'locations', $locations, $self->cache_expire_time );
 
@@ -266,44 +266,88 @@ sub _parse_response {
 
         my @values;
         if( $type =~ /ArrayOf/ ){
-            my $map = $self->_array_type_map( $type ); 
-            $type = $map->{ type };
-            @values = ref( $result->{ out }->{ $map->{ name } } ) eq 'ARRAY' ? @{ $result->{ out }->{ $map->{ name } } } : ( $result->{ out }->{ $map->{ name } } );
+            my $element_type = $self->_response_array_type_map( $type ); 
+            @values = ref( $result->{ out }->{ $element_type } ) eq 'ARRAY' 
+                    ? map { $self->_deserialize( $_, $element_type ) } @{ $result->{ out }->{ $element_type } } 
+                    : ( $self->_deserialize( $result->{ out }->{ $element_type }, $element_type ) )
+            ;
         }else{
-            @values = ( $result->{ out } );
+            @values = $self->_deserialize( $result->{ out }, $type );
         }
 
         die 'Unable to parse response!' unless @values;
 
-        confess "oops, trying to deserialize non trivial response, but cannot determine object type!" unless $type;
-
-        if( (($type !~ /^tns:(.*Status|Continent)$/) or ($type =~ /^tns:Combined.*Status$/))
-            and $type =~ s/^tns:// 
-            and scalar @values ){  # make an object
-
-            # pull it in
-            my $class = "Yahoo::Marketing::$type";
-            eval "require $class";
-
-            die "whoops, couldn't load $class: $@" if $@;
-
-            my $obj = $class->new;
-            
-            foreach my $hash ( @values ){
-                push @return_values, $obj->_new_from_hash( $hash );
-            }
-        }else{
-            push @return_values, @values;
-        }
-
         return wantarray
-             ? @return_values
-             : $return_values[0];
+             ? @values
+             : $values[0];
 
     }
 
     return 1;   # no output, but seemed succesful
 }
+
+
+sub _deserialize {
+    my ( $self, $hash, $type ) = @_;
+
+    my @return_values;
+
+
+    my $obj;
+
+    if( ref $hash eq 'ARRAY' ){
+        return map { $self->_deserialize( $_, $type ) } @{ $hash };
+    }elsif( $type =~ /ArrayOf(.*)/ ){
+        my $element_type = $1;
+        return [ map { $self->_deserialize( $_, $element_type ) } ( ref $hash eq 'ARRAY' ? @{ $hash } : values %$hash ) ];
+    }elsif( $type !~ /^xsd:|(?<!CombinedAccount)Status$|[Ss]tring$|Int$|Continent$/ ){
+        $type =~ s/^tns://;
+
+        # pull it in
+        my $class = 'Yahoo::Marketing::'.ucfirst( $type );
+        eval "require $class";
+
+        die "whoops, couldn't load $class: $@" if $@;
+
+        $obj = $class->new;
+    }elsif( not ref $hash eq 'HASH'){
+        return $hash;
+    }else{  # this should never be reached
+        confess "how did we get here?  type = $type, hash = $hash\n";
+    }
+
+    foreach my $key ( keys %$hash ){
+        if( not ref $hash->{ $key } ){
+            $obj->$key( $hash->{ $key } );
+        }elsif( ref $hash->{ $key } eq 'ARRAY' ){ # better have an array arguement mapping
+                my $type = $self->_simple_types( $key );
+
+                return [ map { $self->_deserialize( $_, $type ) } @{ $hash->{ $key } } ];
+        }elsif( ref $hash->{ $key } eq 'HASH' ){
+            my $type = $self->_simple_types( $key );
+
+            # special case for array types returning as just a hash with a single element.  Annoying.
+            if( $type =~ /^ArrayOf/ ){
+                $type = $self->_response_array_type_map( $type );
+                $obj->$key( [ $self->_deserialize( $hash->{ $key }->{ (keys %{ $hash->{ $key } })[0] }, $type ) ] );
+                next;
+            }
+                
+            $obj->$key( $self->_deserialize( $hash->{ $key }, $type ) ); 
+        }else{
+            warn "can't handle $key in response yet ( $hash->{ $key } )\n";
+        }
+    }
+
+    push @return_values, $obj;
+
+    return wantarray
+            ? @return_values
+            : $return_values[0]
+    ;
+}
+
+
 
 sub _is_not_trivial {
     my ( $self, $response_values ) = @_;
@@ -405,6 +449,20 @@ sub _login_headers {
              );
 }
 
+sub clear_cache {
+    my $self = shift;
+    $self->cache->clear;
+    delete $service_data->{ $self->_wsdl } if $service_data;
+    return $self;
+}
+
+sub purge_cache {
+    my $self = shift;
+    $self->cache->purge;
+    delete $service_data->{ $self->_wsdl } if $service_data;
+    return $self;
+}
+
 sub _parse_wsdl {
     my ( $self, ) = @_;
 
@@ -421,7 +479,7 @@ sub _parse_wsdl {
         my $name = $node->getName;
         if( $name eq 'xsd:complexType' ){
             $self->_parse_complex_type( $node, $xpath );
-        }elsif( $node->getAttribute('name') =~ /Response$/ ){
+        }elsif( $node->getAttribute('name') =~ /Response(Type)?$/ ){
             $self->_parse_response_type( $node, $xpath );
         }else{
             $self->_parse_request_type( $node, $xpath );
@@ -432,26 +490,9 @@ sub _parse_wsdl {
     return;
 }
 
-sub clear_cache {
-    my $self = shift;
-    $self->cache->clear;
-    delete $service_data->{ $self->_wsdl } if $service_data;
-    return $self;
-}
-
-sub purge_cache {
-    my $self = shift;
-    $self->cache->purge;
-    delete $service_data->{ $self->_wsdl } if $service_data;
-    return $self;
-}
-
 sub _parse_request_type {
     my ( $self, $node, $xpath ) = @_;
-    my $element_name = $node->getAttribute( 'name' );
-    my $element_type = $element_name;
-    my $type_name = $element_name;
-    $type_name =~ s/(^tns:)|(^xsd:)//;
+    my $type_name = $node->getAttribute( 'name' );
 
     my $def = $xpath->find( qq{/wsdl:definitions/wsdl:types/xsd:schema/xsd:element[\@name='$type_name']/xsd:complexType/xsd:sequence/xsd:element} );
 
@@ -462,33 +503,17 @@ sub _parse_request_type {
         my $name = $def_node->getAttribute( 'name' );
         my $type = $def_node->getAttribute( 'type' );
 
-        $self->_parse_array_of_type( $xpath, $name, $type ) if $type=~ /^tns:ArrayOf/;
+        $self->_parse_array_of_type( $xpath, $name, $type, 'request' ) if $type=~ /^tns:ArrayOf/;
+
         $service_data->{ $self->_wsdl }->{ type_map }->{ $name } = $type ;
     }
 
     return;
 }
 
-sub _parse_array_of_type {
-    my ( $self, $xpath, $name, $type ) = @_;
-
-    my $type_name = $type; $type_name =~ s/^tns://;
-    my $def_node = ($xpath->find( qq{/wsdl:definitions/wsdl:types/xsd:schema/xsd:complexType[\@name='$type_name']/xsd:sequence/xsd:element} )->get_nodelist)[0];
-    die "couldn't find definition for $type_name!\n" unless $def_node;
-   
-    $service_data->{ $self->_wsdl }->{ array_argument_type_map }->{ $name } 
-        = { type => $type, child => $def_node->getAttribute('name') };
-    $service_data->{ $self->_wsdl }->{ array_type_map }->{ $type } 
-        = { type => $def_node->getAttribute('type'), name => $def_node->getAttribute('name') };
-
-    return; 
-}
-
 sub _parse_response_type {
     my ( $self, $node, $xpath ) = @_;
-    my $element_name = $node->getAttribute( 'name' );
-    my $element_type = $element_name;
-    my $type_name = $element_name;
+    my $type_name = $node->getAttribute( 'name' );
     $type_name =~ s/(^tns:)|(^xsd:)//;
 
     my $def = $xpath->find( qq{/wsdl:definitions/wsdl:types/xsd:schema/xsd:element[\@name='$type_name']/xsd:complexType/xsd:sequence/xsd:element[\@name='out']} );
@@ -496,34 +521,69 @@ sub _parse_response_type {
 
     my $def_node = ($def->get_nodelist)[0];   # there's always just one
 
-    my $name = $def_node->getAttribute( 'name' );
-    my $type = $def_node->getAttribute( 'type' );
+    ( my $name = $def_node->getAttribute( 'name' ) ) =~ s/^tns://;
+    ( my $type = $def_node->getAttribute( 'type' ) ) =~ s/^tns://;
 
-    $self->_parse_array_of_type( $xpath, $name, $type ) if $type=~ /^tns:ArrayOf/;
+    $self->_parse_array_of_type( $xpath, $name, $type, 'response' ) if $type =~ /^ArrayOf/;
  
-    $service_data->{ $self->_wsdl }->{ response_map }->{ $element_name } = { $name => $type };
+    $service_data->{ $self->_wsdl }->{ response_map }->{ $type_name } = { $name => $type };
 
     return;
+}
+
+sub _parse_array_of_type {
+    my ( $self, $xpath, $name, $type, $request_or_response ) = @_;
+
+    $type =~ s/^(tns:)//;
+
+    my $def_node = ($xpath->find( qq{/wsdl:definitions/wsdl:types/xsd:schema/xsd:complexType[\@name='$type']/xsd:sequence/xsd:element} )->get_nodelist)[0];
+    die "couldn't find definition for $type!\n" unless $def_node;
+    ( my $child = $def_node->getAttribute('name') ) =~ s/^tns://;
+
+    $service_data->{ $self->_wsdl }->{ array_argument_type_map }->{ request }->{ $name } 
+        = { type => $type, child => $child }
+        if not $request_or_response or $request_or_response eq 'request';
+
+    $service_data->{ $self->_wsdl }->{ array_argument_type_map }->{ response }->{ $name } 
+        = { type => $type, child => $child }
+        if not $request_or_response or $request_or_response eq 'response';
+
+    ( my $type_name = $def_node->getAttribute('name') ) =~ s/^tns://;
+    $service_data->{ $self->_wsdl }->{ array_type_map }->{ request }->{ $type } 
+        = $type_name
+        if not $request_or_response or $request_or_response eq 'request';
+
+    $service_data->{ $self->_wsdl }->{ array_type_map }->{ response }->{ $type } 
+        = $type_name
+        if not $request_or_response or $request_or_response eq 'response';
+
+    return; 
 }
 
 
 sub _parse_complex_type {
     my ( $self, $node, $xpath ) = @_;
     my $element_name = $node->getAttribute( 'name' );
-    my $element_type = $element_name;
     my $type_name = $element_name;
-    $type_name =~ s/(^tns:)|(^xsd:)//;
 
     my $def = $xpath->find( qq{/wsdl:definitions/wsdl:types/xsd:schema/xsd:complexType[\@name='$type_name']/xsd:sequence/xsd:element} );
     die "unable to get definition for $type_name" unless $def;
 
     foreach my $complex_type_node ( $def->get_nodelist ) {
         my $name = $complex_type_node->getAttribute('name');
-        my $type = $complex_type_node->getAttribute('type');
+        ( my $type = $complex_type_node->getAttribute('type') ) =~ s/^tns://;
 
-        $self->_parse_array_of_type( $xpath, $name, $type ) if $type=~ /^tns:ArrayOf/;
+        if( $type=~ /^ArrayOf/ ){
+            if( $element_name =~ /Request(Type)?$/ ){
+                $self->_parse_array_of_type( $xpath, $name, $type, 'request' );
+            }elsif( $element_name =~ /Response(Type)?$/ ){
+                $self->_parse_array_of_type( $xpath, $name, $type, 'response' );
+            }else{
+                $self->_parse_array_of_type( $xpath, $name, $type );
+            }
+        }
 
-        $service_data->{ $self->_wsdl }->{ type_map }->{ $name } = $type ;
+        $service_data->{ $self->_wsdl }->{ type_map }->{ $name } = $type =~ /^xsd:/ ? $type : 'tns:'.$type
     }
 
     return;
@@ -543,17 +603,29 @@ sub _response_map {
     return $service_data->{ $self->_wsdl }->{ response_map }->{ $method.'Response' };
 }
 
-sub _array_argument_type_map {
+sub _request_array_argument_type_map {
     my ( $self, $array_of_type ) = @_;
 
-    return $service_data->{ $self->_wsdl }->{ array_argument_type_map }->{ $array_of_type };
+    return $service_data->{ $self->_wsdl }->{ array_argument_type_map }->{ request }->{ $array_of_type };
+}
+
+sub _response_array_argument_type_map {
+    my ( $self, $array_of_type ) = @_;
+
+    return $service_data->{ $self->_wsdl }->{ array_argument_type_map }->{ response }->{ $array_of_type };
 }
 
 
-sub _array_type_map {
+sub _request_array_type_map {
     my ( $self, $array_of_type ) = @_;
 
-    return $service_data->{ $self->_wsdl }->{ array_type_map }->{ $array_of_type };
+    return $service_data->{ $self->_wsdl }->{ array_type_map }->{ request }->{ $array_of_type };
+}
+
+sub _response_array_type_map {
+    my ( $self, $array_of_type ) = @_;
+
+    return $service_data->{ $self->_wsdl }->{ array_type_map }->{ response }->{ $array_of_type };
 }
 
 
@@ -562,6 +634,7 @@ sub _simple_types {
 
     return $service_data->{ $self->_wsdl }->{ type_map }->{ $name } 
         if exists $service_data->{ $self->_wsdl }->{ type_map }->{ $name };
+
     return;
 }
 
@@ -573,13 +646,6 @@ sub _class_name {
     confess "no name in _class_name!" unless $name;
 
     return $name;
-}
-
-sub _status_type {
-    my $self = shift;
-    my $type = $self->_class_name;
-    $type =~ s/(Service$|$)/Status/;
-    return 'tns:'.$type;
 }
 
 sub _escape_xml_baddies {
@@ -615,7 +681,7 @@ sub _serialize_argument {
 
     if( ref $value eq 'ARRAY' ){
 
-        if( my $type_def = $self->_array_argument_type_map( $name ) ) {   # it's one of those multiple methods
+        if( my $type_def = $self->_request_array_argument_type_map( $name ) ) {   # it's one of those multiple methods
 
             return SOAP::Data->type( $type_def->{ 'type' } )
                              ->name( $name )
@@ -674,7 +740,7 @@ Yahoo::Marketing::Service - a base class for Service modules
 =head1 SYNOPSIS
 
 This module is a base class for various Service modules (CampaignService, 
-AdGroupService) to inherit from.  It should not be used directly.
+AdGroupService, ForecastService, etc) to inherit from.  It should not be used directly.
 
 There are some methods common to all Services that are documented below.
 
@@ -732,7 +798,7 @@ Get/set the version to be used for requests
 
 Get/set the URI to be used for requests.  
 
-Defaults to http://marketing.ews.yahooapis.com/V1
+Defaults to http://marketing.ews.yahooapis.com/V2
 
 =head2 master_account
 

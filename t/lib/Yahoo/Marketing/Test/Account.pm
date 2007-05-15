@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::Account;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -25,7 +25,7 @@ sub test_can_create_account_and_set_all_fields : Test(16) {
                                            ->sitePassword( 'site password' )
                                            ->siteUserName( 'site user name' )
                                            ->sponsoredSearchON( 'sponsored search on' )
-                                           ->vatCode( 'vat code' )
+                                           ->vatRegistrationNumber( 'vat registration number' )
                                            ->websiteURL( 'website url' )
                    ;
 
@@ -44,7 +44,7 @@ sub test_can_create_account_and_set_all_fields : Test(16) {
     is( $account->sitePassword, 'site password', 'can get site password' );
     is( $account->siteUserName, 'site user name', 'can get site user name' );
     is( $account->sponsoredSearchON, 'sponsored search on', 'can get sponsored search on' );
-    is( $account->vatCode, 'vat code', 'can get vat code' );
+    is( $account->vatRegistrationNumber, 'vat registration number', 'can get vat registration number' );
     is( $account->websiteURL, 'website url', 'can get website url' );
 
 };

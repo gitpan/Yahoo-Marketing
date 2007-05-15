@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::MasterAccount;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -9,11 +9,13 @@ use Test::More;
 
 use Yahoo::Marketing::MasterAccount;
 
-sub test_can_create_master_account_and_set_all_fields : Test(8) {
+sub test_can_create_master_account_and_set_all_fields : Test(10) {
 
     my $master_account = Yahoo::Marketing::MasterAccount->new
                                                         ->ID( 'id' )
+                                                        ->companyID( 'company id' )
                                                         ->currencyID( 'currency id' )
+                                                        ->marketID( 'market id' )
                                                         ->name( 'name' )
                                                         ->signupStatus( 'signup status' )
                                                         ->taggingON( 'tagging on' )
@@ -24,7 +26,9 @@ sub test_can_create_master_account_and_set_all_fields : Test(8) {
     ok( $master_account );
 
     is( $master_account->ID, 'id', 'can get id' );
+    is( $master_account->companyID, 'company id', 'can get company id' );
     is( $master_account->currencyID, 'currency id', 'can get currency id' );
+    is( $master_account->marketID, 'market id', 'can get market id' );
     is( $master_account->name, 'name', 'can get name' );
     is( $master_account->signupStatus, 'signup status', 'can get signup status' );
     is( $master_account->taggingON, 'tagging on', 'can get tagging on' );

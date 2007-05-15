@@ -51,4 +51,7 @@ Revision history for Yahoo-Marketing
         Fix for getRelatedKeywords when no related keywords are returned
         Major version # bumped.  Going forward, the major version # of Yahoo::Marketing will correspond to the major version of EWS that the release is associated with.
 
+2.01    14 May 2007
+        Major version # bumped for EWS V2.  All changes neccessary to support V2 added.
+
 

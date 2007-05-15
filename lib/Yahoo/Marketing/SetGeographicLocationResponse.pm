@@ -1,5 +1,5 @@
 package Yahoo::Marketing::SetGeographicLocationResponse;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -30,31 +30,6 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
                            __PACKAGE__->_read_only_attributes
                          );
 
-sub _new_from_hash {
-    my ( $self, $hash ) = @_;
-
-    my $obj = __PACKAGE__->new;
-    foreach my $key ( keys %$hash ) {
-        if ( $key eq 'ambiguousMatches' ) {
-            my @array;
-            next unless (defined ref $hash->{ $key } and ref $hash->{ $key } eq 'HASH');
-            foreach my $item ( ref $hash->{ $key }{'AmbiguousGeoMatch'} eq 'ARRAY' 
-                             ? @{ $hash->{ $key }{'AmbiguousGeoMatch'} } 
-                             : ( $hash->{ $key }{'AmbiguousGeoMatch'} or () ) ) {
-                my $ambiguous_matches = Yahoo::Marketing::AmbiguousGeoMatch->new->_new_from_hash( $item );
-                push @array, $ambiguous_matches;
-            }
-            $obj->$key( @array ? \@array : undef );
-        }
-        elsif ( $key eq 'stringsWithNoMatches' ) {
-            $obj->$key( $hash->{$key} ? $hash->{$key}->{string} : undef );
-        }
-        else {
-            $obj->$key( $hash->{$key} );
-        }
-    }
-    return $obj;
-}
 
 
 1;

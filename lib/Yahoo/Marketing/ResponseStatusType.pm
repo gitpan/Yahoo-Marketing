@@ -1,5 +1,5 @@
 package Yahoo::Marketing::ResponseStatusType;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -29,22 +29,6 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
                            __PACKAGE__->_read_only_attributes
                          );
 
-
-sub _new_from_hash {
-    my ( $self, $hash ) = @_;
-
-    my $obj = __PACKAGE__->new;
-    foreach my $key ( keys %$hash ) {
-        if ( $key eq 'error' ) {
-            my $error = Yahoo::Marketing::ErrorType->new->_new_from_hash( $hash->{$key} );
-            $obj->$key( $error );
-        }
-        else {
-            $obj->$key( $hash->{ $key } );
-        }
-    }
-    return $obj;
-}
 
 
 1;

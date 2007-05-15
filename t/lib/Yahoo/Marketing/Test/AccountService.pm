@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::AccountService;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -31,7 +31,7 @@ sub test_get_account_balance : Test(2) {
         accountID => $ysm_ws->account,
     );
     ok( $balance );
-    like( $balance, qr/^\d+\.\d+$/, 'looks like a float number' );
+    like( $balance, qr/^-?\d+\.\d+$/, 'looks like a float number' );
 }
 
 sub test_add_money_and_get_account_balance : Test(5) {
@@ -45,7 +45,7 @@ sub test_add_money_and_get_account_balance : Test(5) {
         accountID => $ysm_ws->account,
     );
     ok( $balance );
-    like( $balance, qr/^\d+\.\d+$/, 'looks like a float number' );
+    like( $balance, qr/^-?\d+\.\d+$/, 'looks like a float number' );
 
     my $payment_method_id;
     ok( $payment_method_id = $ysm_ws->getActiveCreditCard(
@@ -53,21 +53,21 @@ sub test_add_money_and_get_account_balance : Test(5) {
         )
     );
 
-    #diag("paymentMethodId: $payment_method_id");
-
     return "no active payment method, skipping addMoney tests"
         if $payment_method_id == -1;
-    
+
+    my $add_amount = 108.01;
+
     $ysm_ws->addMoney(
         accountID => $ysm_ws->account,
-        amount    => '108.01',
+        amount    => $add_amount,
     );
 
     my $new_balance = $ysm_ws->getAccountBalance(
         accountID => $ysm_ws->account,
     );
     ok( $new_balance );
-    is( sprintf('%.2f', $new_balance), sprintf('%.2f', $balance + 108.01 ), 'amount is right' );
+    is( sprintf('%.2f', $new_balance), sprintf('%.2f', $balance + $add_amount), 'amount is right' );
 }
 
 sub test_get_and_set_charge_amount : Test(3) {
@@ -79,8 +79,6 @@ sub test_get_and_set_charge_amount : Test(3) {
 
     my $charge_amount = $ysm_ws->getChargeAmount( accountID => $ysm_ws->account );
     ok( defined( $charge_amount ) );
-
-    #diag("charge amount: $charge_amount");
 
     return "charge amount is 0, skipping setChargeAmount tests"
         if $charge_amount == 0;
@@ -135,8 +133,6 @@ sub test_set_get_and_delete_continent_block_list : Test(9) {
 
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
-    local $TODO = 'setContinentBlockListForAccount not yet instantaneous';
-
     my @continents;
 
     ok( $ysm_ws->setContinentBlockListForAccount(
@@ -149,7 +145,7 @@ sub test_set_get_and_delete_continent_block_list : Test(9) {
     );
 
     ok( @continents );
-    is( $continents[0], 'Africa' );
+    is( $continents[0], 'Africa', 'continent block list contains Africa' );
 
     ok( $ysm_ws->setContinentBlockListForAccount(
         accountID  => $ysm_ws->account,
@@ -161,20 +157,23 @@ sub test_set_get_and_delete_continent_block_list : Test(9) {
     );
 
     ok( @continents );
-    ok( grep { $_ eq 'Europe'    } @continents );
-    ok( grep { $_ eq 'Asia'      } @continents );
-    ok( grep { $_ eq 'Australia' } @continents );
+    ok( grep { $_ eq 'Europe'    } @continents, 'continent block list includes Europe'     );
+    ok( grep { $_ eq 'Asia'      } @continents, 'continent block list includes Asia'       );
+    ok( grep { $_ eq 'Australia' } @continents, 'continent block list includes Austrailia' );
 
     $ysm_ws->deleteContinentBlockListFromAccount(
         accountID => $ysm_ws->account,
     );
+
+    local $TODO = 'deleteContinentBlockListFromAccount not yet instantaneous?';
 
     eval {
         @continents = $ysm_ws->getContinentBlockListForAccount(
             accountID => $ysm_ws->account,
         );
     };
-    ok( $@ =~ /does not exist/ );
+
+    ok( $@ =~ /does not exist/ , 'Continent block list was cleared');
 }
 
 

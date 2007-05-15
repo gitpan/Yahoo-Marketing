@@ -1,5 +1,5 @@
 #!perl -T
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -15,8 +15,8 @@ ok( $ysm_ws, 'can intantiate' );
 
 is( $ysm_ws->use_wsse_security_headers, 1, 'use wsse security headers defaults' );
 is( $ysm_ws->use_location_service,      1, 'use location service defaults' );
-is( $ysm_ws->version, 'V1', 'version defaults' );
-is( $ysm_ws->uri, 'http://marketing.ews.yahooapis.com/V1', 'uri defaults' );
+is( $ysm_ws->version, 'V2', 'version defaults' );
+is( $ysm_ws->uri, 'http://marketing.ews.yahooapis.com/V2', 'uri defaults' );
 is( $ysm_ws->cache_expire_time, '1 day', 'cache expire time defaults' );
 is( ref $ysm_ws->cache, 'Cache::FileCache', 'cache defaults' );
 

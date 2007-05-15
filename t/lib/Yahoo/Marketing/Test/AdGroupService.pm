@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::AdGroupService;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -322,10 +322,7 @@ sub test_get_and_set_optimization_guidelines_for_ad_group : Test(16) {
 
     my $updated_ad_group_optimization_guidelines = $response->adGroupOptimizationGuidelines;
 
-    {
-        local $TODO = 'setOptimizationGuidelinesForAdGroup having issues...';
-        is( $response->operationSucceeded, 'true' );
-    }
+    is( $response->operationSucceeded, 'true' );
 
     ok( $updated_ad_group_optimization_guidelines );
     is( $updated_ad_group_optimization_guidelines->adGroupID, $ad_group->ID );
