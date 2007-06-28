@@ -16,12 +16,15 @@ use Data::Dumper;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
 sub startup_test_ad_service : Test(startup) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("preparing test data...");
 
     $self->common_test_data( 'test_campaign', $self->create_campaign );
     $self->common_test_data( 'test_ad_group', $self->create_ad_group );
@@ -33,9 +36,6 @@ sub startup_test_ad_service : Test(startup) {
 sub shutdown_test_ad_service : Test(shutdown) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("cleaning test data...");
     $self->cleanup_ad;
     $self->cleanup_ads;
     $self->cleanup_ad_group;
@@ -46,8 +46,6 @@ sub shutdown_test_ad_service : Test(shutdown) {
 
 sub test_can_add_ad : Test(4) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad = $self->create_ad;
 
@@ -63,8 +61,6 @@ sub test_can_add_ad : Test(4) {
 
 sub test_dies_for_rejected_ad : Test(3) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
     my $ad = Yahoo::Marketing::Ad->new
@@ -99,8 +95,6 @@ sub test_dies_for_rejected_ad : Test(3) {
 
 sub test_can_add_pending_ad : Test(11) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
 
@@ -137,8 +131,6 @@ sub test_can_add_pending_ad : Test(11) {
 sub test_can_get_update_change_for_ad : Test(7) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
 
     my $ad = $self->create_ad;
@@ -165,8 +157,6 @@ sub test_can_get_update_change_for_ad : Test(7) {
 sub test_can_add_ads : Test(8) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my @ads = $self->create_ads;
 
     ok( scalar @ads );
@@ -184,8 +174,6 @@ sub test_can_add_ads : Test(8) {
 sub test_can_delete_ad : Test(4) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad = $self->create_ad;
 
     ok( $ad );
@@ -202,8 +190,6 @@ sub test_can_delete_ad : Test(4) {
 
 sub test_can_delete_ads : Test(8) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @ads = $self->create_ads;
 
@@ -224,8 +210,6 @@ sub test_can_delete_ads : Test(8) {
 sub test_get_status_for_ad : Test(1) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad = $self->common_test_data( 'test_ad' );
 
     my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
@@ -236,8 +220,6 @@ sub test_get_status_for_ad : Test(1) {
 
 sub test_update_url_for_ad : Test(4) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad = $self->common_test_data( 'test_ad' );
 
@@ -258,8 +240,6 @@ sub test_update_url_for_ad : Test(4) {
 sub test_update_status_for_ad : Test(4) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad = $self->common_test_data( 'test_ad' );
 
     my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
@@ -275,8 +255,6 @@ sub test_update_status_for_ad : Test(4) {
 
 sub test_update_status_for_ads : Test(8) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @ads = @{ $self->common_test_data( 'test_ads' ) };
 
@@ -299,8 +277,6 @@ sub test_update_status_for_ads : Test(8) {
 
 sub test_update_ads : Test(22) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @ads = @{ $self->common_test_data( 'test_ads' ) };
 
@@ -359,8 +335,6 @@ sub test_update_ads : Test(22) {
 sub test_can_get_ad : Test(3) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad = $self->common_test_data( 'test_ad' );
 
     my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
@@ -374,8 +348,6 @@ sub test_can_get_ad : Test(3) {
 
 sub test_can_get_ads : Test(10) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @ads = @{ $self->common_test_data( 'test_ads' ) };
 
@@ -396,8 +368,6 @@ sub test_can_get_ads : Test(10) {
 
 sub test_can_get_ads_by_ad_group_id_by_editorial_status : Test(16) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     # we need another ad group to add an ad to
 
@@ -457,8 +427,6 @@ sub test_can_get_ads_by_ad_group_id_by_editorial_status : Test(16) {
 sub test_can_get_ads_by_ad_group_id_by_status : Test(18) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     # we need another ad group to add an ad to
 
     my $ad_group = $self->create_ad_group;
@@ -515,8 +483,6 @@ sub test_can_get_ads_by_ad_group_id_by_status : Test(18) {
 
 sub test_can_get_ads_by_ad_group_id : Test(12) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     # we need 2 new ad groups for a good test - we can't use the one we created at setup,
     #   because we get all the Deleted adds from previous tests too
@@ -599,8 +565,6 @@ sub test_can_get_ads_by_ad_group_id : Test(12) {
 
 sub test_update_ad : Test(10) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad = $self->common_test_data( 'test_ad' );
 

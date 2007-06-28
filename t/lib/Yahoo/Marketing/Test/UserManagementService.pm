@@ -17,181 +17,15 @@ use Yahoo::Marketing::UserManagementService;
 
 my $section = 'sandbox';
 
-=skip
-# we dont have additional user to test.
-sub test_get_and_add_and_delete_authorization_for_user : Test(7) {
+sub SKIP_CLASS {
     my $self = shift;
-
+    # 'not running post tests' is a true value
     return 'not running post tests' unless $self->run_post_tests;
-
-    return 'no other active user we can test on this function.' unless $self->common_test_data( 'test_user' );
-
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
-
-    my $role = Yahoo::Marketing::Role->new->name( 'AccountManager' );
-
-    ok( $ysm_ws->addAuthorizationForUser(
-                 username      => $self->common_test_data( 'test_user' ),
-                 authorization => Yahoo::Marketing::Authorization->new
-                                                                 ->accountID( $ysm_ws->account )
-                                                                 ->accountType( 'Account' )
-                                                                 ->role( $role ),
-             ), 'can add authorization' );
-
-    my @auth = $ysm_ws->getAuthorizationsForUser( username => $self->common_test_data( 'test_user' ) );
-    ok( @auth, 'can get authorization' );
-    ok( ( grep { $_->role->name eq 'AccountManager' } @auth ), 'can find right authorization' );
-
-    my @user_auths = $ysm_ws->getAuthorizedUsersByAccountID( accountIDs => [ $ysm_ws->account ] );
-
-    my $find = 0;
-    foreach my $user_auth ( @user_auths ) {
-        if ( $user_auth->username eq $self->common_test_data( 'test_user' ) and 
-                 $user_auth->role->name eq 'AccountManager' ) {
-            $find = 1;
-            last;
-        }
-    }
-    is( $find, 1, 'find authorized user in account' );
-
-    @user_auths = $ysm_ws->getAuthorizedUsersByMasterAccountID;
-    $find = 0;
-    foreach my $user_auth ( @user_auths ) {
-        if ( $user_auth->username eq $ysm_ws->username and 
-                 $user_auth->role->name eq 'MasterAccountAdministrator' ) {
-            $find = 1;
-            last;
-        }
-    }
-    is( $find, 1, 'find authorized user in master account' );
-
-    ok( $ysm_ws->deleteAuthorizationForUser(
-        username      => $self->common_test_data( 'test_user' ),
-        authorization => Yahoo::Marketing::Authorization->new
-                                                        ->accountID( $ysm_ws->account )
-                                                        ->accountType( 'Account' )
-                                                        ->role( $role ),
-        ), 'can delete authorization' );
-
-    $role = Yahoo::Marketing::Role->new->name( 'Analyst' );
-
-    ok( $ysm_ws->addAuthorizationForUser(
-                 username      => $self->common_test_data( 'test_user' ),
-                 authorization => Yahoo::Marketing::Authorization->new
-                                                                 ->accountID( $ysm_ws->account )
-                                                                 ->accountType( 'Account' )
-                                                                 ->role( $role ),
-             ), 'can add authorization' );
+    return;
 }
-
-# skip: we dont have credit card setup to test.
-sub test_add_credit_card : Test(3) {
-    my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
-
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
-
-    my @payment_methods = $ysm_ws->getPaymentMethods;
-    unless ( @payment_methods ) {
-        my $payment_method_id = $ysm_ws->addCreditCard(
-            billingUserInfo => Yahoo::Marketing::BillingUser->new
-                                                            ->email( 'test@yahoo-inc.com' )
-                                                            ->firstName( 'John' )
-                                                            ->lastName( 'Smith' )
-                                                            ->phone( '212-555-1234' ),
-            billingAddress  => Yahoo::Marketing::Address->new
-                                                        ->address1('123 Main Street')
-                                                        ->city('New York')
-                                                        ->country('US')
-                                                        ->postalCode( '10012' )
-                                                        ->state( 'NY' ),
-            cc              => Yahoo::Marketing::CreditCardInfo->new
-                                                               ->cardNumber( '347688405216148' )
-                                                               ->cardType( 'Amex' )
-                                                               ->expMonth( '1' )
-                                                               ->expYear( '2015' )
-                                                               ->securityCode( '1234' ),
-        );
-        @payment_methods = $ysm_ws->getPaymentMethods;
-    }
-
-    ok( @payment_methods );
-
-    my $payment_method = $payment_methods[0];
-    my $old_address = $payment_method->billingAddress;
-    my $id = $ysm_ws->updateCreditCard(
-        paymentMethodID => $payment_method->ID,
-        billingUserInfo => $payment_method->billingUser,
-        billingAddress  => $payment_method->billingAddress->address1('456 Park Ave'),
-        cc              => Yahoo::Marketing::CreditCardInfo->new->expYear('2016'),
-        updateAll       => 'false',
-    );
-    @payment_methods = $ysm_ws->getPaymentMethods;
-    ( $payment_method ) = grep { $_->ID eq $id } @payment_methods;
-
-    is( $payment_method->billingAddress->address1, '456 Park Ave', 'address is right' );
-    is( ref $payment_method->expirationDate, 'DateTime', 'expiration date is DateTime object' );
-
-    $ysm_ws->updateCreditCard(
-        paymentMethodID => $payment_method->ID,
-        billingUserInfo => $payment_method->billingUser,
-        billingAddress  => $payment_method->billingAddress->address1('123 Main Street'),
-        cc              => Yahoo::Marketing::CreditCardInfo->new->cardNumber( '' ),
-        updateAll       => 'false',
-    );
-}
-
-# skip: we cannot delete a user, so dont add new one.
-sub test_add_user : Test(1) {
-    my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
-
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
-    my $new_user_name = $self->_make_username;
-    $ysm_ws->addUser(
-        username => $new_user_name,
-        user     => Yahoo::Marketing::User->new
-                                          ->email( $new_user_name . '@yahoo-inc.com' )
-                                          ->firstName( 'test' )
-                                          ->lastName( 'user' )
-                                          ->locale( 'en_US' )
-                                          ->timezone( 'America/Los_Angeles' )
-                                          ->workPhone( '888-555-1234' ),
-        address  => Yahoo::Marketing::Address->new
-                                             ->address1('123 Sunshine Street')
-                                             ->city('Sunnyvale')
-                                             ->country('US')
-                                             ->postalCode( '94089' )
-                                             ->state( 'CA' )
-    );
-
-    is( $ysm_ws->getUserStatus( username => $new_user_name ), 'Staged', 'status is right' );
-}
-
-# skip: we dont have additional user to test.
-sub test_enable_disable_user_and_get_user_status : Test(4) {
-    my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
-
-    return 'no other active user we can test on this function.' unless $self->common_test_data( 'test_user' );
-
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
-
-    ok( $ysm_ws->disableUser( username => $self->common_test_data( 'test_user' ) ), 'can disable user' );
-    is( $ysm_ws->getUserStatus( username => $self->common_test_data( 'test_user' ) ), 'Disabled', 'status is right' );
-    ok( $ysm_ws->enableUser( username => $self->common_test_data( 'test_user' ) ), 'can enable user' );
-    is( $ysm_ws->getUserStatus( username => $self->common_test_data( 'test_user' ) ), 'Active', 'status is right' );
-}
-
-=cut
 
 sub test_get_authorizations : Test(4) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
 
@@ -228,8 +62,6 @@ sub test_get_authorizations : Test(4) {
 sub test_get_available_roles_by_account_id : Test(2) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
     my @roles = $ysm_ws->getAvailableRolesByAccountID(
         accountType => 'MasterAccount',
@@ -250,8 +82,6 @@ sub test_get_available_roles_by_account_id : Test(2) {
 sub test_get_capabilities_for_role : Test(1) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
     my @capabilities = $ysm_ws->getCapabilitiesForRole(
         role => Yahoo::Marketing::Role->new->name( 'MasterAccountAdministrator' ),
@@ -263,8 +93,6 @@ sub test_get_capabilities_for_role : Test(1) {
 
 sub test_get_and_update_my_address : Test(2) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
     my $address = Yahoo::Marketing::Address->new
@@ -294,8 +122,6 @@ sub test_get_and_update_my_address : Test(2) {
 sub test_get_my_authorization : Test(2) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
     my @auths = $ysm_ws->getMyAuthorizations;
 
@@ -312,8 +138,6 @@ sub test_get_my_authorization : Test(2) {
 
 sub test_get_and_update_my_user_info : Test(3) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
     my $user = $ysm_ws->getMyUserInfo;
@@ -344,8 +168,6 @@ sub test_get_and_update_my_user_info : Test(3) {
 sub test_get_and_update_user_address : Test(3) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
     my $address = $ysm_ws->getUserAddress( username => $ysm_ws->username );
 
@@ -372,8 +194,6 @@ sub test_get_and_update_user_address : Test(3) {
 
 sub test_get_and_update_user_info : Test(3) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
     my $user = $ysm_ws->getUserInfo( username => $ysm_ws->username );
@@ -404,8 +224,6 @@ sub test_get_and_update_user_info : Test(3) {
 sub test_test_username : Test(2) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
 
     # we know this username should not be available, we're using it!
@@ -420,19 +238,11 @@ sub test_test_username : Test(2) {
 sub startup_test_user_management_service : Test(startup) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("preparing test data...");
-
     $self->common_test_data( 'test_user', $self->get_user ) unless defined $self->common_test_data( 'test_user' );
 }
 
 sub cleanup_user : Test(shutdown) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("cleaning test data...");
 
     $self->common_test_data( 'test_user', undef );
 }

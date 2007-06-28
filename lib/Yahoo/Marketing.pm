@@ -18,7 +18,7 @@ Version 2.01
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '2.01';
+our $VERSION = '2.02';
 
 
 =head1 SYNOPSIS

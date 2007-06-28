@@ -452,14 +452,16 @@ sub _login_headers {
 sub clear_cache {
     my $self = shift;
     $self->cache->clear;
-    delete $service_data->{ $self->_wsdl } if $service_data;
+    delete $service_data->{ $self->_wsdl } 
+        if $service_data and $self->_wsdl_components_are_defined;
     return $self;
 }
 
 sub purge_cache {
     my $self = shift;
     $self->cache->purge;
-    delete $service_data->{ $self->_wsdl } if $service_data;
+    delete $service_data->{ $self->_wsdl } 
+        if $service_data and $self->_wsdl_components_are_defined;
     return $self;
 }
 
@@ -479,7 +481,7 @@ sub _parse_wsdl {
         my $name = $node->getName;
         if( $name eq 'xsd:complexType' ){
             $self->_parse_complex_type( $node, $xpath );
-        }elsif( $node->getAttribute('name') =~ /Response(Type)?$/ ){
+        }elsif( $node->getAttribute('name') and ($node->getAttribute('name') =~ /Response(Type)?$/) ){
             $self->_parse_response_type( $node, $xpath );
         }else{
             $self->_parse_request_type( $node, $xpath );
@@ -493,6 +495,8 @@ sub _parse_wsdl {
 sub _parse_request_type {
     my ( $self, $node, $xpath ) = @_;
     my $type_name = $node->getAttribute( 'name' );
+
+    return unless $type_name;
 
     my $def = $xpath->find( qq{/wsdl:definitions/wsdl:types/xsd:schema/xsd:element[\@name='$type_name']/xsd:complexType/xsd:sequence/xsd:element} );
 
@@ -589,7 +593,14 @@ sub _parse_complex_type {
     return;
 }
 
+sub _wsdl_components_are_defined {
+    my $self = shift;
 
+    return defined $self->endpoint
+       and defined $self->version
+       and defined $self->_service_name
+    ;
+}
 
 sub _wsdl {
     my $self = shift;

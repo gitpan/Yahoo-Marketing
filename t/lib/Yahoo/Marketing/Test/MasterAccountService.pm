@@ -18,10 +18,16 @@ use Yahoo::Marketing::MasterAccountService;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
+
 sub test_get_master_account : Test(7) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
 
@@ -38,8 +44,6 @@ sub test_get_master_account : Test(7) {
 
 sub test_get_master_accounts_by_company_id : Test(4) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $company_ws = Yahoo::Marketing::CompanyService->new->parse_config( section => $section );
 
@@ -58,8 +62,6 @@ sub test_get_master_accounts_by_company_id : Test(4) {
 sub test_get_master_account_status : Test(1) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
 
     my $master_account_status = $ysm_ws->getMasterAccountStatus( masterAccountID => $ysm_ws->master_account );
@@ -68,8 +70,6 @@ sub test_get_master_account_status : Test(1) {
 
 sub test_update_master_account : Test(4) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
 
@@ -106,9 +106,7 @@ sub _make_username {
 sub test_add_new_customer : Test(8) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    return 'not running addNewCustomer test to prevent creatinga new master account for each test run';
+    return 'not running addNewCustomer test to prevent creating a new master account for each test run';
 
     my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
 

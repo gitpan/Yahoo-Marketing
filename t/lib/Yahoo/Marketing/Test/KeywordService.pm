@@ -15,15 +15,19 @@ use Yahoo::Marketing::KeywordOptimizationGuidelines;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
 sub startup_test_keyword_service : Test(startup) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("preparing test data...");
-
     $self->common_test_data( 'test_campaign', $self->create_campaign ) unless defined $self->common_test_data( 'test_campaign' );
     $self->common_test_data( 'test_ad_group', $self->create_ad_group ) unless defined $self->common_test_data( 'test_ad_group' );
+    $self->common_test_data( 'test_ad_group2', $self->create_ad_group ) unless defined $self->common_test_data( 'test_ad_group2' );
     $self->common_test_data( 'test_keyword',  $self->create_keyword  ) unless defined $self->common_test_data( 'test_keyword'  );
     $self->common_test_data( 'test_keywords', [ $self->create_keywords ] ) unless defined $self->common_test_data( 'test_keywords' );
 }
@@ -32,19 +36,99 @@ sub startup_test_keyword_service : Test(startup) {
 sub shutdown_test_keyword_service : Test(shutdown) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("cleaning test data...");
     $self->cleanup_keywords;
     $self->cleanup_keyword;
     $self->cleanup_ad_group;
+    $self->cleanup_ad_group( $self->common_test_data( 'test_ad_group2' ) );
     $self->cleanup_campaign;
+}
+
+sub test_can_copy_keyword : Test(4) {
+    my ( $self ) = @_;
+
+    # create a keyword in ag_group.
+    my $added_keyword = $self->create_keyword;
+
+    # now copy the keyword to ad_group2
+    my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
+    my $new_ss_bid = 99.99;
+    ok( $ysm_ws->copyKeyword(
+        keywordID => $added_keyword->ID,
+        destinationAdGroupID => $self->common_test_data( 'test_ad_group2' )->ID,
+        newSponsoredSearchMaxBid => $new_ss_bid,
+    ), 'copyKeyword result returned' );
+
+    # now verify it's copied to that adgrp
+    my @fetched_keywords = $ysm_ws->getKeywordsByAdGroupID(
+        adGroupID      => $self->common_test_data( 'test_ad_group2' )->ID,
+        includeDeleted => 'false',
+        startElement   => 0,
+        numElements    => 1000,
+    );
+
+    my $found = 0;
+    foreach my $fetched_keyword ( @fetched_keywords ){
+        $found = $fetched_keyword->ID if $fetched_keyword->text eq $added_keyword->text and
+                                         $fetched_keyword->sponsoredSearchMaxBid == $new_ss_bid;
+    }
+    ok($found, 'found copied keyword');
+
+    # clean up
+    ok( $ysm_ws->deleteKeyword( keywordID => $added_keyword->ID ), 'delete original keyword' );
+    ok( $ysm_ws->deleteKeyword( keywordID => $found ), 'delete copied keyword' );
+}
+
+
+sub test_can_move_keyword : Test(4) {
+    my ( $self ) = @_;
+
+    # create a keyword in ag_group.
+    my $added_keyword = $self->create_keyword;
+
+    # now copy the keyword to ad_group2
+    my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
+    my $new_ss_bid = 99.99;
+    ok( $ysm_ws->moveKeyword(
+        keywordID => $added_keyword->ID,
+        destinationAdGroupID => $self->common_test_data( 'test_ad_group2' )->ID,
+        newSponsoredSearchMaxBid => $new_ss_bid,
+    ), 'copyKeyword result returned' );
+
+    # now verify it's not in original adgrp any more
+    my @fetched_keywords = $ysm_ws->getKeywordsByAdGroupID(
+        adGroupID      => $self->common_test_data( 'test_ad_group' )->ID,
+        includeDeleted => 'false',
+        startElement   => 0,
+        numElements    => 1000,
+    );
+    my $found = 0;
+    foreach my $fetched_keyword ( @fetched_keywords ){
+        $found = $fetched_keyword->ID if $fetched_keyword->ID eq $added_keyword->ID;
+    }
+    ok(!$found, 'not found original keyword');
+
+
+    # now verify it's copied to that adgrp
+    @fetched_keywords = $ysm_ws->getKeywordsByAdGroupID(
+        adGroupID      => $self->common_test_data( 'test_ad_group2' )->ID,
+        includeDeleted => 'false',
+        startElement   => 0,
+        numElements    => 1000,
+    );
+
+    $found = 0;
+    foreach my $fetched_keyword ( @fetched_keywords ){
+        $found = $fetched_keyword->ID if $fetched_keyword->text eq $added_keyword->text and
+                                         $fetched_keyword->sponsoredSearchMaxBid == $new_ss_bid;
+    }
+    ok($found, 'found copied keyword');
+
+    # clean up
+    ok( $ysm_ws->deleteKeyword( keywordID => $found ), 'delete copied keyword' );
 }
 
 sub test_can_add_keyword : Test(8) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $added_keyword = $self->create_keyword;
 
@@ -63,8 +147,6 @@ sub test_can_add_keyword : Test(8) {
 
 sub test_can_add_keywords : Test(22) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @added_keywords = $self->create_keywords;
 
@@ -87,8 +169,6 @@ sub test_can_add_keywords : Test(22) {
 sub test_can_delete_keyword : Test(3) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $added_keyword = $self->create_keyword;
 
     ok( $added_keyword, 'something was returned' );
@@ -104,8 +184,6 @@ sub test_can_delete_keyword : Test(3) {
 
 sub test_can_delete_keywords : Test(10) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @added_keywords = $self->create_keywords;
 
@@ -128,8 +206,6 @@ sub test_can_delete_keywords : Test(10) {
 sub test_can_get_keyword : Test(7) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
     my $fetched_keyword = $ysm_ws->getKeyword( keywordID => $self->common_test_data( 'test_keyword' )->ID );
@@ -145,8 +221,6 @@ sub test_can_get_keyword : Test(7) {
 
 sub test_can_get_keywords : Test(21) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
@@ -166,8 +240,6 @@ sub test_can_get_keywords : Test(21) {
 
 sub test_can_get_keywords_by_account_id : Test(35) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
@@ -194,8 +266,6 @@ sub test_can_get_keywords_by_account_id : Test(35) {
 sub test_can_get_keywords_by_ad_group_id : Test(35) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
     my @fetched_keywords = $ysm_ws->getKeywordsByAdGroupID(
@@ -221,8 +291,6 @@ sub test_can_get_keywords_by_ad_group_id : Test(35) {
 
 sub test_can_get_keywords_by_ad_group_id_by_editorial_status : Test(35) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
@@ -255,8 +323,6 @@ sub test_can_get_keywords_by_ad_group_id_by_editorial_status : Test(35) {
 sub test_can_get_keywords_by_ad_group_id_by_status : Test(35) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
     my @fetched_keywords = $ysm_ws->getKeywordsByAdGroupIDByStatus(
@@ -281,8 +347,6 @@ sub test_can_get_keywords_by_ad_group_id_by_status : Test(35) {
 sub test_can_get_keyword_sponsored_search_max_bid : Test(1) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
     is( $ysm_ws->getKeywordSponsoredSearchMaxBid( keywordID => $self->common_test_data( 'test_keyword' )->ID ), '1.0' );
 }
@@ -290,8 +354,6 @@ sub test_can_get_keyword_sponsored_search_max_bid : Test(1) {
 
 sub test_can_get_and_set_optimization_guidelines_for_keyword : Test(2) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
@@ -315,8 +377,6 @@ sub test_can_get_and_set_optimization_guidelines_for_keyword : Test(2) {
 sub test_can_get_update_for_keyword : Test(3) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $added_keyword = $self->create_keyword;
 
     ok( $added_keyword, 'something was returned' );
@@ -336,8 +396,6 @@ sub test_can_get_update_for_keyword : Test(3) {
 
 sub test_can_get_editorial_reasons_for_keyword : Test(7) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $added_keyword = $self->create_keyword;
 
@@ -371,8 +429,6 @@ sub test_can_get_editorial_reasons_for_keyword : Test(7) {
 sub test_can_get_status_for_keyword : Test(2) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $added_keyword = $self->common_test_data( 'test_keyword' );
 
     ok( $added_keyword, 'something was returned' );
@@ -381,32 +437,49 @@ sub test_can_get_status_for_keyword : Test(2) {
     is( $ysm_ws->getStatusForKeyword( keywordID => $added_keyword->ID ), 'On' );
 }
 
-
-sub test_can_set_keyword_sponsored_search_max_bid : Test(2) {
+sub test_can_update_sponsored_search_max_bid_for_keyword : Test(2) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
-    $ysm_ws->setKeywordSponsoredSearchMaxBid(
+    $ysm_ws->updateSponsoredSearchMaxBidForKeyword(
         keywordID => $self->common_test_data( 'test_keyword' )->ID,
         maxBid    => 8.88,
     );
     is( $ysm_ws->getKeywordSponsoredSearchMaxBid( keywordID => $self->common_test_data( 'test_keyword' )->ID ), '8.88' );
 
-    $ysm_ws->setKeywordSponsoredSearchMaxBid(
+    $ysm_ws->updateSponsoredSearchMaxBidForKeyword(
         keywordID => $self->common_test_data( 'test_keyword' )->ID,
         maxBid    => 1,
     );
     is( $ysm_ws->getKeywordSponsoredSearchMaxBid( keywordID => $self->common_test_data( 'test_keyword' )->ID ), '1.0' );
 }
 
+sub test_can_update_sponsored_search_max_bid_for_keywords : Test(6) {
+    my ( $self ) = @_;
+
+    my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
+
+    $ysm_ws->updateSponsoredSearchMaxBidForKeywords(
+        keywordIDs => [ map { $_->ID } @{$self->common_test_data( 'test_keywords' )} ],
+        maxBids    => [ (8.88) x 3 ],
+    );
+
+    foreach my $id ( map { $_->ID } @{$self->common_test_data( 'test_keywords' )} ) {
+        is( $ysm_ws->getKeywordSponsoredSearchMaxBid( keywordID => $id ), '8.88' );
+    }
+
+    $ysm_ws->updateSponsoredSearchMaxBidForKeywords(
+        keywordIDs => [ map { $_->ID } @{$self->common_test_data( 'test_keywords' )} ],
+        maxBids    => [(1) x 3],
+    );
+    foreach my $id ( map { $_->ID } @{$self->common_test_data( 'test_keywords' )} ) {
+        is( $ysm_ws->getKeywordSponsoredSearchMaxBid( keywordID => $id ), '1.0' );
+    }
+}
 
 sub test_can_update_keyword : Test(5) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $added_keyword = $self->create_keyword;
     my $old_alternate_text = $added_keyword->alternateText;
@@ -431,8 +504,6 @@ sub test_can_update_keyword : Test(5) {
 sub test_can_update_keywords : Test(7) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my @added_keywords = $self->create_keywords;
     foreach my $keyword ( @added_keywords ) {
         $keyword->alternateText( 'some new alternate text' );
@@ -455,8 +526,6 @@ sub test_can_update_keywords : Test(7) {
 sub test_can_set_and_get_keyword_sponsored_search_max_bid : Test(2) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => 'sandbox' );
 
     my $keyword  = $self->common_test_data( 'test_keyword' );
@@ -472,8 +541,6 @@ sub test_can_set_and_get_keyword_sponsored_search_max_bid : Test(2) {
 
 sub test_can_set_and_get_optimization_guidelines_for_keyword : Test(5) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $keyword  = $self->common_test_data( 'test_keyword' );
     my $ad_group = $self->common_test_data( 'test_ad_group' );
@@ -505,8 +572,6 @@ sub test_can_set_and_get_optimization_guidelines_for_keyword : Test(5) {
 sub test_can_update_status_for_keyword : Test(2) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $added_keyword = $self->common_test_data( 'test_keyword' );
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
 
@@ -526,8 +591,6 @@ sub test_can_update_status_for_keyword : Test(2) {
 
 sub test_can_update_status_for_keywords : Test(6) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @added_keywords = @{$self->common_test_data( 'test_keywords' )};
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );

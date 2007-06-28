@@ -17,10 +17,15 @@ use Yahoo::Marketing::PageRelatedKeywordRequestType;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
 sub test_get_common_keywords : Test(5) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
 
@@ -43,8 +48,6 @@ sub test_get_common_keywords : Test(5) {
 sub test_get_canonical_keywords : Test(5) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
 
     my $result = $ysm_ws->getCanonicalKeywords(
@@ -65,8 +68,6 @@ sub test_get_canonical_keywords : Test(5) {
 
 sub test_get_page_related_keywords : Test(5) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $page_related_keyword_request_type = Yahoo::Marketing::PageRelatedKeywordRequestType->new
         ->excludedKeywords( [ 'autos', 'music' ] )
@@ -94,8 +95,6 @@ sub test_get_page_related_keywords : Test(5) {
 sub test_get_related_keywords : Test(5) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $related_keyword_request_type = Yahoo::Marketing::RelatedKeywordRequestType->new
         ->excludedKeywords( [ 'autos', 'music' ] )
         ->excludedPhraseFilters( [ 'xbox' ] )
@@ -121,8 +120,6 @@ sub test_get_related_keywords : Test(5) {
 sub test_get_related_keywords_works_for_no_results : Test(3) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $related_keyword_request_type = Yahoo::Marketing::RelatedKeywordRequestType->new
         ->market( 'US' )
         ->maxKeywords( '3' )
@@ -141,8 +138,6 @@ sub test_get_related_keywords_works_for_no_results : Test(3) {
 
 sub test_get_range_definitions : Test(3) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $range_definition_request_type = Yahoo::Marketing::RangeDefinitionRequestType->new
         ->market( 'US' )

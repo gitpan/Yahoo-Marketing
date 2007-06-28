@@ -43,12 +43,11 @@ Please make sure they're properly installed on your system.
                          print STDERR "Failed to find a YAML configuration file in the default location.\n"
                                      ."Please enter your Yahoo! EWS Sandbox information when prompted.\n"
                                      ."A configuration file will be created for you\n\n"
-                                     ."Note that you need to enter values to acess the Sandbox\n"
                                      ."DO NOT enter your live account information!\n\n"
                          ;
                          
    
-                         my @config_values = qw/ username password license master_account default_account endpoint uri/;
+                         my @config_values = qw/ username password license master_account default_account endpoint uri /;
 
                          foreach my $name ( @config_values ){
                              my $prompt = $name; $prompt =~ s/_/ /g;
@@ -102,15 +101,12 @@ my $build = $builder->new(
     dist_author         => 'Jeff Lavallee <jeff@zeroclue.com>',
     dist_version_from   => 'lib/Yahoo/Marketing.pm',
     build_requires => {
-        'Test::More'               => 0,
-        # requires below by jeff
-        'YAML'                     => '0.01',
-        'Module::Build'            => '0.26',  
+        'Test::More'     => 0,
+        'YAML'           => '0.01',
+        'Module::Build'  => '0.26',  
     },
     requires => {
-        'Test::More'               => 0,
-        # requires below by jeff
-
+        'Test::More'                 => 0,
         'perl'                       => '5.6.1',   
         'SOAP::Lite'                 => '0.66',
         'YAML'                       => '0.01',
@@ -118,16 +114,15 @@ my $build = $builder->new(
         'Module::Build'              => '0.26',  
         'Scalar::Util'               => '1.01',
         'Test::Class'                => '0.10',
-        'Test::Simple'               => '0.60', # for displaying error message in tests.
+        'Test::Simple'               => '0.60', # for displaying error message in tests correctly
         'Cache::Cache'               => '1.01',
         'XML::XPath'                 => '1.10',
         'Crypt::SSLeay'              => '0.40',
-	'DateTime::Format::ISO8601'  => 0,
-	'DateTime::Format::W3CDTF'   => 0,
+	    'DateTime::Format::ISO8601'  => 0,
+	    'DateTime::Format::W3CDTF'   => 0,
     },
-    add_to_cleanup                 => [ 'Yahoo-Marketing-*' ],
-    # see http://perlmonks.org/index.pl?node_id=458282
-    create_makefile_pl             => 'traditional',
+    add_to_cleanup      => [ 'Yahoo-Marketing-*' ],
+    create_makefile_pl  => 'traditional',
 );
 
 

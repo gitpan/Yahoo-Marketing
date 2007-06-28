@@ -12,10 +12,15 @@ use Yahoo::Marketing::BudgetingService;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
 sub test_account_daily_spend_limit : Test(4) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::BudgetingService->new->parse_config( section => $section );
 
@@ -37,8 +42,6 @@ sub test_account_daily_spend_limit : Test(4) {
 
 sub test_campaign_daily_spend_limit : Test(7) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->common_test_data( 'test_campaign' );
     is( $campaign->campaignOptimizationON, 'false' );
@@ -75,19 +78,12 @@ sub test_campaign_daily_spend_limit : Test(7) {
 sub startup_test_budgeting_service : Test(startup) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("preparing test data...");
-
     $self->common_test_data( 'test_campaign', $self->create_campaign ) unless defined $self->common_test_data( 'test_campaign' );
 }
 
 sub shutdown_test_budgeting_service : Test(shutdown) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("cleaning test data...");
     $self->cleanup_campaign;
 }
 

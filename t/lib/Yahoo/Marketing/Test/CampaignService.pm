@@ -14,12 +14,15 @@ use Yahoo::Marketing::CampaignOptimizationGuidelines;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
 sub startup_test_campaign_service : Test(startup) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("preparing test data...");
 
     $self->common_test_data( 'test_campaign', $self->create_campaign ) unless defined $self->common_test_data( 'test_campaign' );
     $self->common_test_data( 'test_campaigns', [$self->create_campaigns] ) unless defined $self->common_test_data( 'test_campaigns' );
@@ -29,9 +32,6 @@ sub startup_test_campaign_service : Test(startup) {
 sub shutdown_test_campaign_service : Test(shutdown) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("cleaning test data...");
     $self->cleanup_campaign;
     $self->cleanup_campaigns;
 }
@@ -39,7 +39,6 @@ sub shutdown_test_campaign_service : Test(shutdown) {
 
 sub test_get_campaign : Test(3) { 
     my ( $self ) = @_;
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
@@ -55,7 +54,6 @@ sub test_get_campaign : Test(3) {
 
 sub test_update_campaign : Test(22) {
     my ( $self ) = @_;
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
@@ -127,7 +125,6 @@ sub test_update_campaign : Test(22) {
 
 sub test_update_campaign_can_handle_dates_for_user : Test(12) {
     my ( $self ) = @_;
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
@@ -172,8 +169,6 @@ sub test_update_campaign_can_handle_dates_for_user : Test(12) {
 sub test_can_add_campaign : Test(4) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $campaign = $self->create_campaign;
 
     ok( $campaign );
@@ -193,8 +188,6 @@ sub test_can_add_campaign : Test(4) {
 
 sub test_can_get_campaign_ad_group_count : Test(6) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
@@ -244,8 +237,6 @@ sub test_can_get_campaign_ad_group_count : Test(6) {
 sub test_can_get_campaigns_by_account_id : Test(1) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
     my @campaigns = $ysm_ws->getCampaignsByAccountID(
@@ -259,8 +250,6 @@ sub test_can_get_campaigns_by_account_id : Test(1) {
 
 sub test_can_update_campaigns : Test(13) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
@@ -301,8 +290,6 @@ sub test_can_update_campaigns : Test(13) {
 sub test_can_get_campaigns : Test(4) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
     my @campaigns = @{ $self->common_test_data( 'test_campaigns' ) };
@@ -324,8 +311,6 @@ sub test_can_get_campaigns : Test(4) {
 
 sub test_can_update_status_for_campaigns : Test(4) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @campaigns = @{ $self->common_test_data( 'test_campaigns' ) };
 
@@ -352,8 +337,6 @@ sub test_can_update_status_for_campaigns : Test(4) {
 sub test_can_get_status_for_campaign : Test(1) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $campaign = $self->common_test_data( 'test_campaign' );
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
@@ -365,8 +348,6 @@ sub test_can_get_status_for_campaign : Test(1) {
 
 sub test_can_get_campaign_keyword_count : Test(1) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
@@ -383,8 +364,6 @@ sub test_can_get_campaign_keyword_count : Test(1) {
 
 sub test_can_delete_campaign : Test(2) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->create_campaign;
 
@@ -403,8 +382,6 @@ sub test_can_delete_campaign : Test(2) {
 
 sub test_can_set_get_delete_geographic_location_for_campaign : Test(18) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->create_campaign;
 
@@ -457,8 +434,6 @@ sub test_can_set_get_delete_geographic_location_for_campaign : Test(18) {
 sub test_set_get_delete_geographic_location_for_campaign_works_for_unambiguous_match : Test(3) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $campaign = $self->create_campaign;
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
@@ -477,8 +452,6 @@ sub test_set_get_delete_geographic_location_for_campaign_works_for_unambiguous_m
 sub test_set_get_delete_geographic_location_for_campaign_doesnt_fail_for_bad_location : Test(5) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $silly_geo_string = 'this is a really silly geo string that shouldnt return any ambiguous matches at all';
 
     my $campaign = $self->create_campaign;
@@ -493,6 +466,9 @@ sub test_set_get_delete_geographic_location_for_campaign_doesnt_fail_for_bad_loc
     ok( $response );
 
     is( ref $response, 'Yahoo::Marketing::SetGeographicLocationResponse' );
+
+    return "silly geo string worked, skipping further tests" if $response->setSucceeded eq 'true';
+
     is( $response->setSucceeded, 'false' );
     is( $response->stringsWithNoMatches->[0], $silly_geo_string );
 
@@ -501,8 +477,6 @@ sub test_set_get_delete_geographic_location_for_campaign_doesnt_fail_for_bad_loc
 
 sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(5) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
@@ -547,8 +521,6 @@ sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(5) {
 sub test_can_get_campaigns_by_account_id_by_campaign_status : Test(1) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
     my @campaigns = $ysm_ws->getCampaignsByAccountIDByCampaignStatus(
@@ -562,8 +534,6 @@ sub test_can_get_campaigns_by_account_id_by_campaign_status : Test(1) {
 
 sub test_can_add_campaigns : Test(8) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @added_campaigns = $self->create_campaigns;
 
@@ -585,8 +555,6 @@ sub test_can_add_campaigns : Test(8) {
 
 sub test_add_campaigns_doesnt_add_if_one_is_bad : Test(3) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $formatter = DateTime::Format::W3CDTF->new;
     my $datetime = DateTime->now;
@@ -636,8 +604,6 @@ sub test_add_campaigns_doesnt_add_if_one_is_bad : Test(3) {
 sub test_can_update_status_for_campaign : Test(4) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $campaign = $self->common_test_data( 'test_campaign' );
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
@@ -667,8 +633,6 @@ sub test_can_update_status_for_campaign : Test(4) {
 sub test_can_delete_campaigns : Test(4) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $campaign1 = $self->create_campaign;
     my $campaign2 = $self->create_campaign;
 
@@ -695,8 +659,6 @@ sub test_can_delete_campaigns : Test(4) {
 sub test_update_campaigns_response_with_multiple_errors_dies_correctly : Test(2) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
     my @campaigns = @{ $self->common_test_data( 'test_campaigns' ) };
@@ -712,7 +674,7 @@ sub test_update_campaigns_response_with_multiple_errors_dies_correctly : Test(2)
     my $die_message = $@;
 
     ok( $die_message, 'we died' );        
-    like( $die_message, qr/Message: Enumeration value "foo" is not recognized\./,'die message looks right' );
+    like( $die_message, qr/Message: Enumeration value .*is not recognized/,'die message looks right' );
 
     # be nice, put the statuses back
     $campaigns[$_]->status( 'On' ) for ( 1..2 );
@@ -720,8 +682,6 @@ sub test_update_campaigns_response_with_multiple_errors_dies_correctly : Test(2)
 
 sub test_campaign_service_can_be_immortal : Test(5) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new
                                                   ->parse_config( section => $section )
@@ -741,7 +701,7 @@ sub test_campaign_service_can_be_immortal : Test(5) {
     ok( $ysm_ws->fault );
     is( ref $ysm_ws->fault, 'Yahoo::Marketing::ApiFault'  );
     is( $ysm_ws->fault->code, 'E1019' );
-    is( $ysm_ws->fault->message, 'Enumeration value "foo" is not recognized.' );
+    like( $ysm_ws->fault->message, qr/Enumeration value .*is not recognized/,'error message looks right' );
 
 
     # be nice, put the statuses back

@@ -17,13 +17,20 @@ use Yahoo::Marketing::CreditCardInfo;
 
 #use SOAP::Lite +trace => [qw/ debug method fault /];
 
+
+
 my $section = 'sandbox';
+
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
 
 
 sub test_get_account_balance : Test(2) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
@@ -37,7 +44,7 @@ sub test_get_account_balance : Test(2) {
 sub test_add_money_and_get_account_balance : Test(5) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
+    return 'skipping add money and get account balance test, less danger of playing with real money';
 
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
@@ -73,8 +80,6 @@ sub test_add_money_and_get_account_balance : Test(5) {
 sub test_get_and_set_charge_amount : Test(3) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
     my $charge_amount = $ysm_ws->getChargeAmount( accountID => $ysm_ws->account );
@@ -103,8 +108,6 @@ sub test_get_and_set_charge_amount : Test(3) {
 sub test_get_and_set_active_credit_card : Test(2) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
     my $active_payment_method_id = $ysm_ws->getActiveCreditCard( accountID => $ysm_ws->account );
@@ -128,8 +131,6 @@ sub test_get_and_set_active_credit_card : Test(2) {
 
 sub test_set_get_and_delete_continent_block_list : Test(9) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
@@ -180,8 +181,6 @@ sub test_set_get_and_delete_continent_block_list : Test(9) {
 sub test_get_account : Test(3) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
     my $account = $ysm_ws->getAccount( accountID => $ysm_ws->account );
@@ -193,8 +192,6 @@ sub test_get_account : Test(3) {
 
 sub test_get_accounts : Test(2) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
@@ -211,8 +208,6 @@ sub test_get_accounts : Test(2) {
 sub test_get_account_status : Test(2) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
     my $account_status = $ysm_ws->getAccountStatus( accountID => $ysm_ws->account );
@@ -223,8 +218,6 @@ sub test_get_account_status : Test(2) {
 
 sub test_update_account : Test(7) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
@@ -260,8 +253,6 @@ sub test_update_account : Test(7) {
 
 sub test_update_account_status : Test(3) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 

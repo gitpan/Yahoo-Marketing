@@ -16,10 +16,15 @@ use Yahoo::Marketing::ForecastKeyword;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
 sub test_get_forecast_for_keyword : Test(15) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -64,8 +69,6 @@ sub test_get_forecast_for_keyword : Test(15) {
 
 sub test_get_forecast_for_keywords : Test(16) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -132,8 +135,6 @@ sub test_get_forecast_for_keywords : Test(16) {
 sub test_get_forecast_by_ad_group : Test(15) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
     my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $section );
@@ -175,10 +176,6 @@ sub test_get_forecast_by_ad_group : Test(15) {
 sub startup_test_forecast_service : Test(startup) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("preparing test data...");
-
     $self->common_test_data( 'test_campaign', $self->create_campaign ) unless defined $self->common_test_data( 'test_campaign' );
     $self->common_test_data( 'test_ad_group', $self->create_ad_group ) unless defined $self->common_test_data( 'test_ad_group' );
     $self->common_test_data( 'test_keyword', $self->create_keyword( text => 'ipod') ) unless defined $self->common_test_data( 'test_keyword' );
@@ -188,9 +185,6 @@ sub startup_test_forecast_service : Test(startup) {
 sub shutdown_test_forecast_service : Test(shutdown) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("cleaning test data...");
     $self->cleanup_keyword;
     $self->cleanup_ad_group;
     $self->cleanup_campaign;

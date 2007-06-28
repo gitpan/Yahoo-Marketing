@@ -17,11 +17,16 @@ use Yahoo::Marketing::AdGroupService;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
 
 sub test_add_ad_group : Test(3) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $result = $self->create_ad_group;
 
@@ -37,8 +42,6 @@ sub test_add_ad_group : Test(3) {
 
 sub test_add_ad_groups : Test(5) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @added_ad_groups = $self->create_ad_groups;
 
@@ -57,8 +60,6 @@ sub test_add_ad_groups : Test(5) {
 
 sub test_delete_ad_group : Test(3) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad_group = $self->create_ad_group;
 
@@ -80,8 +81,6 @@ sub test_delete_ad_group : Test(3) {
 
 sub test_delete_ad_groups : Test(5) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad_group1 = $self->create_ad_group;
     my $ad_group2 = $self->create_ad_group;
@@ -108,8 +107,6 @@ sub test_delete_ad_groups : Test(5) {
 sub test_get_ad_group : Test(4) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
@@ -125,8 +122,6 @@ sub test_get_ad_group : Test(4) {
 
 sub test_get_ad_group_ad_count : Test(1) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -145,8 +140,6 @@ sub test_get_ad_group_ad_count : Test(1) {
 sub test_get_ad_group_content_match_max_bid : Test(1) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad_group = $self->create_ad_group;
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
@@ -161,8 +154,6 @@ sub test_get_ad_group_content_match_max_bid : Test(1) {
 
 sub test_get_ad_group_excluded_words_count : Test(1) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     # do we need to add some excluded words to the ad group first?
     my $ad_group = $self->common_test_data( 'test_ad_group' );
@@ -181,8 +172,6 @@ sub test_get_ad_group_excluded_words_count : Test(1) {
 sub test_get_ad_group_keyword_count : Test(1) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     # do we need to add some keywords to the ad group first?
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -199,8 +188,6 @@ sub test_get_ad_group_keyword_count : Test(1) {
 
 sub test_get_ad_groups : Test(6) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
 
@@ -230,8 +217,6 @@ sub test_get_ad_groups : Test(6) {
 sub test_get_ad_groups_by_campaign_id : Test(1) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $campaign = $self->common_test_data( 'test_campaign' );
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
@@ -250,8 +235,6 @@ sub test_get_ad_groups_by_campaign_id : Test(1) {
 
 sub test_get_ad_groups_by_campaign_id_by_status : Test(2) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
@@ -276,8 +259,6 @@ sub test_get_ad_groups_by_campaign_id_by_status : Test(2) {
 sub test_get_ad_group_sponsored_search_max_bid : Test(1) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
@@ -292,8 +273,6 @@ sub test_get_ad_group_sponsored_search_max_bid : Test(1) {
 
 sub test_get_and_set_optimization_guidelines_for_ad_group : Test(16) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -345,8 +324,6 @@ sub test_get_and_set_optimization_guidelines_for_ad_group : Test(16) {
 sub test_get_status_for_ad_group : Test(1) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
@@ -358,8 +335,6 @@ sub test_get_status_for_ad_group : Test(1) {
 # may need change - the doc on site is not ready
 sub test_set_ad_group_content_match_max_bid : Test(2) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -384,8 +359,6 @@ sub test_set_ad_group_content_match_max_bid : Test(2) {
 sub test_set_ad_group_sponsored_search_max_bid : Test(2) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
@@ -407,8 +380,6 @@ sub test_set_ad_group_sponsored_search_max_bid : Test(2) {
 
 sub test_update_ad_group : Test(7) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad_group = $self->create_ad_group;
 
@@ -435,8 +406,6 @@ sub test_update_ad_group : Test(7) {
 
 sub test_update_ad_groups : Test(11) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
 
@@ -479,8 +448,6 @@ sub test_update_ad_groups : Test(11) {
 sub test_update_status_for_ad_group : Test(2) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
     my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
@@ -500,8 +467,6 @@ sub test_update_status_for_ad_group : Test(2) {
 
 sub test_update_status_for_ad_groups : Test(4) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my @ad_groups = @{ $self->common_test_data( 'test_ad_groups' ) };
 
@@ -525,8 +490,6 @@ sub test_update_status_for_ad_groups : Test(4) {
 
 sub test_move_ad_group : Test(7) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $campaign = $self->create_campaign;
     ok( $campaign );
@@ -564,10 +527,6 @@ sub test_move_ad_group : Test(7) {
 sub startup_test_ad_group_service : Test(startup) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("preparing test data...");
-
     $self->common_test_data( 'test_campaign', $self->create_campaign ) unless defined $self->common_test_data( 'test_campaign' );
     $self->common_test_data( 'test_ad_group', $self->create_ad_group ) unless defined $self->common_test_data( 'test_ad_group' );
     $self->common_test_data( 'test_ad_groups', [$self->create_ad_groups] ) unless defined $self->common_test_data( 'test_ad_groups' );
@@ -577,9 +536,6 @@ sub startup_test_ad_group_service : Test(startup) {
 sub shutdown_test_ad_group_service : Test(shutdown) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("cleaning test data...");
     $self->cleanup_ad_group;
     $self->cleanup_ad_groups;
     $self->cleanup_campaign;

@@ -7,7 +7,7 @@ use strict; use warnings;
 use base qw/Yahoo::Marketing::Service/;
 
 
-sub _add_account_to_header { return 1; } # force addition of account to header
+sub _add_account_to_header { return 0; } # force addition of account to header
 
 =head1 NAME
 

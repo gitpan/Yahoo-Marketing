@@ -12,10 +12,15 @@ use Yahoo::Marketing::CompanyService;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
 sub test_get_company : Test(2) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::CompanyService->new->parse_config( section => $section );
 

@@ -89,6 +89,7 @@ META.yml			# Will be created by "make dist"
 README
 t/00-load.t
 t/01-instantiate_services.t
+t/02-cache.t
 t/account.t
 t/account_service.t
 t/ad.t
@@ -168,6 +169,7 @@ t/lib/Yahoo/Marketing/Test/BidInformationService.pm
 t/lib/Yahoo/Marketing/Test/BillingUser.pm
 t/lib/Yahoo/Marketing/Test/BucketType.pm
 t/lib/Yahoo/Marketing/Test/BudgetingService.pm
+t/lib/Yahoo/Marketing/Test/Cache.pm
 t/lib/Yahoo/Marketing/Test/Campaign.pm
 t/lib/Yahoo/Marketing/Test/CampaignOptimizationGuidelines.pm
 t/lib/Yahoo/Marketing/Test/CampaignOptimizationGuidelinesResponse.pm

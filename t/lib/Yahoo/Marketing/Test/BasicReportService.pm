@@ -16,10 +16,32 @@ use Yahoo::Marketing::FileOutputFormat;
 
 my $section = 'sandbox';
 
-sub test_add_report_request_with_account_aggregation : Test(2) {
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
+sub test_is_books_closed : Test(1) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
+
+    my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
+        ->reportName( 'account aggregation report' )
+        ->reportType( 'AccountSummary' )
+        ->dateRange( 'LastCalendarMonth' );
+
+    my $result = $ysm_ws->isBooksClosed(
+        reportRequest => $basic_report_request,
+    );
+    ok($result);
+};
+
+
+sub test_add_report_request_with_account_aggregation : Test(2) {
+    my $self = shift;
 
     my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
 
@@ -40,8 +62,6 @@ sub test_add_report_request_with_account_aggregation : Test(2) {
 sub test_add_report_request_for_account_id : Test(2) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
@@ -61,8 +81,6 @@ sub test_add_report_request_for_account_id : Test(2) {
 
 sub test_get_report_list : Test(2) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
 
@@ -93,8 +111,6 @@ sub test_get_report_list : Test(2) {
 
 sub test_delete_report : Test(2) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
 
@@ -128,8 +144,6 @@ sub test_delete_report : Test(2) {
 
 sub test_delete_reports : Test(3) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
 
@@ -176,8 +190,6 @@ sub test_delete_reports : Test(3) {
 sub test_get_report_output_url : Test(2) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
@@ -218,8 +230,6 @@ sub test_get_report_output_url : Test(2) {
 
 sub test_get_report_output_urls : Test(4) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
 
@@ -276,8 +286,6 @@ sub test_get_report_output_urls : Test(4) {
 sub test_only_hold_5_reports : Test(4) {
 
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
     my @report_list = $ysm_ws->getReportList( onlyCompleted => 'false' );

@@ -13,11 +13,15 @@ use Yahoo::Marketing::ExcludedWord;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
 
 sub test_add_excluded_words_to_ad_group : Test(9) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
 
@@ -56,8 +60,6 @@ sub test_add_excluded_words_to_ad_group : Test(9) {
 sub test_add_excluded_words_to_account : Test(9) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
 
     my $excluded_word1 = Yahoo::Marketing::ExcludedWord->new
@@ -92,8 +94,6 @@ sub test_add_excluded_words_to_account : Test(9) {
 sub test_add_excluded_word_to_ad_group : Test(5) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
@@ -119,8 +119,6 @@ sub test_add_excluded_word_to_ad_group : Test(5) {
 sub test_add_excluded_word_to_account : Test(5) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
 
     my $excluded_word = Yahoo::Marketing::ExcludedWord->new
@@ -142,8 +140,6 @@ sub test_add_excluded_word_to_account : Test(5) {
 
 sub test_get_excluded_word : Test(4) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
 
@@ -171,8 +167,6 @@ sub test_get_excluded_word : Test(4) {
 
 sub test_get_excluded_words : Test(6) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
 
@@ -211,8 +205,6 @@ sub test_get_excluded_words : Test(6) {
 sub test_get_excluded_words_by_ad_group_id : Test(3) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
@@ -249,8 +241,6 @@ sub test_get_excluded_words_by_ad_group_id : Test(3) {
 sub test_get_excluded_words_by_account : Test(3) {
     my $self = shift;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
 
     my $excluded_word = Yahoo::Marketing::ExcludedWord->new
@@ -276,8 +266,6 @@ sub test_get_excluded_words_by_account : Test(3) {
 
 sub test_delete_excluded_word : Test(5) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
 
@@ -329,8 +317,6 @@ sub test_delete_excluded_word : Test(5) {
 
 sub test_delete_excluded_words : Test(9) {
     my $self = shift;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
 
@@ -397,10 +383,6 @@ sub test_delete_excluded_words : Test(9) {
 sub startup_test_excluded_words_service : Test(startup) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("preparing test data...");
-
     $self->common_test_data( 'test_campaign', $self->create_campaign ) unless defined $self->common_test_data( 'test_campaign' );
     $self->common_test_data( 'test_ad_group', $self->create_ad_group ) unless defined $self->common_test_data( 'test_ad_group' );
 
@@ -410,9 +392,6 @@ sub startup_test_excluded_words_service : Test(startup) {
 sub shutdown_test_excluded_words_service : Test(shutdown) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("cleaning test data...");
     $self->cleanup_ad_group;
     $self->cleanup_campaign;
 

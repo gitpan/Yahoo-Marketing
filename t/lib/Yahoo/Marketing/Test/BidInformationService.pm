@@ -15,10 +15,15 @@ use Yahoo::Marketing::BidInformationService;
 
 my $section = 'sandbox';
 
+sub SKIP_CLASS {
+    my $self = shift;
+    # 'not running post tests' is a true value
+    return 'not running post tests' unless $self->run_post_tests;
+    return;
+}
+
 sub test_get_bids_for_best_rank : Test(3) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -36,8 +41,6 @@ sub test_get_bids_for_best_rank : Test(3) {
 
 sub test_get_market_bids_for_best_rank : Test(3) {
     my ( $self ) = @_;
-
-    return 'not running post tests' unless $self->run_post_tests;
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -61,8 +64,6 @@ sub test_get_market_bids_for_best_rank : Test(3) {
 sub test_get_min_bids_for_keyword_string : Test(2) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
     my $ysm_ws = Yahoo::Marketing::BidInformationService->new->parse_config( section => $section );
 
     my $bid = $ysm_ws->getMinBidForKeywordString( keyword => 'porsche' );
@@ -74,10 +75,6 @@ sub test_get_min_bids_for_keyword_string : Test(2) {
 sub startup_test_bid_information_service : Test(startup) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("preparing test data...");
-
     $self->common_test_data( 'test_campaign', $self->create_campaign ) unless defined $self->common_test_data( 'test_campaign' );
     $self->common_test_data( 'test_ad_group', $self->create_ad_group ) unless defined $self->common_test_data( 'test_ad_group' );
 }
@@ -86,9 +83,6 @@ sub startup_test_bid_information_service : Test(startup) {
 sub shutdown_test_bid_information_service : Test(shutdown) {
     my ( $self ) = @_;
 
-    return 'not running post tests' unless $self->run_post_tests;
-
-    diag("cleaning test data...");
     $self->cleanup_ad_group;
     $self->cleanup_campaign;
 }
