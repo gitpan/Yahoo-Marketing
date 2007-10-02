@@ -54,4 +54,10 @@ Revision history for Yahoo-Marketing
 2.01    14 May 2007
         Major version # bumped for EWS V2.  All changes neccessary to support V2 added.
 
+2.02    27 June 2007
+        New tests for new functionality with V2.1.  Some misc cleanup.
+
+3.01    02 October 2007
+        Changes for EWS V3.  New VaultService, new get/set/delete BlockedDomainListForAccount commands in AccountService.
+
 

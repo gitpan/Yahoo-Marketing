@@ -44,9 +44,9 @@ sub new {
     $args{ use_wsse_security_headers } = 1       unless exists $args{ use_wsse_security_headers };
     $args{ use_location_service }      = 1       unless exists $args{ use_location_service };
     $args{ cache_expire_time }         = '1 day' unless exists $args{ cache_expire_time };
-    $args{ version }                   = 'V2'    unless exists $args{ version };
+    $args{ version }                   = 'V3'    unless exists $args{ version };
 
-    $args{ uri } = 'http://marketing.ews.yahooapis.com/V2' 
+    $args{ uri } = 'http://marketing.ews.yahooapis.com/V3' 
         unless exists $args{ uri };
 
     my $self = bless \%args, $class;
@@ -809,7 +809,7 @@ Get/set the version to be used for requests
 
 Get/set the URI to be used for requests.  
 
-Defaults to http://marketing.ews.yahooapis.com/V2
+Defaults to http://marketing.ews.yahooapis.com/V3
 
 =head2 master_account
 

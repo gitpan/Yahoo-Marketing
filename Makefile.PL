@@ -2,25 +2,25 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
-          'PL_FILES' => {},
-          'INSTALLDIRS' => 'site',
           'NAME' => 'Yahoo::Marketing',
-          'EXE_FILES' => [],
           'VERSION_FROM' => 'lib/Yahoo/Marketing.pm',
           'PREREQ_PM' => {
-                           'Scalar::Util' => '1.01',
-                           'DateTime::Format::ISO8601' => 0,
-                           'YAML' => '0.01',
-                           'Test::Class' => '0.10',
-                           'Test::Simple' => '0.60',
                            'Cache::Cache' => '1.01',
-                           'Test::More' => 0,
-                           'SOAP::Lite' => '0.66',
-                           'DateTime::Format::W3CDTF' => 0,
                            'Class::Accessor::Chained' => '0.01',
                            'Crypt::SSLeay' => '0.40',
+                           'DateTime::Format::ISO8601' => '0',
+                           'DateTime::Format::W3CDTF' => '0',
+                           'Module::Build' => '0.26',
+                           'SOAP::Lite' => '0.66',
+                           'Scalar::Util' => '1.01',
+                           'Test::Class' => '0.10',
+                           'Test::More' => '0',
+                           'Test::Simple' => '0.60',
                            'XML::XPath' => '1.10',
-                           'Module::Build' => '0.26'
-                         }
+                           'YAML' => '0.01'
+                         },
+          'INSTALLDIRS' => 'site',
+          'EXE_FILES' => [],
+          'PL_FILES' => {}
         )
 ;

@@ -19,10 +19,15 @@ sub _user_setable_attributes {
                  businessTypeCode
                  contentMatchON
                  displayURL
+                 fiscalCode
+                 hasFiscalCode
+                 hasNifCif
+                 hasVatRegistrationNumber
                  marketID
                  masterAccountID
                  name
                  nameFurigana
+                 nifCif
                  personalID
                  sitePassword
                  siteUserName
@@ -65,10 +70,15 @@ Creates a new instance
     businessTypeCode
     contentMatchON
     displayURL
+    fiscalCode
+    hasFiscalCode
+    hasNifCif
+    hasVatRegistrationNumber
     marketID
     masterAccountID
     name
     nameFurigana
+    nifCif
     personalID
     sitePassword
     siteUserName

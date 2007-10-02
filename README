@@ -20,7 +20,7 @@ Sample Usage:
     $service->license( 'your license' );
     $service->master_account( 'your master account ID' );
     $service->account( 'your account ID' );
-    $service->endpoint( 'https://sandbox.marketing.ews.yahooapis.com/services/V2' );
+    $service->endpoint( 'https://sandbox.marketing.ews.yahooapis.com/services/V3' );
     $service->wsdl_init;
 
     # OR

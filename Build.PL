@@ -10,9 +10,10 @@ my $builder = Module::Build->subclass(
 
                  our $run_post;  
 
-                 my %config_defaults = ( endpoint => 'https://sandbox.marketing.ews.yahooapis.com/services',
-                                         uri      => 'http://marketing.ews.yahooapis.com/V2',
-                                         version  => 'V2',
+                 my %config_defaults = ( endpoint       => 'https://sandbox.marketing.ews.yahooapis.com/services',
+                                         vault_endpoint => 'https://sandbox.vmarketing.ews.yahooapis.com/services',
+                                         uri            => 'http://marketing.ews.yahooapis.com/V3',
+                                         version        => 'V3',
                                        );
 
                  sub ACTION_posttest {
@@ -47,7 +48,7 @@ Please make sure they're properly installed on your system.
                          ;
                          
    
-                         my @config_values = qw/ username password license master_account default_account endpoint uri /;
+                         my @config_values = qw/ username password license master_account default_account endpoint uri vault_endpoint version /;
 
                          foreach my $name ( @config_values ){
                              my $prompt = $name; $prompt =~ s/_/ /g;

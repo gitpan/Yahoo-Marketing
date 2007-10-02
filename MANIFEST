@@ -83,6 +83,7 @@ lib/Yahoo/Marketing/UpdateForKeyword.pm
 lib/Yahoo/Marketing/User.pm
 lib/Yahoo/Marketing/UserAuthorization.pm
 lib/Yahoo/Marketing/UserManagementService.pm
+lib/Yahoo/Marketing/VaultService.pm
 Makefile.PL
 MANIFEST
 META.yml			# Will be created by "make dist"
@@ -224,6 +225,7 @@ t/lib/Yahoo/Marketing/Test/UpdateForKeyword.pm
 t/lib/Yahoo/Marketing/Test/User.pm
 t/lib/Yahoo/Marketing/Test/UserAuthorization.pm
 t/lib/Yahoo/Marketing/Test/UserManagementService.pm
+t/lib/Yahoo/Marketing/Test/VaultService.pm
 t/master_account.t
 t/master_account_service.t
 t/page_related_keyword_request_type.t
@@ -247,4 +249,5 @@ t/update_for_keyword.t
 t/user.t
 t/user_authorization.t
 t/user_management_service.t
+t/vault_service.t
 t/z_cleanup.t

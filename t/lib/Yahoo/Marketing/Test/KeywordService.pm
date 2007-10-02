@@ -523,22 +523,6 @@ sub test_can_update_keywords : Test(7) {
     ok( $ysm_ws->deleteKeywords( keywordIDs => [ map { $_->ID } @added_keywords ] ) );
 }
 
-sub test_can_set_and_get_keyword_sponsored_search_max_bid : Test(2) {
-    my ( $self ) = @_;
-
-    my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => 'sandbox' );
-
-    my $keyword  = $self->common_test_data( 'test_keyword' );
-
-    $ysm_ws->setKeywordSponsoredSearchMaxBid( keywordID => $keyword->ID, maxBid => 3.23 );
-
-
-    my $bid = $ysm_ws->getKeywordSponsoredSearchMaxBid( keywordID => $keyword->ID );
-
-    ok( $bid, 'something was returned' );
-    is( $bid, 3.23, 'bid is correct' );
-}
-
 sub test_can_set_and_get_optimization_guidelines_for_keyword : Test(5) {
     my ( $self ) = @_;
 
@@ -554,7 +538,6 @@ sub test_can_set_and_get_optimization_guidelines_for_keyword : Test(5) {
                                                                        ->sponsoredSearchMaxBid( 2.23 )
              );
 
-    return 'setOptimizationGuidelinesForKeyword having issues...';
     my $optimization_guidelines = $ysm_ws->getOptimizationGuidelinesForKeyword( keywordID => $keyword->ID );
 
     ok( $optimization_guidelines, 'something was returned' );
@@ -564,10 +547,6 @@ sub test_can_set_and_get_optimization_guidelines_for_keyword : Test(5) {
     is( $optimization_guidelines->sponsoredSearchMaxBid , 2.23,             'bid is correct' );
 
 }
-
-
-
-
 
 sub test_can_update_status_for_keyword : Test(2) {
     my ( $self ) = @_;

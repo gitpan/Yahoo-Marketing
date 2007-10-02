@@ -9,7 +9,7 @@ use Test::More;
 use Module::Build;
 
 use Yahoo::Marketing::AccountService;
-use Yahoo::Marketing::UserManagementService;
+use Yahoo::Marketing::VaultService;
 use Yahoo::Marketing::User;
 use Yahoo::Marketing::Address;
 use Yahoo::Marketing::BillingUser;
@@ -113,8 +113,9 @@ sub test_get_and_set_active_credit_card : Test(2) {
     my $active_payment_method_id = $ysm_ws->getActiveCreditCard( accountID => $ysm_ws->account );
     ok( $active_payment_method_id );
 
-    my $user_service = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
-    my @payment_methods = $user_service->getPaymentMethods;
+    my $vault_service = Yahoo::Marketing::VaultService->new->parse_config( section => $section );
+
+    my @payment_methods = $vault_service->getPaymentMethods;
 
     return "no payment methods, skipping setActiveCreditCard tests"
         if @payment_methods < 1;
@@ -252,8 +253,6 @@ sub test_update_account : Test(7) {
 
 
 sub test_update_account_status : Test(3) {
-    my $self = shift;
-
     my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
 
     my $account_status = $ysm_ws->getAccountStatus( accountID => $ysm_ws->account );
@@ -272,6 +271,33 @@ sub test_update_account_status : Test(3) {
     is( $ysm_ws->getAccountStatus( accountID => $ysm_ws->account )->accountStatus, $account_status->accountStatus, 'change back to old status' );
 }
 
+sub test_set_get_delete_blocked_domain_list : Test(8) {
+    my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
+
+    ok( $ysm_ws->deleteBlockedDomainListForAccount( accountID => $ysm_ws->account ) );
+
+    ok( not $ysm_ws->getBlockedDomainListForAccount( accountID => $ysm_ws->account ) );
+
+    ok( $ysm_ws->setBlockedDomainListForAccount( accountID => $ysm_ws->account, blockedDomainList => [ 'microsoft.com', 'perl.org' ] ) );
+
+    my @blocked_domains = $ysm_ws->getBlockedDomainListForAccount( accountID => $ysm_ws->account );
+
+    is( scalar @blocked_domains, 2 );
+
+    ok( grep { /^microsoft\.com$/ } @blocked_domains );
+    ok( grep { /^perl\.org$/  } @blocked_domains );
+
+    ok( $ysm_ws->deleteBlockedDomainListForAccount( accountID => $ysm_ws->account ) );
+
+    ok( not $ysm_ws->getBlockedDomainListForAccount( accountID => $ysm_ws->account ) );
+}
+
 
 
 1;
+
+
+# setBlockedDomainListForAccount
+# getBlockedDomainListForAccount
+# deleteBlockedDomainListForAccount
+
