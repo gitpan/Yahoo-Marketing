@@ -99,8 +99,6 @@ sub test_update_master_account : Test(4) {
 
 
 
-=cut
-
 1;
 
 

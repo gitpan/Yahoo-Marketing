@@ -7,4 +7,7 @@ use strict; use warnings;
 use Test::More;
 eval "use Test::Pod 1.14";
 plan skip_all => "Test::Pod 1.14 required for testing POD" if $@;
-all_pod_files_ok();
+
+# add t/lib to verify there's no bad pod in test modules.
+# Note that we don't require coverage for all test modules in t/pod-coverage.t
+all_pod_files_ok( all_pod_files( 'lib', 't/lib' ) );   

@@ -13,8 +13,6 @@ use Yahoo::Marketing::RelatedKeywordRequestType;
 use Yahoo::Marketing::RangeDefinitionRequestType;
 use Yahoo::Marketing::PageRelatedKeywordRequestType;
 
-#use SOAP::Lite +trace => [qw/ debug method fault /];
-
 my $section = 'sandbox';
 
 sub SKIP_CLASS {
@@ -22,6 +20,31 @@ sub SKIP_CLASS {
     # 'not running post tests' is a true value
     return 'not running post tests' unless $self->run_post_tests;
     return;
+}
+
+sub test_get_related_keywords_non_us_pre_encoded : Test(2) {
+     my ( $self ) = @_;
+
+     my $word = '&#x30B2;&#x30FC;&#x30E0; &#x30D7;&#x30EC;&#x30B9;&#x30C6;';
+
+     my $related_keyword_request_type = 
+         Yahoo::Marketing::RelatedKeywordRequestType->new
+                  ->market( 'JP' )
+                  ->maxKeywords( '5' )
+                  ->positiveKeywords( [ $word ] )
+     ;
+
+
+
+     my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
+
+     my $result = $ysm_ws->getRelatedKeywords(
+         relatedKeywordRequest => $related_keyword_request_type,
+     );
+
+     ok( $result );
+     is( scalar @{$result->relatedKeywords}, 5 );
+
 }
 
 sub test_get_common_keywords : Test(5) {
@@ -156,7 +179,6 @@ sub test_get_range_definitions : Test(3) {
     is( $result->rangeDefinition->[0]->rangeName, 'Searches' );
 }
 
-=cut
 
 1;
 

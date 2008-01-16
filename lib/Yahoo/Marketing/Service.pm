@@ -664,11 +664,9 @@ sub _escape_xml_baddies {
     return unless defined $input;
     # trouble with HTML::Entities::encode_entities is it will happily double encode things
     # SOAP::Lite::encode_data also appears to have this problem
-    #return encode_entities( $input );
-    $input =~ s/&(?!\w+;)/&amp;/g;
+    $input =~ s/&(?![#\w]+;)/&amp;/g;
     $input =~ s/</&lt;/g;
     $input =~ s/\]\]>/\]\]&gt;/g;  # From SOAP::Lite's encode_data
-    #$input =~ s/"/&quot;/g;   # no values in attributes
     return $input;
 }
 

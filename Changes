@@ -60,4 +60,5 @@ Revision history for Yahoo-Marketing
 3.01    02 October 2007
         Changes for EWS V3.  New VaultService, new get/set/delete BlockedDomainListForAccount commands in AccountService.
 
-
+3.02    16 January 2007
+        Fixed double-encoding for HTML encoded UTF-8 chars.
