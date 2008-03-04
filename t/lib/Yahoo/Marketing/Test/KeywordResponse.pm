@@ -9,13 +9,14 @@ use Test::More;
 
 use Yahoo::Marketing::KeywordResponse;
 
-sub test_can_create_keyword_response_and_set_all_fields : Test(5) {
+sub test_can_create_keyword_response_and_set_all_fields : Test(6) {
 
     my $keyword_response = Yahoo::Marketing::KeywordResponse->new
                                                             ->editorialReasons( 'editorial reasons' )
                                                             ->errors( 'errors' )
                                                             ->keyword( 'keyword' )
                                                             ->operationSucceeded( 'operation succeeded' )
+                                                            ->warnings( 'warnings' )
                    ;
 
     ok( $keyword_response );
@@ -24,6 +25,7 @@ sub test_can_create_keyword_response_and_set_all_fields : Test(5) {
     is( $keyword_response->errors, 'errors', 'can get errors' );
     is( $keyword_response->keyword, 'keyword', 'can get keyword' );
     is( $keyword_response->operationSucceeded, 'operation succeeded', 'can get operation succeeded' );
+    is( $keyword_response->warnings, 'warnings', 'can get warnings' );
 
 };
 

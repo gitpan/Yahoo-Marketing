@@ -9,12 +9,13 @@ use Test::More;
 
 use Yahoo::Marketing::CampaignResponse;
 
-sub test_can_create_campaign_response_and_set_all_fields : Test(4) {
+sub test_can_create_campaign_response_and_set_all_fields : Test(5) {
 
     my $campaign_response = Yahoo::Marketing::CampaignResponse->new
                                                               ->campaign( 'campaign' )
                                                               ->errors( 'errors' )
                                                               ->operationSucceeded( 'operation succeeded' )
+                                                              ->warnings( 'warnings' )
                    ;
 
     ok( $campaign_response );
@@ -22,6 +23,7 @@ sub test_can_create_campaign_response_and_set_all_fields : Test(4) {
     is( $campaign_response->campaign, 'campaign', 'can get campaign' );
     is( $campaign_response->errors, 'errors', 'can get errors' );
     is( $campaign_response->operationSucceeded, 'operation succeeded', 'can get operation succeeded' );
+    is( $campaign_response->warnings, 'warnings', 'can get warnings' );
 
 };
 

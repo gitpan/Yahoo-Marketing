@@ -12,7 +12,7 @@ use Yahoo::Marketing::Campaign;
 use Yahoo::Marketing::CampaignService;
 use Yahoo::Marketing::CampaignOptimizationGuidelines;
 
-my $section = 'sandbox';
+# use SOAP::Lite +trace => [qw/ debug method fault /];
 
 sub SKIP_CLASS {
     my $self = shift;
@@ -40,7 +40,7 @@ sub shutdown_test_campaign_service : Test(shutdown) {
 sub test_get_campaign : Test(3) { 
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
@@ -66,7 +66,7 @@ sub test_update_campaign : Test(22) {
     $end_datetime->set_time_zone( 'America/Chicago' );
     $end_datetime->add( years => 2 );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
     my $update_campaign_response = $ysm_ws->updateCampaign( 
                                         campaign  => $campaign->name( "updated campaign $$" )
                                                               ->watchON( 'true' ) 
@@ -131,7 +131,7 @@ sub test_update_campaign_can_handle_dates_for_user : Test(12) {
     my $datetime = DateTime->now;
     $datetime->set_time_zone( 'America/Chicago' );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
     my $update_campaign_response = $ysm_ws->updateCampaign( 
                                         campaign  => $campaign->name( "updated campaign datetime $$" )
                                                               ->watchON( 'true' ) 
@@ -176,7 +176,7 @@ sub test_can_add_campaign : Test(4) {
     like( $campaign->name, qr/^test campaign \d+$/, 'name looks right' );
     like( $campaign->ID, qr/^[\d]+$/, 'ID is numeric' );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     ok( $ysm_ws->deleteCampaign(
                      campaignID => $campaign->ID,
@@ -191,7 +191,7 @@ sub test_can_get_campaign_ad_group_count : Test(6) {
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $count = $ysm_ws->getCampaignAdGroupCount(
                              campaignID     => $campaign->ID,
@@ -209,7 +209,7 @@ sub test_can_get_campaign_ad_group_count : Test(6) {
                                             ->sponsoredSearchMaxBid( '0.28' )
                                             ->adAutoOptimizationON( 'false' )
                    ;
-    my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
     my $add_ad_group_response = $ad_group_service->addAdGroup( adGroup => $ad_group );
     ok( not $add_ad_group_response->errors );
 
@@ -237,7 +237,7 @@ sub test_can_get_campaign_ad_group_count : Test(6) {
 sub test_can_get_campaigns_by_account_id : Test(1) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my @campaigns = $ysm_ws->getCampaignsByAccountID(
         accountID      => $ysm_ws->account,
@@ -251,7 +251,7 @@ sub test_can_get_campaigns_by_account_id : Test(1) {
 sub test_can_update_campaigns : Test(13) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my @campaigns = @{ $self->common_test_data( 'test_campaigns' ) };
 
@@ -290,7 +290,7 @@ sub test_can_update_campaigns : Test(13) {
 sub test_can_get_campaigns : Test(4) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my @campaigns = @{ $self->common_test_data( 'test_campaigns' ) };
 
@@ -314,7 +314,7 @@ sub test_can_update_status_for_campaigns : Test(4) {
 
     my @campaigns = @{ $self->common_test_data( 'test_campaigns' ) };
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     $ysm_ws->updateStatusForCampaigns(
                  campaignIDs => [ $campaigns[0]->ID, $campaigns[1]->ID ],
@@ -339,7 +339,7 @@ sub test_can_get_status_for_campaign : Test(1) {
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $status = $ysm_ws->getStatusForCampaign( campaignID => $campaign->ID, );
 
@@ -351,7 +351,7 @@ sub test_can_get_campaign_keyword_count : Test(1) {
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $count = $ysm_ws->getCampaignKeywordCount(
         campaignID     => $campaign->ID,
@@ -367,7 +367,7 @@ sub test_can_delete_campaign : Test(2) {
 
     my $campaign = $self->create_campaign;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $response = $ysm_ws->deleteCampaign(
                        campaignID => $campaign->ID,
@@ -385,7 +385,7 @@ sub test_can_set_get_delete_geographic_location_for_campaign : Test(18) {
 
     my $campaign = $self->create_campaign;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $response = $ysm_ws->setGeographicLocationForCampaign(
         campaignID => $campaign->ID,
@@ -436,7 +436,7 @@ sub test_set_get_delete_geographic_location_for_campaign_works_for_unambiguous_m
 
     my $campaign = $self->create_campaign;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $response = $ysm_ws->setGeographicLocationForCampaign(
         campaignID => $campaign->ID,
@@ -456,7 +456,7 @@ sub test_set_get_delete_geographic_location_for_campaign_doesnt_fail_for_bad_loc
 
     my $campaign = $self->create_campaign;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $response = $ysm_ws->setGeographicLocationForCampaign(
         campaignID => $campaign->ID,
@@ -475,12 +475,29 @@ sub test_set_get_delete_geographic_location_for_campaign_doesnt_fail_for_bad_loc
     ok( not $response->ambiguousMatches );
 }
 
+sub test_can_get_min_mid_for_campaign_optimization_guidelines : Test(1) {
+    my ( $self ) = @_;
+
+    # getMinBidForCampaignOptimizationGuidelines
+
+    my $campaign = $self->common_test_data( 'test_campaign' );
+
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
+
+    my $response = $ysm_ws->getMinBidForCampaignOptimizationGuidelines( campaignID => $campaign->ID );
+
+    like( $response, qr/^\d+(\.)*(\d)*$/, 'bid is numeric' );
+
+    diag( $response );
+
+}
+
 sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(5) {
     my ( $self ) = @_;
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $campaignOptimizationGuidelines = Yahoo::Marketing::CampaignOptimizationGuidelines->new
                                              ->campaignID( $campaign->ID )
@@ -521,7 +538,7 @@ sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(5) {
 sub test_can_get_campaigns_by_account_id_by_campaign_status : Test(1) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my @campaigns = $ysm_ws->getCampaignsByAccountIDByCampaignStatus(
                                  accountID => $ysm_ws->account,
@@ -537,7 +554,7 @@ sub test_can_add_campaigns : Test(8) {
 
     my @added_campaigns = $self->create_campaigns;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     ok( scalar @added_campaigns );
 
@@ -565,7 +582,7 @@ sub test_add_campaigns_doesnt_add_if_one_is_bad : Test(3) {
     $datetime->add( years => 1 );
     my $end_datetime   = $formatter->format_datetime( $datetime );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $campaign1 = Yahoo::Marketing::Campaign->new
                                               ->startDate( $start_datetime )
@@ -606,7 +623,7 @@ sub test_can_update_status_for_campaign : Test(4) {
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
     $ysm_ws->updateStatusForCampaign(
                  campaignID => $campaign->ID,
                  status     => 'Off',
@@ -636,7 +653,7 @@ sub test_can_delete_campaigns : Test(4) {
     my $campaign1 = $self->create_campaign;
     my $campaign2 = $self->create_campaign;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my @responses = $ysm_ws->deleteCampaigns(
                         campaignIDs => [ $campaign1->ID, $campaign2->ID ],
@@ -659,7 +676,7 @@ sub test_can_delete_campaigns : Test(4) {
 sub test_update_campaigns_response_with_multiple_errors_dies_correctly : Test(2) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my @campaigns = @{ $self->common_test_data( 'test_campaigns' ) };
 
@@ -684,7 +701,7 @@ sub test_campaign_service_can_be_immortal : Test(5) {
     my ( $self ) = @_;
 
     my $ysm_ws = Yahoo::Marketing::CampaignService->new
-                                                  ->parse_config( section => $section )
+                                                  ->parse_config( section => $self->section )
                                                   ->immortal(1)  # don't die 
     ;
 

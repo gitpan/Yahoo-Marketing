@@ -39,6 +39,24 @@ Please make sure they're properly installed on your system.
 
                      $build->notes(run_post_tests => 'yes');
 
+                     my $section = $ENV{ YAHOO_MARKETING_CONFIG_SECTION } 
+                                 ? $ENV{ YAHOO_MARKETING_CONFIG_SECTION } 
+                                 : ( $build and $build->args('config_section') )
+                                   ? $build->args('config_section') 
+                                   : 'sandbox'
+                     ;
+
+                     $build->notes(config_section => $section);
+
+                     my $debug_level = defined $ENV{ YAHOO_MARKETING_DEBUG }
+                                     ? $ENV{ YAHOO_MARKETING_DEBUG }
+                                     : ( $build and $build->args('SOAPdebug') )
+                                        ? $build->args('SOAPdebug') 
+                                        : 0
+                     ;
+
+                     $build->notes(SOAP_debug_level => $debug_level);
+
                      my $config;
                      unless( -e 'yahoo-marketing.yml' ){
                          print STDERR "Failed to find a YAML configuration file in the default location.\n"
@@ -66,7 +84,6 @@ Please make sure they're properly installed on your system.
                      }else{
                         $config = YAML::LoadFile( 'yahoo-marketing.yml' );
                      }
-
 
                      $cover 
                          ? $self->ACTION_testcover
@@ -124,6 +141,9 @@ my $build = $builder->new(
     },
     add_to_cleanup      => [ 'Yahoo-Marketing-*' ],
     create_makefile_pl  => 'traditional',
+    get_options => { SOAPdebug       => { type  => '+'  },
+                     config_section  => { type  => '=s' },
+                   },
 );
 
 

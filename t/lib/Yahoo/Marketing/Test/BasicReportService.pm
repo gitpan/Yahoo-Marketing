@@ -14,8 +14,6 @@ use Yahoo::Marketing::ReportInfo;
 use Yahoo::Marketing::FileOutputFormat;
 #use SOAP::Lite +trace => [qw/ debug method fault /];
 
-my $section = 'sandbox';
-
 sub SKIP_CLASS {
     my $self = shift;
     # 'not running post tests' is a true value
@@ -26,7 +24,7 @@ sub SKIP_CLASS {
 sub test_is_books_closed : Test(1) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account aggregation report' )
@@ -43,7 +41,7 @@ sub test_is_books_closed : Test(1) {
 sub test_add_report_request_with_account_aggregation : Test(2) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account aggregation report' )
@@ -62,7 +60,7 @@ sub test_add_report_request_with_account_aggregation : Test(2) {
 sub test_add_report_request_for_account_id : Test(2) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report' )
@@ -82,7 +80,7 @@ sub test_add_report_request_for_account_id : Test(2) {
 sub test_get_report_list : Test(2) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report for testing get report list' )
@@ -112,7 +110,7 @@ sub test_get_report_list : Test(2) {
 sub test_delete_report : Test(2) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report for testing delete' )
@@ -145,7 +143,7 @@ sub test_delete_report : Test(2) {
 sub test_delete_reports : Test(3) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
 
     my $basic_report_request1 = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report 1 for testing delete' )
@@ -190,7 +188,7 @@ sub test_delete_reports : Test(3) {
 sub test_get_report_output_url : Test(2) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report for getting output url test' )
@@ -231,7 +229,7 @@ sub test_get_report_output_url : Test(2) {
 sub test_get_report_output_urls : Test(4) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
 
     my $basic_report_request1 = Yahoo::Marketing::BasicReportRequest->new
         ->reportName( 'account report for getting output urls test' )
@@ -287,7 +285,7 @@ sub test_only_hold_5_reports : Test(4) {
 
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
     my @report_list = $ysm_ws->getReportList( onlyCompleted => 'false' );
 
     ok( @report_list <= 5, 'less then 5' );

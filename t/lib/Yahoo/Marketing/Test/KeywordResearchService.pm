@@ -6,6 +6,7 @@ use strict; use warnings;
 
 use base qw/ Yahoo::Marketing::Test::PostTest /;
 use Test::More;
+use utf8;
 
 use Yahoo::Marketing::KeywordResearchService;
 use Yahoo::Marketing::KeywordInfoRequestType;
@@ -13,7 +14,7 @@ use Yahoo::Marketing::RelatedKeywordRequestType;
 use Yahoo::Marketing::RangeDefinitionRequestType;
 use Yahoo::Marketing::PageRelatedKeywordRequestType;
 
-my $section = 'sandbox';
+# use SOAP::Lite +trace => [qw/ debug method fault /];
 
 sub SKIP_CLASS {
     my $self = shift;
@@ -22,6 +23,29 @@ sub SKIP_CLASS {
     return;
 }
 
+sub test_get_related_keywords_non_us_utf8 : Test(2) {
+    my ( $self ) = @_;
+
+    my $word = 'ゲーム プレステ';
+
+    my $related_keyword_request_type = 
+        Yahoo::Marketing::RelatedKeywordRequestType->new
+                 ->market( 'JP' )
+                 ->maxKeywords( '5' )
+                 ->positiveKeywords( [ $word ] )
+    ;
+
+    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $self->section );
+
+    my $result = $ysm_ws->getRelatedKeywords(
+        relatedKeywordRequest => $related_keyword_request_type,
+    );
+
+    ok( $result );
+    # use Data::Dumper; warn( Dumper $result );
+    is( scalar @{$result->relatedKeywords}, 5 );
+
+}
 sub test_get_related_keywords_non_us_pre_encoded : Test(2) {
      my ( $self ) = @_;
 
@@ -36,13 +60,14 @@ sub test_get_related_keywords_non_us_pre_encoded : Test(2) {
 
 
 
-     my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
+     my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $self->section );
 
      my $result = $ysm_ws->getRelatedKeywords(
          relatedKeywordRequest => $related_keyword_request_type,
      );
 
      ok( $result );
+     # use Data::Dumper; warn( Dumper $result );
      is( scalar @{$result->relatedKeywords}, 5 );
 
 }
@@ -50,7 +75,7 @@ sub test_get_related_keywords_non_us_pre_encoded : Test(2) {
 sub test_get_common_keywords : Test(5) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $self->section );
 
     my $result = $ysm_ws->getCommonKeywords(
         getCommonKeywordsRequest 
@@ -71,7 +96,7 @@ sub test_get_common_keywords : Test(5) {
 sub test_get_canonical_keywords : Test(5) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $self->section );
 
     my $result = $ysm_ws->getCanonicalKeywords(
         getCanonicalKeywordsRequest
@@ -96,13 +121,13 @@ sub test_get_page_related_keywords : Test(5) {
         ->excludedKeywords( [ 'autos', 'music' ] )
         ->market( 'US' )
         ->maxKeywords( '3' )
-        ->excludedPhraseFilters( [ 'xbox' ] )
+        ->excludedPhraseFilters( [ 'xbox', 'x box' ] )
         ->negativeKeywords( [ 'people' ] )
         ->positiveKeywords( [ 'gadget' ] )
         ->requiredPhraseFilters( [ 'laptop' ])
         ->URL( 'http://www.yahoo.com' );
 
-    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $self->section );
 
     my $result = $ysm_ws->getPageRelatedKeywords(
         pageRelatedKeywordRequest => $page_related_keyword_request_type,
@@ -127,7 +152,7 @@ sub test_get_related_keywords : Test(5) {
         ->positiveKeywords( [ 'gadget' ] )
         ->requiredPhraseFilters( [ 'laptop' ]);
 
-    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $self->section );
 
     my $result = $ysm_ws->getRelatedKeywords(
         relatedKeywordRequest => $related_keyword_request_type,
@@ -149,7 +174,7 @@ sub test_get_related_keywords_works_for_no_results : Test(3) {
         ->positiveKeywords( [ 'pandas bears llamas' ] )
     ;
 
-    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $self->section );
 
     my $result = $ysm_ws->getRelatedKeywords(
         relatedKeywordRequest => $related_keyword_request_type,
@@ -167,7 +192,7 @@ sub test_get_range_definitions : Test(3) {
         ->rangeName( [ 'Searches' ] )
     ;
 
-    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $self->section );
 
     my $result = $ysm_ws->getRangeDefinitions(
         rangeDefinitionRequest => $range_definition_request_type,

@@ -15,10 +15,17 @@ Yahoo::Marketing::Keyword - an object to represent a Yahoo Marketing Keyword.
 sub _user_setable_attributes {
     return ( qw/ 
                  ID
+                 accountID
                  adGroupID
                  advancedMatchON
                  alternateText
+                 canonicalSearchText
+                 editorialStatus
+                 participatesInMarketplace
+                 phraseSearchText
+                 sponsoredSearchBidStatus
                  sponsoredSearchMaxBid
+                 sponsoredSearchMinBid
                  status
                  text
                  update
@@ -29,13 +36,9 @@ sub _user_setable_attributes {
 
 sub _read_only_attributes {
     return ( qw/
-                 accountID
-                 canonicalSearchText
                  createTimestamp
                  deleteTimestamp
-                 editorialStatus
                  lastUpdateTimestamp
-                 phraseSearchText
                  sponsoredSearchMaxBidTimestamp
            / );
 }
@@ -48,7 +51,7 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 1;
 =head1 SYNOPSIS
 
-See L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V4/reference/dataObjects.php> for documentation of the various data objects.
 
 
 =cut
@@ -64,10 +67,17 @@ Creates a new instance
 =over 8
 
     ID
+    accountID
     adGroupID
     advancedMatchON
     alternateText
+    canonicalSearchText
+    editorialStatus
+    participatesInMarketplace
+    phraseSearchText
+    sponsoredSearchBidStatus
     sponsoredSearchMaxBid
+    sponsoredSearchMinBid
     status
     text
     update
@@ -80,13 +90,9 @@ Creates a new instance
 
 =over 8
 
-    accountID
-    canonicalSearchText
     createTimestamp
     deleteTimestamp
-    editorialStatus
     lastUpdateTimestamp
-    phraseSearchText
     sponsoredSearchMaxBidTimestamp
 
 =back

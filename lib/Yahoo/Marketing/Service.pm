@@ -9,6 +9,7 @@ use base qw/ Class::Accessor::Chained Yahoo::Marketing /;
 use Carp;
 use YAML qw/DumpFile LoadFile Dump/;
 use XML::XPath;
+use bytes;
 use SOAP::Lite on_action => sub { sprintf '' };
 use Scalar::Util qw/ blessed /;
 use Cache::FileCache;
@@ -36,6 +37,31 @@ __PACKAGE__->mk_accessors( qw/ username
                                immortal
                           / );
 
+my @simple_type_exceptions = (qw/
+    AccountStatus
+    AccountType
+    AdGroupStatus
+    AdStatus
+    BasicReportType
+    BidStatus
+    CampaignStatus
+    Continent
+    ConversionMetric
+    DateRange
+    EditorialStatus
+    ErrorKeyType
+    FileOutputType
+    ForecastMatchType
+    Importance
+    KeywordStatus
+    MasterAccountStatus
+    NotParticipatingInMarketplaceReason
+    RangeNameType
+    ResponseStatusCodeType
+    SignupStatus
+    UserStatus
+/);
+
 
 sub new {
     my ( $class, %args ) = @_;
@@ -44,9 +70,9 @@ sub new {
     $args{ use_wsse_security_headers } = 1       unless exists $args{ use_wsse_security_headers };
     $args{ use_location_service }      = 1       unless exists $args{ use_location_service };
     $args{ cache_expire_time }         = '1 day' unless exists $args{ cache_expire_time };
-    $args{ version }                   = 'V3'    unless exists $args{ version };
+    $args{ version }                   = 'V4'    unless exists $args{ version };
 
-    $args{ uri } = 'http://marketing.ews.yahooapis.com/V3' 
+    $args{ uri } = 'http://marketing.ews.yahooapis.com/V4' 
         unless exists $args{ uri };
 
     my $self = bless \%args, $class;
@@ -226,8 +252,14 @@ sub _process_soap_call {
     my @soap_args;
     while( my $key = shift @args ){
         my $value = shift @args;
-        push @soap_args,  $self->_serialize_argument( $key => $value );
+        push @soap_args,  $self->_serialize_argument( $method, $key => $value );
     }
+
+    # since we have our own _escape_xml_baddies, here we override SOAP::Serializer::as_string.
+    # see comments in _escape_xml_baddies.
+    local *SOAP::Serializer::as_string = \&Yahoo::Marketing::Service::_as_string;
+    # SOAP::Serializer treat utf8 as base64, we need to override to set as_string.
+    # $self->_soap->typelookup->{utf8String} = [8, sub { $_[0] =~ /[^\x09\x0a\x0d\x20-\x7f]/}, 'as_string'];
 
     my $som = $self->_soap->$method( @soap_args, $self->_headers );
 
@@ -238,7 +270,7 @@ sub _process_soap_call {
     }
 
     $self->_set_quota_from_som( $som );
-    return $self->_parse_response( $som, $method );
+    return $self->_parse_response( $som, $method.'Response' );
 }
 
 sub _set_quota_from_som {
@@ -255,24 +287,24 @@ sub _set_quota_from_som {
 sub _parse_response {
     my ( $self, $som, $method ) = @_;
 
-    if( my $result = $som->valueof( '/Envelope/Body/'.$method.'Response/' ) ){
+    if( my $result = $som->valueof( "/Envelope/Body/$method/" ) ){
 
         # catch empty string responses
         return if ( not defined $result->{ out } ) or ( defined $result->{ out } and $result->{ out } eq '' );
 
         my @return_values;
 
-        my $type = $self->_response_map( $method )->{ out };
+        my $type = $self->_complex_types( $method, 'out' );
 
         my @values;
         if( $type =~ /ArrayOf/ ){
-            my $element_type = $self->_response_array_type_map( $type ); 
+            my $element_type = $self->_complex_types( $type );  
             @values = ref( $result->{ out }->{ $element_type } ) eq 'ARRAY' 
-                    ? map { $self->_deserialize( $_, $element_type ) } @{ $result->{ out }->{ $element_type } } 
-                    : ( $self->_deserialize( $result->{ out }->{ $element_type }, $element_type ) )
+                    ? map { $self->_deserialize( $method, $_, $element_type ) } @{ $result->{ out }->{ $element_type } } 
+                    : ( $self->_deserialize( $method, $result->{ out }->{ $element_type }, $element_type ) )
             ;
         }else{
-            @values = $self->_deserialize( $result->{ out }, $type );
+            @values = $self->_deserialize( $method, $result->{ out }, $type );
         }
 
         die 'Unable to parse response!' unless @values;
@@ -288,19 +320,20 @@ sub _parse_response {
 
 
 sub _deserialize {
-    my ( $self, $hash, $type ) = @_;
+    my ( $self, $method, $hash, $type ) = @_;
 
     my @return_values;
-
 
     my $obj;
 
     if( ref $hash eq 'ARRAY' ){
-        return map { $self->_deserialize( $_, $type ) } @{ $hash };
+        return map { $self->_deserialize( $method, $_, $type ) } @{ $hash };
     }elsif( $type =~ /ArrayOf(.*)/ ){
         my $element_type = $1;
-        return [ map { $self->_deserialize( $_, $element_type ) } ( ref $hash eq 'ARRAY' ? @{ $hash } : values %$hash ) ];
-    }elsif( $type !~ /^xsd:|(?<!CombinedAccount)Status$|[Ss]tring$|Int$|Continent$/ ){
+        return [ map { $self->_deserialize( $method, $_, $element_type ) } ( ref $hash eq 'ARRAY' ? @{ $hash } : values %$hash ) ];
+    }elsif( $type !~ /^xsd:|^[Ss]tring$|^[Ii]nt$|^[Dd]ouble|^Continent$/ 
+        and ! grep { $type =~ /^(tns:)?$_$/ } @simple_type_exceptions ){
+
         $type =~ s/^tns://;
 
         # pull it in
@@ -310,30 +343,30 @@ sub _deserialize {
         die "whoops, couldn't load $class: $@" if $@;
 
         $obj = $class->new;
-    }elsif( not ref $hash eq 'HASH'){
+    }elsif( ref $hash ne 'HASH' ){
         return $hash;
     }else{  # this should never be reached
-        confess "how did we get here?  type = $type, hash = $hash\n";
+        confess "Please send this stack trace to the module author.\ntype = $type, hash = $hash";
     }
 
     foreach my $key ( keys %$hash ){
         if( not ref $hash->{ $key } ){
             $obj->$key( $hash->{ $key } );
         }elsif( ref $hash->{ $key } eq 'ARRAY' ){ # better have an array arguement mapping
-                my $type = $self->_simple_types( $key );
+                my $type = $self->_complex_type( $type, $key );
 
-                return [ map { $self->_deserialize( $_, $type ) } @{ $hash->{ $key } } ];
+                return [ map { $self->_deserialize( $method, $_, $type ) } @{ $hash->{ $key } } ];
         }elsif( ref $hash->{ $key } eq 'HASH' ){
-            my $type = $self->_simple_types( $key );
+            my $type = $self->_complex_types( $type, $key );
 
             # special case for array types returning as just a hash with a single element.  Annoying.
             if( $type =~ /^ArrayOf/ ){
-                $type = $self->_response_array_type_map( $type );
-                $obj->$key( [ $self->_deserialize( $hash->{ $key }->{ (keys %{ $hash->{ $key } })[0] }, $type ) ] );
+                $type = $self->_complex_types( $method, $type );
+                $obj->$key( [ $self->_deserialize( $method, $hash->{ $key }->{ (keys %{ $hash->{ $key } })[0] }, $type ) ] );
                 next;
             }
                 
-            $obj->$key( $self->_deserialize( $hash->{ $key }, $type ) ); 
+            $obj->$key( $self->_deserialize( $method, $hash->{ $key }, $type ) ); 
         }else{
             warn "can't handle $key in response yet ( $hash->{ $key } )\n";
         }
@@ -345,24 +378,6 @@ sub _deserialize {
             ? @return_values
             : $return_values[0]
     ;
-}
-
-
-
-sub _is_not_trivial {
-    my ( $self, $response_values ) = @_;
-
-    return ref $response_values->[0];  # only looking at the first one.  Hope they're consistient!
-    # TODO: use List::Utils any/all to croak of they don't all match?
-}
-
-sub _is_special_case {
-    my ( $self, $response_values ) = @_;
-
-    if( ref $response_values->[0] && defined $response_values->[0]->{ string } ){
-        return 1;
-    }
-    return;
 }
 
 
@@ -507,9 +522,10 @@ sub _parse_request_type {
         my $name = $def_node->getAttribute( 'name' );
         my $type = $def_node->getAttribute( 'type' );
 
-        $self->_parse_array_of_type( $xpath, $name, $type, 'request' ) if $type=~ /^tns:ArrayOf/;
-
-        $service_data->{ $self->_wsdl }->{ type_map }->{ $name } = $type ;
+        #warn "req setting type_map->$type_name->_name = $name";
+        $service_data->{ $self->_wsdl }->{ type_map }->{ $type_name }->{ _name } = $name ;
+        #warn "req setting type_map->$type_name->$name = $type";
+        $service_data->{ $self->_wsdl }->{ type_map }->{ $type_name }->{ $name } = $type ;
     }
 
     return;
@@ -528,41 +544,14 @@ sub _parse_response_type {
     ( my $name = $def_node->getAttribute( 'name' ) ) =~ s/^tns://;
     ( my $type = $def_node->getAttribute( 'type' ) ) =~ s/^tns://;
 
-    $self->_parse_array_of_type( $xpath, $name, $type, 'response' ) if $type =~ /^ArrayOf/;
- 
-    $service_data->{ $self->_wsdl }->{ response_map }->{ $type_name } = { $name => $type };
+    #warn "res setting type_map->$type_name->_name = $name";
+    $service_data->{ $self->_wsdl }->{ type_map }->{ $type_name }->{ _name } = $name ;
+    #warn "res setting type_map->$type_name->$name = $type";
+    $service_data->{ $self->_wsdl }->{ type_map }->{ $type_name }->{ $name } = $type ;
 
     return;
 }
 
-sub _parse_array_of_type {
-    my ( $self, $xpath, $name, $type, $request_or_response ) = @_;
-
-    $type =~ s/^(tns:)//;
-
-    my $def_node = ($xpath->find( qq{/wsdl:definitions/wsdl:types/xsd:schema/xsd:complexType[\@name='$type']/xsd:sequence/xsd:element} )->get_nodelist)[0];
-    die "couldn't find definition for $type!\n" unless $def_node;
-    ( my $child = $def_node->getAttribute('name') ) =~ s/^tns://;
-
-    $service_data->{ $self->_wsdl }->{ array_argument_type_map }->{ request }->{ $name } 
-        = { type => $type, child => $child }
-        if not $request_or_response or $request_or_response eq 'request';
-
-    $service_data->{ $self->_wsdl }->{ array_argument_type_map }->{ response }->{ $name } 
-        = { type => $type, child => $child }
-        if not $request_or_response or $request_or_response eq 'response';
-
-    ( my $type_name = $def_node->getAttribute('name') ) =~ s/^tns://;
-    $service_data->{ $self->_wsdl }->{ array_type_map }->{ request }->{ $type } 
-        = $type_name
-        if not $request_or_response or $request_or_response eq 'request';
-
-    $service_data->{ $self->_wsdl }->{ array_type_map }->{ response }->{ $type } 
-        = $type_name
-        if not $request_or_response or $request_or_response eq 'response';
-
-    return; 
-}
 
 
 sub _parse_complex_type {
@@ -577,17 +566,10 @@ sub _parse_complex_type {
         my $name = $complex_type_node->getAttribute('name');
         ( my $type = $complex_type_node->getAttribute('type') ) =~ s/^tns://;
 
-        if( $type=~ /^ArrayOf/ ){
-            if( $element_name =~ /Request(Type)?$/ ){
-                $self->_parse_array_of_type( $xpath, $name, $type, 'request' );
-            }elsif( $element_name =~ /Response(Type)?$/ ){
-                $self->_parse_array_of_type( $xpath, $name, $type, 'response' );
-            }else{
-                $self->_parse_array_of_type( $xpath, $name, $type );
-            }
-        }
-
-        $service_data->{ $self->_wsdl }->{ type_map }->{ $name } = $type =~ /^xsd:/ ? $type : 'tns:'.$type
+        #warn "cpt setting type_map->$type_name->_name = $name";
+        $service_data->{ $self->_wsdl }->{ type_map }->{ $type_name }->{ _name } = $name ;
+        #warn "cpt setting type_map->$type_name->$name = ".( $type =~ /^xsd:/ ? $type : 'tns:'.$type );
+        $service_data->{ $self->_wsdl }->{ type_map }->{ $type_name }->{ $name } = $type =~ /^xsd:/ ? $type : 'tns:'.$type
     }
 
     return;
@@ -608,45 +590,24 @@ sub _wsdl {
     return $self->endpoint.'/'.$self->version.'/'.$self->_service_name.'?wsdl';
 }
 
-sub _response_map {
-    my ( $self, $method ) = @_;
-
-    return $service_data->{ $self->_wsdl }->{ response_map }->{ $method.'Response' };
-}
-
-sub _request_array_argument_type_map {
-    my ( $self, $array_of_type ) = @_;
-
-    return $service_data->{ $self->_wsdl }->{ array_argument_type_map }->{ request }->{ $array_of_type };
-}
-
-sub _response_array_argument_type_map {
-    my ( $self, $array_of_type ) = @_;
-
-    return $service_data->{ $self->_wsdl }->{ array_argument_type_map }->{ response }->{ $array_of_type };
-}
 
 
-sub _request_array_type_map {
-    my ( $self, $array_of_type ) = @_;
 
-    return $service_data->{ $self->_wsdl }->{ array_type_map }->{ request }->{ $array_of_type };
-}
+sub _complex_types {
+    my ( $self, $complex_type, $name ) = @_;
 
-sub _response_array_type_map {
-    my ( $self, $array_of_type ) = @_;
+    my $return;
 
-    return $service_data->{ $self->_wsdl }->{ array_type_map }->{ response }->{ $array_of_type };
-}
+    if( @_ == 2 ){  # no $name
+        $return = $service_data->{ $self->_wsdl }->{ type_map }->{ $complex_type }->{_name};
 
+    }elsif( exists $service_data->{ $self->_wsdl }->{ type_map }->{ $complex_type }->{ $name } ){
+        $return = $service_data->{ $self->_wsdl }->{ type_map }->{ $complex_type }->{ $name } ;
+    }
 
-sub _simple_types {
-    my ( $self, $name ) = @_;
+    #use Carp qw/cluck/; cluck("\n\n\n\n\n\n\n\n\n\n*****************************************************************\n _complex_types( $complex_type, $name ) returning $return");
 
-    return $service_data->{ $self->_wsdl }->{ type_map }->{ $name } 
-        if exists $service_data->{ $self->_wsdl }->{ type_map }->{ $name };
-
-    return;
+    return $return;
 }
 
 
@@ -670,67 +631,78 @@ sub _escape_xml_baddies {
     return $input;
 }
 
+sub _as_string {
+# sub SOAP::Serializer::as_string {
+  my $self = shift;
+  my($value, $name, $type, $attr) = @_;
+  die "String value expected instead of @{[ref $value]} reference\n" if ref $value;
+  return [$name, {'xsi:type' => 'xsd:string', %$attr}, $value];
+}
+
 sub _serialize_argument {
-    my ( $self, $name, $value, @additional_values ) = @_;
+    my ( $self, $method, $name, $value, @additional_values ) = @_;
 
     # there are three major decision paths here:
 
     # if we get multiple values (as an array reference)
-    #   recurse a bit - serialize each individually (see above) and the serialize the whole, then return
-    #   *NOTE* that our test for this is getting the first value as an array reference, and that's it.  
-    #        We'll ignore everything else!  
+    #   serialize each individually and the serialize the whole, then return
 
     # if we get multiple values (as an array)
     #   return an array of each serialized individually
 
     # if we get a just one non-array ref value, serialize it 
-    #   using ->_serialize if it's blessed 
-    #   using ->_simple_types if they apply
-    #  or just plain old
+    #   using ->_serialize_complex_type if it's blessed 
+    #   using ->_complex_types if they apply
 
     if( ref $value eq 'ARRAY' ){
-
-        if( my $type_def = $self->_request_array_argument_type_map( $name ) ) {   # it's one of those multiple methods
-
-            return SOAP::Data->type( $type_def->{ 'type' } )
+        if( my $type_def = $self->_complex_types( $method, $name ) ) {   # it's one of those multiple methods
+            ( my $sub_type = $type_def ) =~ s/^tns://;
+            
+            return SOAP::Data->type( $type_def )
                              ->name( $name )
-                             ->value( \SOAP::Data->value( $self->_serialize_argument( $type_def->{ 'child' } => @{$value} ) ) );
+                             ->value( \SOAP::Data->value( $self->_serialize_argument( $name, $self->_complex_types( $sub_type ), @$value ) ) );
         }
-
-        croak "trying to serialize non plural looking $name with an array reference as a value.  Not sure how to deal with this - aborting.";
     }
 
     if( scalar @additional_values ){
         my @return;
         foreach my $element ( $value, @additional_values ){
-            push @return, $self->_serialize_argument( $name, $element );
+            push @return, $self->_serialize_argument( $method, $name, $element );
         }
         return @return;
     }
 
     if( blessed( $value ) and $value->UNIVERSAL::isa( 'Yahoo::Marketing::ComplexType' ) ){
-        my $type = $self->_simple_types( $name );
+        my $type = $self->_complex_types( $method, $name );
         return SOAP::Data->name( $name )
                          ->type( $type )
-                         ->value( $self->_serialize_complex_type( $value ) )
+                         ->value( $self->_serialize_complex_type( $method, $value ) )
         ;
-    }elsif( my $type = $self->_simple_types( $name ) ){
+    }elsif( my $type = $self->_complex_types( $method, $name ) ){
         return SOAP::Data->name( $name )
                          ->type( $type )
                          ->value( $self->_escape_xml_baddies("$value") )  # force it stringy for now
         ;
     }
 
+    # special case: RangeNameType needs hack to not use 'string' as type due to apache axis problem on server side.
+    if ( $name eq 'RangeNameType') {
+        return SOAP::Data->name( $name )
+                     ->type( 'xsd:enumeration' )
+                     ->value( $self->_escape_xml_baddies($value) );
+    }
+
     # don't do anything special
     return SOAP::Data->name( $name )
+                     ->type( 'xsd:string' )
                      ->value( $self->_escape_xml_baddies($value) );
 }
 
 
 sub _serialize_complex_type {
-    my ( $self, $complex_type ) = @_;
+    my ( $self, $method, $complex_type ) = @_;
 
-    return \SOAP::Data->value( map { $self->_serialize_argument( $_, $complex_type->$_ )
+    return \SOAP::Data->value( map { $self->_serialize_argument( $complex_type->_type,  $_, $complex_type->$_ )
                                    } 
                                    grep { defined $complex_type->$_ } $complex_type->_user_setable_attributes
                              )
@@ -770,7 +742,7 @@ See also perldoc Yahoo::Marketing::AccountService
 
 Please see the API docs at 
 
-L<http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/index.asp#services>
+L<http://searchmarketing.yahoo.com/developer/docs/V4/gsg/index.php#services>
 
 for details about what methods are available from each of the Services.
 
@@ -807,7 +779,7 @@ Get/set the version to be used for requests
 
 Get/set the URI to be used for requests.  
 
-Defaults to http://marketing.ews.yahooapis.com/V3
+Defaults to http://marketing.ews.yahooapis.com/V4
 
 =head2 master_account
 
@@ -819,7 +791,7 @@ Get/set the account to be used for requests.  Not all requests require an accoun
 Any service that deals with Campaigns (or Ad Groups, Ads, or Keywords) requires account
 to be set.
 
-L<http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/requests.asp#header>
+L<http://searchmarketing.yahoo.com/developer/docs/V4/gsg/requests.php#header>
 
 =head2 immortal
 
@@ -833,13 +805,13 @@ Defaults to false.
 
 Get/set the onBehalfOfUsername to be used for requests.  
 
-L<http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/auth.asp#onbehalfof>
+L<http://searchmarketing.yahoo.com/developer/docs/V4/gsg/auth.php#onbehalfof>
 
 =head2 on_behalf_of_password
 
 Get/set the onBehalfOfPassword to be used for requests.  
 
-L<http://ysm.techportal.searchmarketing.yahoo.com/docs/gsg/auth.asp#onbehalfof>
+L<http://searchmarketing.yahoo.com/developer/docs/V4/gsg/auth.php#onbehalfof>
 
 =head2 use_wsse_security_headers
 

@@ -16,8 +16,6 @@ use Yahoo::Marketing::VaultService;
 use Yahoo::Marketing::MasterAccount;
 use Yahoo::Marketing::CreditCardInfo;
 
-my $section = 'sandbox';
-
 sub SKIP_CLASS {
     my $self = shift;
     # 'not running post tests' is a true value
@@ -26,11 +24,12 @@ sub SKIP_CLASS {
 }
 
 sub test_add_new_customer : Test(8) {
-    my $self = shift;
+    my ( $self ) = @_;
+
 
     return 'not running addNewCustomer test to prevent creating a new master account for each test run';
 
-    my $ysm_ws = Yahoo::Marketing::VaultService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::VaultService->new->parse_config( section => $self->section );
 
     my $username = $self->_make_username;
 
@@ -102,7 +101,9 @@ sub test_add_new_customer : Test(8) {
 
 
 sub test_get_and_set_active_credit_card : Test(1) {
-    my $ysm_ws = Yahoo::Marketing::VaultService->new->parse_config( section => $section );
+    my ( $self ) = @_;
+
+    my $ysm_ws = Yahoo::Marketing::VaultService->new->parse_config( section => $self->section );
 
     my @payment_methods = $ysm_ws->getPaymentMethods;
 

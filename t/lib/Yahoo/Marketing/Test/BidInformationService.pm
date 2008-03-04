@@ -13,8 +13,6 @@ use Yahoo::Marketing::BidInformationService;
 
 #use SOAP::Lite +trace => [qw/ debug method fault /];
 
-my $section = 'sandbox';
-
 sub SKIP_CLASS {
     my $self = shift;
     # 'not running post tests' is a true value
@@ -27,7 +25,7 @@ sub test_get_bids_for_best_rank : Test(3) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::BidInformationService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BidInformationService->new->parse_config( section => $self->section );
 
     my $bid_information = $ysm_ws->getBidsForBestRank(
         adGroupID => $ad_group->ID,
@@ -44,11 +42,11 @@ sub test_get_market_bids_for_best_rank : Test(3) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ms_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
+    my $ms_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $self->section );
 
     my $master_account = $ms_ws->getMasterAccount( masterAccountID => $ms_ws->master_account );
 
-    my $ysm_ws = Yahoo::Marketing::BidInformationService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BidInformationService->new->parse_config( section => $self->section );
 
     my $bid_information = $ysm_ws->getMarketBidsForBestRank(
         adGroupID => $ad_group->ID,
@@ -64,12 +62,16 @@ sub test_get_market_bids_for_best_rank : Test(3) {
 sub test_get_min_bids_for_keyword_string : Test(2) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::BidInformationService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BidInformationService->new->parse_config( section => $self->section );
 
-    my $bid = $ysm_ws->getMinBidForKeywordString( keyword => 'porsche' );
+    SKIP: {
+        skip "getMinBidForKeywordString not available after V3", 2 unless $ysm_ws->version eq 'V3';
 
-    ok( $bid );
-    like( $bid, qr/^\d+(\.\d+)?$/, 'bid looks like float' );
+        my $bid = $ysm_ws->getMinBidForKeywordString( keyword => 'porsche' );
+
+        ok( $bid );
+        like( $bid, qr/^\d+(\.\d+)?$/, 'bid looks like float' );
+    };
 }
 
 sub startup_test_bid_information_service : Test(startup) {

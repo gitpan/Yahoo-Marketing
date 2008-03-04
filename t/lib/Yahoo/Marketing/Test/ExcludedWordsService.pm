@@ -11,8 +11,6 @@ use Module::Build;
 use Yahoo::Marketing::ExcludedWordsService;
 use Yahoo::Marketing::ExcludedWord;
 
-my $section = 'sandbox';
-
 sub SKIP_CLASS {
     my $self = shift;
     # 'not running post tests' is a true value
@@ -23,7 +21,7 @@ sub SKIP_CLASS {
 sub test_add_excluded_words_to_ad_group : Test(9) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -60,7 +58,7 @@ sub test_add_excluded_words_to_ad_group : Test(9) {
 sub test_add_excluded_words_to_account : Test(9) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
 
     my $excluded_word1 = Yahoo::Marketing::ExcludedWord->new
                                                        ->accountID( $ysm_ws->account )
@@ -94,7 +92,7 @@ sub test_add_excluded_words_to_account : Test(9) {
 sub test_add_excluded_word_to_ad_group : Test(5) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -119,7 +117,7 @@ sub test_add_excluded_word_to_ad_group : Test(5) {
 sub test_add_excluded_word_to_account : Test(5) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
 
     my $excluded_word = Yahoo::Marketing::ExcludedWord->new
         ->accountID( $ysm_ws->account )
@@ -141,7 +139,7 @@ sub test_add_excluded_word_to_account : Test(5) {
 sub test_get_excluded_word : Test(4) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -168,7 +166,7 @@ sub test_get_excluded_word : Test(4) {
 sub test_get_excluded_words : Test(6) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -205,7 +203,7 @@ sub test_get_excluded_words : Test(6) {
 sub test_get_excluded_words_by_ad_group_id : Test(3) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -241,7 +239,7 @@ sub test_get_excluded_words_by_ad_group_id : Test(3) {
 sub test_get_excluded_words_by_account : Test(3) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
 
     my $excluded_word = Yahoo::Marketing::ExcludedWord->new
                                                       ->accountID( $ysm_ws->account )
@@ -267,7 +265,7 @@ sub test_get_excluded_words_by_account : Test(3) {
 sub test_delete_excluded_word : Test(5) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -318,7 +316,7 @@ sub test_delete_excluded_word : Test(5) {
 sub test_delete_excluded_words : Test(9) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
@@ -397,7 +395,7 @@ sub shutdown_test_excluded_words_service : Test(shutdown) {
 
     # clean up excluded words in account.
     # if excluded word to be added already exists in account, the add action will fail.
-    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ExcludedWordsService->new->parse_config( section => $self->section );
     my @fetched_excluded_words = $ysm_ws->getExcludedWordsByAccountID(
                                               accountID => $ysm_ws->account,
                                           );

@@ -15,8 +15,8 @@ ok( $ysm_ws, 'can intantiate' );
 
 is( $ysm_ws->use_wsse_security_headers, 1, 'use wsse security headers defaults' );
 is( $ysm_ws->use_location_service,      1, 'use location service defaults' );
-is( $ysm_ws->version, 'V3', 'version defaults' );
-is( $ysm_ws->uri, 'http://marketing.ews.yahooapis.com/V3', 'uri defaults' );
+is( $ysm_ws->version, 'V4', 'version defaults' );
+is( $ysm_ws->uri, 'http://marketing.ews.yahooapis.com/V4', 'uri defaults' );
 is( $ysm_ws->cache_expire_time, '1 day', 'cache expire time defaults' );
 is( ref $ysm_ws->cache, 'Cache::FileCache', 'cache defaults' );
 

@@ -4,9 +4,7 @@ package Yahoo::Marketing::ExcludedWordResponse;
 
 use strict; use warnings;
 
-use Yahoo::Marketing::ExcludedWord;
-use Yahoo::Marketing::Error;
-use base qw/Yahoo::Marketing::ResponseType/;
+use base qw/Yahoo::Marketing::ComplexType/;
 
 =head1 NAME
 
@@ -19,6 +17,7 @@ sub _user_setable_attributes {
                  errors
                  excludedWord
                  operationSucceeded
+                 warnings
             /  );
 }
 
@@ -31,16 +30,11 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
                            __PACKAGE__->_read_only_attributes
                          );
 
-sub _type_field {
-    return 'excludedWord';
-}
-
-
 
 1;
 =head1 SYNOPSIS
 
-See L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V4/reference/dataObjects.php> for documentation of the various data objects.
 
 
 =cut
@@ -58,6 +52,7 @@ Creates a new instance
     errors
     excludedWord
     operationSucceeded
+    warnings
 
 =back
 

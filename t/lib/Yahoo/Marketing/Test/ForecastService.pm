@@ -14,8 +14,6 @@ use Yahoo::Marketing::ForecastKeyword;
 
 #use SOAP::Lite +trace => [qw/ debug method fault /];
 
-my $section = 'sandbox';
-
 sub SKIP_CLASS {
     my $self = shift;
     # 'not running post tests' is a true value
@@ -28,12 +26,13 @@ sub test_get_forecast_for_keyword : Test(15) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $self->section );
 
     my $forecast_request_data = Yahoo::Marketing::ForecastRequestData->new
         ->accountID( $ysm_ws->account )
         #->contentMatchMaxBid( '0.88' )
         ->marketID( 'US' )
+        #->matchTypes( [qw(SponsoredSearch )] )
         ->matchTypes( [qw(SponsoredSearch )] )
         ->sponsoredSearchMaxBid( '0.99' )
     ;
@@ -72,7 +71,7 @@ sub test_get_forecast_for_keywords : Test(16) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $self->section );
 
     my $forecast_request_data = Yahoo::Marketing::ForecastRequestData->new
         ->accountID( $ysm_ws->account )
@@ -98,8 +97,7 @@ sub test_get_forecast_for_keywords : Test(16) {
                           );
     ok( $result );
 
-    # customized_response_by_ad_group should be empty, since we didnot override in forecastKeywords.
-    ok( not $result->customizedResponseByAdGroup );
+    ok( $result->customizedResponseByAdGroup );
 
     my $default_response_by_ad_group = $result->defaultResponseByAdGroup;
     if( $default_response_by_ad_group and defined $default_response_by_ad_group->impressions ){
@@ -139,7 +137,7 @@ sub test_get_forecast_by_ad_group : Test(15) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $self->section );
 
     my $forecast_request_data = Yahoo::Marketing::ForecastRequestData->new
         ->accountID( $ysm_ws->account )

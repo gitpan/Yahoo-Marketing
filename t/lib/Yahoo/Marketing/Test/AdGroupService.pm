@@ -11,11 +11,11 @@ use Module::Build;
 
 use Yahoo::Marketing::AdGroup;
 use Yahoo::Marketing::AdGroupService;
-    use Yahoo::Marketing::AdGroupOptimizationGuidelines;
+use Yahoo::Marketing::AdGroupOptimizationGuidelines;
+
+use Data::Dumper;
 
 #use SOAP::Lite +trace => [qw/ debug method fault /];
-
-my $section = 'sandbox';
 
 sub SKIP_CLASS {
     my $self = shift;
@@ -35,7 +35,7 @@ sub test_add_ad_group : Test(3) {
     like( $result->name, qr/^test ad group \d+$/, 'name looks right' );
     like( $result->ID, qr/^[\d]+$/, 'ID is numeric' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
     $ysm_ws->deleteAdGroup( adGroupID => $result->ID );
 };
 
@@ -53,7 +53,7 @@ sub test_add_ad_groups : Test(5) {
     like( $added_ad_groups[1]->name, qr/^test ad group \d+ 2$/, 'name looks right' );
     like( $added_ad_groups[1]->ID, qr/^[\d]+$/, 'ID is numeric' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
     $ysm_ws->deleteAdGroups( adGroupIDs => [ map { $_->ID } @added_ad_groups ] );
 };
 
@@ -63,7 +63,7 @@ sub test_delete_ad_group : Test(3) {
 
     my $ad_group = $self->create_ad_group;
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $response = $ysm_ws->deleteAdGroup(
                        adGroupID => $ad_group->ID,
@@ -85,7 +85,7 @@ sub test_delete_ad_groups : Test(5) {
     my $ad_group1 = $self->create_ad_group;
     my $ad_group2 = $self->create_ad_group;
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my @responses = $ysm_ws->deleteAdGroups(
                         adGroupIDs => [ $ad_group1->ID, $ad_group2->ID ],
@@ -105,11 +105,11 @@ sub test_delete_ad_groups : Test(5) {
 
 
 sub test_get_ad_group : Test(4) {
-    my $self = shift;
+    my ( $self ) = @_;
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $fetched_ad_group = $ysm_ws->getAdGroup( adGroupID => $ad_group->ID );
 
@@ -125,7 +125,7 @@ sub test_get_ad_group_ad_count : Test(1) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $ad_count = $ysm_ws->getAdGroupAdCount(
         adGroupID => $ad_group->ID,
@@ -142,7 +142,7 @@ sub test_get_ad_group_content_match_max_bid : Test(1) {
 
     my $ad_group = $self->create_ad_group;
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $cm_max_bid = $ysm_ws->getAdGroupContentMatchMaxBid(
         adGroupID => $ad_group->ID,
@@ -158,7 +158,7 @@ sub test_get_ad_group_excluded_words_count : Test(1) {
     # do we need to add some excluded words to the ad group first?
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $excluded_words_count = $ysm_ws->getAdGroupExcludedWordsCount(
         adGroupID => $ad_group->ID,
@@ -175,7 +175,7 @@ sub test_get_ad_group_keyword_count : Test(1) {
     # do we need to add some keywords to the ad group first?
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $keyword_count = $ysm_ws->getAdGroupKeywordCount(
         adGroupID => $ad_group->ID,
@@ -189,7 +189,7 @@ sub test_get_ad_group_keyword_count : Test(1) {
 sub test_get_ad_groups : Test(6) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my @ad_groups = ( $self->create_ad_group, $self->create_ad_group );
 
@@ -219,7 +219,7 @@ sub test_get_ad_groups_by_campaign_id : Test(1) {
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my @fetched_ad_groups = $ysm_ws->getAdGroupsByCampaignID(
         campaignID   => $campaign->ID,
@@ -238,7 +238,7 @@ sub test_get_ad_groups_by_campaign_id_by_status : Test(2) {
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my @fetched_ad_groups = $ysm_ws->getAdGroupsByCampaignIDByStatus(
         campaignID    => $campaign->ID,
@@ -261,7 +261,7 @@ sub test_get_ad_group_sponsored_search_max_bid : Test(1) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $ss_max_bid = $ysm_ws->getAdGroupSponsoredSearchMaxBid(
         adGroupID => $ad_group->ID,
@@ -276,7 +276,7 @@ sub test_get_and_set_optimization_guidelines_for_ad_group : Test(16) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $adGroupOptimizationGuidelines = Yahoo::Marketing::AdGroupOptimizationGuidelines->new
                                             ->adGroupID( $ad_group->ID )
@@ -326,7 +326,7 @@ sub test_get_status_for_ad_group : Test(1) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     is( $ysm_ws->getStatusForAdGroup( adGroupID => $ad_group->ID ), $ad_group->status, 'Status is right');
 };
@@ -338,7 +338,7 @@ sub test_set_ad_group_content_match_max_bid : Test(2) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $new_bid = 1.28;
     $ysm_ws->setAdGroupContentMatchMaxBid(
@@ -361,7 +361,7 @@ sub test_set_ad_group_sponsored_search_max_bid : Test(2) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $new_bid = 2.38;
     $ysm_ws->setAdGroupSponsoredSearchMaxBid(
@@ -383,7 +383,7 @@ sub test_update_ad_group : Test(7) {
 
     my $ad_group = $self->create_ad_group;
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
     my $response = $ysm_ws->updateAdGroup( adGroup => $ad_group->name( "updated ad group $$" ) ,
                                            updateAll => 'True',
                                          );
@@ -407,7 +407,7 @@ sub test_update_ad_group : Test(7) {
 sub test_update_ad_groups : Test(11) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my @ad_groups = $self->create_ad_groups;
 
@@ -450,7 +450,7 @@ sub test_update_status_for_ad_group : Test(2) {
 
     my $ad_group = $self->common_test_data( 'test_ad_group' );
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
     $ysm_ws->updateStatusForAdGroup(
         adGroupID  => $ad_group->ID,
         status     => 'Off',
@@ -470,7 +470,7 @@ sub test_update_status_for_ad_groups : Test(4) {
 
     my @ad_groups = @{ $self->common_test_data( 'test_ad_groups' ) };
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     $ysm_ws->updateStatusForAdGroups(
         adGroupIDs => [ $ad_groups[0]->ID, $ad_groups[1]->ID ],
@@ -504,11 +504,11 @@ sub test_move_ad_group : Test(7) {
                                             ->sponsoredSearchMaxBid( '0.28' )
                                             ->adAutoOptimizationON( 'false' )
                    ;
-    my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
     my $added_ad_group = $ad_group_service->addAdGroup( adGroup => $ad_group )->adGroup;
     ok( $added_ad_group );
 
-    my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
     ok( $campaign_service->deleteCampaign( campaignID => $campaign->ID ) );
 
     $ad_group_service->moveAdGroup(
@@ -522,6 +522,33 @@ sub test_move_ad_group : Test(7) {
     is( $moved_ad_group->campaignID, $self->common_test_data( 'test_campaign' )->ID, 'campaignID is right' );
     is( $moved_ad_group->name, "$ad_group_name new", 'name is right' );
     ok( $ad_group_service->deleteAdGroup( adGroupID => $added_ad_group->ID ) );
+}
+
+sub test_get_sponsored_search_min_bid_for_ad_group : Test(2) {
+    my ( $self ) = @_;
+
+    my $ad_group = $self->common_test_data( 'test_ad_group' );
+
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
+
+    my $min_bid = $ysm_ws->getSponsoredSearchMinBidForAdGroup( adGroupID => $ad_group->ID );
+
+    ok( $min_bid );
+    like( $min_bid, qr/^[\d\.]+$/, 'looks like some body\'s money');
+}
+
+sub test_get_sponsored_search_min_bid_for_ad_groups : Test(2) {
+    my ( $self ) = @_;
+
+    my $ad_groups = $self->common_test_data( 'test_ad_groups' );
+
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
+
+    my $min_bid = $ysm_ws->getSponsoredSearchMinBidForAdGroups( adGroupIDs => [ map { $_->ID } @$ad_groups ] );
+   
+    # we only get one value back 
+    ok( $min_bid );
+    like( $min_bid, qr/^[\d\.]+$/, 'looks like some body\'s money');
 }
 
 sub startup_test_ad_group_service : Test(startup) {
@@ -546,24 +573,9 @@ sub shutdown_test_ad_group_service : Test(shutdown) {
 
 __END__
 
-# addAdGroups
-# deleteAdGroup
-# deleteAdGroups
-# getAdGroup
-# getAdGroupAdCount
-# getAdGroupContentMatchMaxBid
-# getAdGroupExcludedWordsCount
-# getAdGroupKeywordCount
-# getAdGroups
-# getAdGroupsByCampaignID
-# getAdGroupsByCampaignIDByStatus
-# getAdGroupSponsoredSearchMaxBid
-# getOptimizationGuidelinesForAdGroup
-# getStatusForAdGroup
-# setAdGroupContentMatchMaxBid
-# setAdGroupSponsoredSearchMaxBid
-# setOptimizationGuidelinesForAdGroup
-# updateAdGroup
-# updateAdGroups
-# updateStatusForAdGroup
-# updateStatusForAdGroups
+# getContentMatchMinBidForAdGroupOptimizationGuidelines
+# getSponsoredSearchMinBidForAdGroup
+# getSponsoredSearchMinBidForAdGroupOptimizationGuidelines
+# getSponsoredSearchMinBidForAdGroups
+
+

@@ -4,9 +4,7 @@ package Yahoo::Marketing::KeywordResponse;
 
 use strict; use warnings;
 
-use Yahoo::Marketing::Error;
-use Yahoo::Marketing::KeywordEditorialReasons;
-use base qw/Yahoo::Marketing::ResponseType/;
+use base qw/Yahoo::Marketing::ComplexType/;
 
 =head1 NAME
 
@@ -20,6 +18,7 @@ sub _user_setable_attributes {
                  errors
                  keyword
                  operationSucceeded
+                 warnings
             /  );
 }
 
@@ -32,22 +31,11 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
                            __PACKAGE__->_read_only_attributes
                          );
 
-sub _type_field {
-    return 'keyword';
-}
-
-sub _editorial_reasons_class {
-    return Yahoo::Marketing::KeywordEditorialReasons->new;
-}
-
-
-
-
 
 1;
 =head1 SYNOPSIS
 
-See L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V4/reference/dataObjects.php> for documentation of the various data objects.
 
 
 =cut
@@ -66,6 +54,7 @@ Creates a new instance
     errors
     keyword
     operationSucceeded
+    warnings
 
 =back
 

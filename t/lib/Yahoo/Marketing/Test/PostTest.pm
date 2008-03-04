@@ -6,7 +6,8 @@ use strict; use warnings;
 
 use base qw/Test::Class/;
 
-use Carp;
+use Carp qw/croak confess/;
+use Test::More;
 use Module::Build;
 use Yahoo::Marketing::Campaign;
 use Yahoo::Marketing::AdGroup;
@@ -18,8 +19,52 @@ use Yahoo::Marketing::AccountService;
 use Yahoo::Marketing::AdGroupService;
 use Yahoo::Marketing::KeywordService;
 
+use Data::Dumper;
+
 our %common_test_data;
-my $section = 'sandbox';
+
+sub section {
+    my $build; eval { $build = Module::Build->current; };
+
+    return $build->notes('config_section');
+}
+
+sub startup_post_test_diag_settings : Test(startup) {
+    my ( $self ) = @_;
+
+    my $build; eval { $build = Module::Build->current; };
+    my $debug_level = $build->notes('SOAP_debug_level');
+
+    if( $debug_level ){
+
+        my $service = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
+
+        if( $debug_level ){
+            eval "use SOAP::Lite +trace => [qw/ fault /];";
+
+            local $| = 1;
+            diag(<<EODIAG);
+Running post tests with the following settings:
+    config section: @{[ $self->section ]}
+    version:        @{[ $service->version ]}
+    endpoint:       @{[ $service->endpoint]} 
+    username:       @{[ $service->username]} 
+    master account: @{[ $service->master_account]} 
+    account:        @{[ $service->account]} 
+EODIAG
+        }
+
+
+        # add even more SOAP::Lite debugging if debug level > 1
+        if( $debug_level > 1 ){
+            eval "use SOAP::Lite +trace => [qw/ debug method fault /];";
+        }
+
+        # now set it to 0 so we don't print the above diag again
+        $build->notes(SOAP_debug_level => 0);
+    }
+}
+
 
 sub common_test_data {
     my ( $self, $key, $value ) = @_;
@@ -27,7 +72,6 @@ sub common_test_data {
     die "common_test_data_value needs a key" unless defined $key;
 
     if( @_ > 2 ){  # we have a value
-        #confess "common_test_data called with $key but an undef \$value" unless defined $value;
         $common_test_data{ $key } = $value;
         return $self;
     }
@@ -52,7 +96,7 @@ sub cleanup_keyword {
     my $self = shift;
 
     if( my $keyword = $self->common_test_data( 'test_keyword' ) ){
-        my $keyword_service = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
+        my $keyword_service = Yahoo::Marketing::KeywordService->new->parse_config( section => $self->section );
         $keyword_service->deleteKeyword( keywordID => $keyword->ID );
     }
     $self->common_test_data( 'test_keyword', undef );
@@ -64,7 +108,7 @@ sub cleanup_keywords {
 
     if ($self->common_test_data( 'test_keywords' ) ){
 
-        my $keyword_service = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
+        my $keyword_service = Yahoo::Marketing::KeywordService->new->parse_config( section => $self->section );
         $keyword_service->deleteKeywords( keywordIDs => [ map { $_->ID } @{ $self->common_test_data( 'test_keywords' ) } ] );
     }
     $self->common_test_data( 'test_keywords', undef );
@@ -75,7 +119,7 @@ sub cleanup_ad {
     my $self = shift;
 
     if( my $ad = $self->common_test_data( 'test_ad' ) ){
-        my $ad_service = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+        my $ad_service = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
         $ad_service->deleteAd( adID => $ad->ID );
     }
     $self->common_test_data( 'test_ad', undef );
@@ -87,7 +131,7 @@ sub cleanup_ads {
 
     if ($self->common_test_data( 'test_ads' ) ){
 
-        my $ad_service = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+        my $ad_service = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
         $ad_service->deleteAds( adIDs => [ map { $_->ID } @{ $self->common_test_data( 'test_ads' ) } ] );
     }
     $self->common_test_data( 'test_ads', undef );
@@ -103,7 +147,7 @@ sub cleanup_ad_group {
     }
     
     if( $ad_group ){
-        my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+        my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
         $ad_group_service->deleteAdGroup( adGroupID => $ad_group->ID );
     }
     return;
@@ -113,7 +157,7 @@ sub cleanup_ad_groups {
     my $self = shift;
 
     if ($self->common_test_data( 'test_ad_groups' ) ){
-        my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+        my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
         $ad_group_service->deleteAdGroups( adGroupIDs => [ map { $_->ID } @{ $self->common_test_data( 'test_ad_groups' ) } ] );
     }
@@ -125,7 +169,7 @@ sub cleanup_all_ad_groups_in_test_campaign {
     my $self = shift;
 
     if ( my $campaign = $self->common_test_data( 'test_campaign' ) ) {
-        my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+        my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
         my @ad_groups = $ad_group_service->getAdGroupsByCampaignID(
             campaignID => $campaign->ID,
         );
@@ -142,7 +186,7 @@ sub cleanup_campaign {
     my $self = shift;
 
     if( my $campaign = $self->common_test_data( 'test_campaign' ) ){
-        my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+        my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
         $campaign_service->deleteCampaign( campaignID => $campaign->ID );
     }
@@ -154,7 +198,7 @@ sub cleanup_campaigns {
     my $self = shift;
 
     if ( $self->common_test_data( 'test_campaigns' ) ){
-        my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+        my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
         $campaign_service->deleteCampaigns( campaignIDs => [ map { $_->ID } @{ $self->common_test_data( 'test_campaigns' ) } ] );
     }
@@ -165,7 +209,7 @@ sub cleanup_campaigns {
 sub cleanup_campaigns_in_test_account {
     my $self = shift;
 
-    my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     return unless $campaign_service->account;
 
@@ -224,7 +268,7 @@ sub create_campaign {
     $datetime->add( years => 1 );
     my $end_datetime   = $formatter->format_datetime( $datetime );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $campaign = Yahoo::Marketing::Campaign->new
                                              ->startDate( $start_datetime )
@@ -257,7 +301,7 @@ sub create_campaigns {
     $datetime->add( years => 1 );
     my $end_datetime   = $formatter->format_datetime( $datetime );
 
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
 
     my $campaign1 = Yahoo::Marketing::Campaign->new
                                               ->startDate( $start_datetime )
@@ -309,7 +353,7 @@ sub create_ad_group {
                                             ->adAutoOptimizationON( 'false' )
                    ;
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my $response = $ysm_ws->addAdGroup( adGroup => $ad_group );
 
@@ -359,7 +403,7 @@ sub create_ad_groups {
                                              ->adAutoOptimizationON( 'false' )
                     ;
 
-    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdGroupService->new->parse_config( section => $self->section );
 
     my @responses = $ysm_ws->addAdGroups( adGroups => [ $ad_group1, $ad_group2, $ad_group3 ] );
 
@@ -374,18 +418,18 @@ our $ad_count = 0;
 sub create_ad {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => 'sandbox' );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     my $ad = Yahoo::Marketing::Ad->new
                                  ->accountID( $ysm_ws->account )
                                  ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
                                  ->name( 'test ad '.($$ + $ad_count++) )
                                  ->status( 'On' )
-                                 ->title( 'lamest title in the world' )
+                                 ->title( 'An Example Title' )
                                  ->displayUrl( 'http://www.perl.com/' )
                                  ->url( 'http://www.perl.com/' )
-                                 ->description( 'here\'s some great long description.  Not too long though.' )
-                                 ->shortDescription( 'here\'s some great short description' )
+                                 ->description( 'Here\'s some long description.  Not overly long though.' )
+                                 ->shortDescription( 'Here\'s some short description' )
              ;
 
     my $response = $ysm_ws->addAd( ad => $ad );
@@ -393,6 +437,19 @@ sub create_ad {
     if ( $response->operationSucceeded ne 'true' ) {
         croak( 'addAd failed' );
     }
+
+    #if( $response->ad->editorialStatus eq 'Pending' ){
+    #    my $count = 0;
+    #    while(  my $status = $ysm_ws->getAd( adID => $response->ad->ID )->editorialStatus eq 'Pending'
+    #        and ++$count < 10 ){
+    #        use Test::More;
+    #        diag( "warning, Ad ". $response->ad->ID . " still Pending ");
+    #        sleep 2;
+    #    }
+
+    #    #confess( "Oops, our newly added ad is pending: ". (Dumper $response->ad) )
+    #        #if $count >= 10;
+    #}
 
     return $response->ad;
 }
@@ -402,7 +459,7 @@ sub create_ads {
 
     my $campaign = $self->common_test_data( 'test_campaign' );
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     my $ad1 = Yahoo::Marketing::Ad->new
                                   ->accountID( $ysm_ws->account )
@@ -455,7 +512,7 @@ sub create_keyword {
 
     my $text = $args{text} || ('test keyword text '.( $$ + $keyword_count ));
 
-    my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => 'sandbox' );
+    my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $self->section );
 
     my $keyword = Yahoo::Marketing::Keyword->new
                                            ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
@@ -481,7 +538,7 @@ sub create_keyword {
 sub create_keywords {
     my ( $self, %args ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $self->section );
 
     my $keyword1 = Yahoo::Marketing::Keyword->new
                                             ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )

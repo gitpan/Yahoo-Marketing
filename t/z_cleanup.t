@@ -30,10 +30,12 @@ SKIP: {
                                          and $build->notes( 'run_post_tests' ) =~ /^y/i
     ;
 
-    my $keyword_service  = Yahoo::Marketing::KeywordService->new->parse_config(  section => 'sandbox' );
-    my $ad_service       = Yahoo::Marketing::AdService->new->parse_config(  section => 'sandbox' );
-    my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config(  section => 'sandbox' );
-    my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => 'sandbox' );
+    my $section = $build->notes('config_section');
+
+    my $keyword_service  = Yahoo::Marketing::KeywordService->new->parse_config(  section => $section );
+    my $ad_service       = Yahoo::Marketing::AdService->new->parse_config(  section => $section );
+    my $ad_group_service = Yahoo::Marketing::AdGroupService->new->parse_config(  section => $section );
+    my $campaign_service = Yahoo::Marketing::CampaignService->new->parse_config( section => $section );
 
     my @keywords = grep { defined $_ and $_ ne '' } 
                        $keyword_service->getKeywordsByAccountID(

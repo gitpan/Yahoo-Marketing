@@ -62,3 +62,7 @@ Revision history for Yahoo-Marketing
 
 3.02    16 January 2007
         Fixed double-encoding for HTML encoded UTF-8 chars.
+
+4.01    5 March 2008
+        Major version # bumped for EWS V4.  All changes necessary to support V4 added.
+        Override SOAP::Serializer::as_string.

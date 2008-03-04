@@ -19,6 +19,7 @@ sub _user_setable_attributes {
                  adGroupOptimizationGuidelines
                  errors
                  operationSucceeded
+                 warnings
             /  );
 }
 
@@ -39,7 +40,7 @@ sub _type_field {
 1;
 =head1 SYNOPSIS
 
-See L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V3/reference/dataObjects.php> for documentation of the various data objects.
 
 
 =cut
@@ -57,6 +58,7 @@ Creates a new instance
     adGroupOptimizationGuidelines
     errors
     operationSucceeded
+    warnings
 
 =back
 

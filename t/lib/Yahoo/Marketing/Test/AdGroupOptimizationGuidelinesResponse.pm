@@ -9,12 +9,13 @@ use Test::More;
 
 use Yahoo::Marketing::AdGroupOptimizationGuidelinesResponse;
 
-sub test_can_create_ad_group_optimization_guidelines_response_and_set_all_fields : Test(4) {
+sub test_can_create_ad_group_optimization_guidelines_response_and_set_all_fields : Test(5) {
 
     my $ad_group_optimization_guidelines_response = Yahoo::Marketing::AdGroupOptimizationGuidelinesResponse->new
                                                                                                            ->adGroupOptimizationGuidelines( 'ad group optimization guidelines' )
                                                                                                            ->errors( 'errors' )
                                                                                                            ->operationSucceeded( 'operation succeeded' )
+                                                                                                           ->warnings( 'warnings' )
                    ;
 
     ok( $ad_group_optimization_guidelines_response );
@@ -22,6 +23,7 @@ sub test_can_create_ad_group_optimization_guidelines_response_and_set_all_fields
     is( $ad_group_optimization_guidelines_response->adGroupOptimizationGuidelines, 'ad group optimization guidelines', 'can get ad group optimization guidelines' );
     is( $ad_group_optimization_guidelines_response->errors, 'errors', 'can get errors' );
     is( $ad_group_optimization_guidelines_response->operationSucceeded, 'operation succeeded', 'can get operation succeeded' );
+    is( $ad_group_optimization_guidelines_response->warnings, 'warnings', 'can get warnings' );
 
 };
 

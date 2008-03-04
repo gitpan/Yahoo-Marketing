@@ -12,15 +12,13 @@ use Yahoo::Marketing::AccountService;
 
 # use SOAP::Lite +trace => [qw/ debug method fault /];
 
-my $section = 'sandbox';
-
 
 sub test_set_cache : Test(2) {
     my $self = shift;
 
     return 'not running post tests' unless $self->run_post_tests;
 
-    my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $self->section );
     $ysm_ws->getAccount( accountID => $ysm_ws->account );
     my $location = $ysm_ws->cache->get('locations');
 
@@ -42,7 +40,7 @@ sub test_clear_cache : Test(2) {
 
     return 'not running post tests' unless $self->run_post_tests;
 
-    my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $self->section );
     $ysm_ws->getAccount( accountID => $ysm_ws->account );
 
     ok( $ysm_ws->cache->get( 'locations' )->{$ysm_ws->version }->{ $ysm_ws->endpoint }->{ $ysm_ws->master_account } );
@@ -57,7 +55,7 @@ sub test_purge_cache : Test(3) {
 
     return 'not running post tests' unless $self->run_post_tests;
 
-    my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AccountService->new->parse_config( section => $self->section );
     # clear old cache first.
     $ysm_ws->clear_cache;
 

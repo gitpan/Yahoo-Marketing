@@ -9,7 +9,7 @@ use Test::More;
 
 use Yahoo::Marketing::Keyword;
 
-sub test_can_create_keyword_and_set_all_fields : Test(19) {
+sub test_can_create_keyword_and_set_all_fields : Test(22) {
 
     my $keyword = Yahoo::Marketing::Keyword->new
                                            ->ID( 'id' )
@@ -19,8 +19,11 @@ sub test_can_create_keyword_and_set_all_fields : Test(19) {
                                            ->alternateText( 'alternate text' )
                                            ->canonicalSearchText( 'canonical search text' )
                                            ->editorialStatus( 'editorial status' )
+                                           ->participatesInMarketplace( 'participates in marketplace' )
                                            ->phraseSearchText( 'phrase search text' )
+                                           ->sponsoredSearchBidStatus( 'sponsored search bid status' )
                                            ->sponsoredSearchMaxBid( 'sponsored search max bid' )
+                                           ->sponsoredSearchMinBid( 'sponsored search min bid' )
                                            ->status( 'status' )
                                            ->text( 'text' )
                                            ->update( 'update' )
@@ -41,8 +44,11 @@ sub test_can_create_keyword_and_set_all_fields : Test(19) {
     is( $keyword->alternateText, 'alternate text', 'can get alternate text' );
     is( $keyword->canonicalSearchText, 'canonical search text', 'can get canonical search text' );
     is( $keyword->editorialStatus, 'editorial status', 'can get editorial status' );
+    is( $keyword->participatesInMarketplace, 'participates in marketplace', 'can get participates in marketplace' );
     is( $keyword->phraseSearchText, 'phrase search text', 'can get phrase search text' );
+    is( $keyword->sponsoredSearchBidStatus, 'sponsored search bid status', 'can get sponsored search bid status' );
     is( $keyword->sponsoredSearchMaxBid, 'sponsored search max bid', 'can get sponsored search max bid' );
+    is( $keyword->sponsoredSearchMinBid, 'sponsored search min bid', 'can get sponsored search min bid' );
     is( $keyword->status, 'status', 'can get status' );
     is( $keyword->text, 'text', 'can get text' );
     is( $keyword->update, 'update', 'can get update' );

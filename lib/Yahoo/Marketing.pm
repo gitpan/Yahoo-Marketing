@@ -12,20 +12,20 @@ Yahoo::Marketing - an interface for Yahoo! Search Marketing's Web Services.
 
 =head1 VERSION
 
-Version 3.02
+Version 4.01
 
 =cut
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '3.02';
+our $VERSION = '4.01';
 
 
 =head1 SYNOPSIS
 
 This collection of modules makes interacting with Yahoo! Search Marketing's Web Services as easy as possible.
 
-B<Note that this version (3.x) is intended to be used with V3 of the marketing web services.>
+B<Note that this version (4.x) is intended to be used with V4 of the marketing web services.>
 
 Sample Usage:
 
@@ -69,7 +69,7 @@ Sample Usage:
 
 =head1 VERSIONING
 
-This version of Yahoo::Marketing is intended to be used with V3 of Yahoo's Marketing API.  If you need to access both V2 and V3 simultaneously, you'll need to install 2 versions of Yahoo::Marketing.  In order to have 2 versions of the same perl module installed, you'll need to put one in a non-standard location, for example ~/perl/.  See perldoc CPAN for more information.
+This version of Yahoo::Marketing is intended to be used with V4 of Yahoo's Marketing API.  If you need to access both V3 and V4 simultaneously, you'll need to install 2 versions of Yahoo::Marketing.  In order to have 2 versions of the same perl module installed, you'll need to put one in a non-standard location, for example ~/perl/.  See perldoc CPAN for more information.
 
 =head1 OVERVIEW
 
@@ -79,7 +79,7 @@ Yahoo::Marketing will call LocationService for you, and cache the results.  This
 
 The calls you can make to the various services are documented on YSM's Technology Solutions Portal.  See
 
-L<http://ysm.techportal.searchmarketing.yahoo.com/docs/index.asp>
+L<http://searchmarketing.yahoo.com/developer/docs/index.php>
 
 Where the documentation indicates that a complex type must be passed in to a particular service call, you must pass in the appropriate 
 Yahoo::Marketing::ComplexType object.  For example, CampaignService->addCampaign requires that a Campaign be passed in:
@@ -97,7 +97,7 @@ Yahoo::Marketing::ComplexType object.  For example, CampaignService->addCampaign
  
  my $campaign_service  =  Yahoo::Marketing::CampaignService->new;
 
- my $campaign_response = $ysm_ws->addCampaign( campaign => $campaign );
+ my $campaign_response = $campaign_service->addCampaign( campaign => $campaign );
 
  my $added_campaign    = $campaign_response->campaign;
 
@@ -148,11 +148,11 @@ And perldoc Yahoo::Marketing::ComplexTypes for Complex Type documentation
 
 See t/example.t for an example that parallels the perl example code at 
 
-L<http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perl.asp>
+L<http://searchmarketing.yahoo.com/developer/docs/V4/sample_code/perl.php>
 
 and
 
-L<http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perlsdk.asp>
+L<http://searchmarketing.yahoo.com/developer/docs/V4/sample_code/perlsdk.php>
 
 =head2 Example 1 - creating a campaign
  
@@ -215,11 +215,11 @@ L<http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perlsdk.asp>
                                             ->matchTypes( [qw(advanced_match content_match sponsored_search )] )
                                             ->sponsoredSearchMaxBid( '0.99' );
 
- my $result = $ysm_ws->getForecastForKeyword(
-                           keyword             => 'porsche',
-                           adGroupID           => 116439261,           # some existing Ad Group ID
-                           forecastRequestData => $forecast_request_data,
-                       );
+ my $result = $forecast_service->getForecastForKeyword(
+                                     keyword             => 'porsche',
+                                     adGroupID           => 116439261,           # some existing Ad Group ID
+                                     forecastRequestData => $forecast_request_data,
+                                 );
 
  my $forecast_response_detail = $result->forecastResponseDetail;
 
@@ -244,10 +244,10 @@ L<http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perlsdk.asp>
 
  my $bid_info_service  = Yahoo::Marketing::BidInformationService->new->parse_config;
 
- my $bid_information = $ysm_ws->getBidsForBestRank(
-                                    adGroupID => '90171822',   # existing Ad Group ID
-                                    keyword   => 'porsche',
-                                );
+ my $bid_information = $bid_info_service->getBidsForBestRank(
+                                              adGroupID => '90171822',   # existing Ad Group ID
+                                              keyword   => 'porsche',
+                                          );
 
  print "Bid: "
       .$bid_information->bid
@@ -281,9 +281,9 @@ is loaded B<only if an account has not already been set!>
    license: your-ews-license
    master_account: 98765432
    password: secretpassword
-   uri: http://marketing.ews.yahooapis.com/V3
+   uri: http://marketing.ews.yahooapis.com/V4
    username: defaultusername
-   version: V3
+   version: V4
  sandbox:
    default_account: 21921327 
    endpoint: https://sandbox.marketing.ews.yahooapis.com/services
@@ -291,9 +291,9 @@ is loaded B<only if an account has not already been set!>
    license: 90837ada-3b26-c2e5-6d59-61d7f2fb578e
    master_account: 21921326 
    password: mypassword
-   uri: http://marketing.ews.yahooapis.com/V3
+   uri: http://marketing.ews.yahooapis.com/V4
    username: mytestusername
-   version: V3
+   version: V4
 
 
 =head1 DEBUGGING

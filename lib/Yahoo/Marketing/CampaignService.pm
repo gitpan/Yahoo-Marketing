@@ -18,7 +18,7 @@ Yahoo::Marketing::CampaignService - an object that provides access to Yahoo Mark
 
 See EWS documentation online for available SOAP methods:
 
-L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/services/CampaignService.asp>
+L<http://searchmarketing.yahoo.com/developer/docs/V3/reference/services/CampaignService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

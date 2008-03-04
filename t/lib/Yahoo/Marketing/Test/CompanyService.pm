@@ -10,8 +10,6 @@ use Module::Build;
 
 use Yahoo::Marketing::CompanyService;
 
-my $section = 'sandbox';
-
 sub SKIP_CLASS {
     my $self = shift;
     # 'not running post tests' is a true value
@@ -22,7 +20,7 @@ sub SKIP_CLASS {
 sub test_get_company : Test(2) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::CompanyService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::CompanyService->new->parse_config( section => $self->section );
 
     my $company = $ysm_ws->getCompany;
 

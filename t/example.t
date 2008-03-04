@@ -5,7 +5,7 @@
 
 # This example follows the example perl code at
 #
-# http://ysm.techportal.searchmarketing.yahoo.com/docs/sample_code/perl.asp
+# http://searchmarketing.yahoo.com/developer/docs/V4/sample_code/perl.php
 #
 # only it uses the Yahoo::Marketing modules to perform the same functions.
 #
@@ -50,13 +50,16 @@ SKIP: {
                                           and $build->notes( 'run_post_tests' ) =~ /^y/i
     ;
 
+my $config_section = $build->notes('config_section');
+
+diag("using config section $config_section");
 
 # setup our services
-my $campaign_service        = Yahoo::Marketing::CampaignService->new->parse_config(       section => 'sandbox' );
-my $ad_group_service        = Yahoo::Marketing::AdGroupService->new->parse_config(        section => 'sandbox' );
-my $ad_service              = Yahoo::Marketing::AdService->new->parse_config(             section => 'sandbox' );
-my $keyword_service         = Yahoo::Marketing::KeywordService->new->parse_config(        section => 'sandbox' );
-my $excluded_words_service  = Yahoo::Marketing::ExcludedWordsService->new->parse_config(  section => 'sandbox' );
+my $campaign_service        = Yahoo::Marketing::CampaignService->new->parse_config(       section => $config_section );
+my $ad_group_service        = Yahoo::Marketing::AdGroupService->new->parse_config(        section => $config_section );
+my $ad_service              = Yahoo::Marketing::AdService->new->parse_config(             section => $config_section );
+my $keyword_service         = Yahoo::Marketing::KeywordService->new->parse_config(        section => $config_section );
+my $excluded_words_service  = Yahoo::Marketing::ExcludedWordsService->new->parse_config(  section => $config_section );
 
 
 # setup start and end dates for our campaign

@@ -16,8 +16,6 @@ use Yahoo::Marketing::CreditCardInfo;
 use Yahoo::Marketing::CompanyService;
 use Yahoo::Marketing::MasterAccountService;
 
-my $section = 'sandbox';
-
 sub SKIP_CLASS {
     my $self = shift;
     # 'not running post tests' is a true value
@@ -29,7 +27,7 @@ sub SKIP_CLASS {
 sub test_get_master_account : Test(7) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $self->section );
 
     my $master_account = $ysm_ws->getMasterAccount( masterAccountID => $ysm_ws->master_account );
 
@@ -45,11 +43,11 @@ sub test_get_master_account : Test(7) {
 sub test_get_master_accounts_by_company_id : Test(4) {
     my $self = shift;
 
-    my $company_ws = Yahoo::Marketing::CompanyService->new->parse_config( section => $section );
+    my $company_ws = Yahoo::Marketing::CompanyService->new->parse_config( section => $self->section );
 
     my $company = $company_ws->getCompany;
 
-    my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $self->section );
 
     my @master_accounts = $ysm_ws->getMasterAccountsByCompanyID( companyID => $company->companyID );
 
@@ -62,7 +60,7 @@ sub test_get_master_accounts_by_company_id : Test(4) {
 sub test_get_master_account_status : Test(1) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $self->section );
 
     my $master_account_status = $ysm_ws->getMasterAccountStatus( masterAccountID => $ysm_ws->master_account );
     ok( $master_account_status =~ /^(Active|Inactive)$/, 'master account status is right' );
@@ -71,7 +69,7 @@ sub test_get_master_account_status : Test(1) {
 sub test_update_master_account : Test(4) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::MasterAccountService->new->parse_config( section => $self->section );
 
     my $master_account = $ysm_ws->getMasterAccount( masterAccountID => $ysm_ws->master_account );
     my $old_name = $master_account->name;

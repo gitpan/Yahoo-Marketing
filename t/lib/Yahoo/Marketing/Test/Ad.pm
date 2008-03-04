@@ -9,7 +9,7 @@ use Test::More;
 
 use Yahoo::Marketing::Ad;
 
-sub test_can_create_ad_and_set_all_fields : Test(18) {
+sub test_can_create_ad_and_set_all_fields : Test(19) {
 
     my $ad = Yahoo::Marketing::Ad->new
                                  ->ID( 'id' )
@@ -20,6 +20,7 @@ sub test_can_create_ad_and_set_all_fields : Test(18) {
                                  ->displayUrl( 'display url' )
                                  ->editorialStatus( 'editorial status' )
                                  ->name( 'name' )
+                                 ->participatesInMarketplace( 'participates in marketplace' )
                                  ->shortDescription( 'short description' )
                                  ->sponsoredSearchQualityScore( 'sponsored search quality score' )
                                  ->status( 'status' )
@@ -41,6 +42,7 @@ sub test_can_create_ad_and_set_all_fields : Test(18) {
     is( $ad->displayUrl, 'display url', 'can get display url' );
     is( $ad->editorialStatus, 'editorial status', 'can get editorial status' );
     is( $ad->name, 'name', 'can get name' );
+    is( $ad->participatesInMarketplace, 'participates in marketplace', 'can get participates in marketplace' );
     is( $ad->shortDescription, 'short description', 'can get short description' );
     is( $ad->sponsoredSearchQualityScore, 'sponsored search quality score', 'can get sponsored search quality score' );
     is( $ad->status, 'status', 'can get status' );

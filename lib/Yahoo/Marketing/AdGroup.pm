@@ -15,10 +15,13 @@ Yahoo::Marketing::AdGroup - an object to represent a Yahoo Marketing AdGroup.
 sub _user_setable_attributes {
     return ( qw/ 
                  ID
+                 accountID
                  adAutoOptimizationON
                  advancedMatchON
                  campaignID
+                 contentMatchBidStatus
                  contentMatchMaxBid
+                 contentMatchMinBid
                  contentMatchON
                  name
                  sponsoredSearchMaxBid
@@ -30,7 +33,6 @@ sub _user_setable_attributes {
 
 sub _read_only_attributes {
     return ( qw/
-                 accountID
                  contentMatchMaxBidTimestamp
                  createTimestamp
                  deleteTimestamp
@@ -47,16 +49,16 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 1;
 =head1 SYNOPSIS
 
-See L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V4/reference/dataObjects.php> for documentation of the various data objects.
 
-
-=head2 new
-
-Creates a new instance
 
 =cut
 
 =head1 METHODS
+
+=head2 new
+
+Creates a new instance
 
 =head2 get/set methods
 
@@ -67,7 +69,9 @@ Creates a new instance
     adAutoOptimizationON
     advancedMatchON
     campaignID
+    contentMatchBidStatus
     contentMatchMaxBid
+    contentMatchMinBid
     contentMatchON
     name
     sponsoredSearchMaxBid

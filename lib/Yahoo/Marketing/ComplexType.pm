@@ -19,7 +19,7 @@ Yahoo::Marketing::ComplexType - a base class for complex types.
 
 =head1 SYNOPSIS
 
-See L<http://ysm.techportal.searchmarketing.yahoo.com/docs/reference/dataObjects.asp> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V3/reference/dataObjects.php> for documentation of the various data objects.
 
 This module is not intended to be used directly.   Documentation for each of the complex types is in the appropriate module.  
 

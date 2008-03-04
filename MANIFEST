@@ -21,6 +21,7 @@ lib/Yahoo/Marketing/BasicReportService.pm
 lib/Yahoo/Marketing/BasicResponse.pm
 lib/Yahoo/Marketing/BidInformation.pm
 lib/Yahoo/Marketing/BidInformationService.pm
+lib/Yahoo/Marketing/BidUpdateInfo.pm
 lib/Yahoo/Marketing/BillingUser.pm
 lib/Yahoo/Marketing/BucketType.pm
 lib/Yahoo/Marketing/BudgetingService.pm
@@ -74,16 +75,17 @@ lib/Yahoo/Marketing/RelatedKeywordResponseType.pm
 lib/Yahoo/Marketing/RelatedKeywordType.pm
 lib/Yahoo/Marketing/ReportInfo.pm
 lib/Yahoo/Marketing/ResponseStatusType.pm
-lib/Yahoo/Marketing/ResponseType.pm
 lib/Yahoo/Marketing/Role.pm
 lib/Yahoo/Marketing/Service.pm
 lib/Yahoo/Marketing/SetGeographicLocationResponse.pm
+lib/Yahoo/Marketing/SponsoredSearchMinBidRequest.pm
 lib/Yahoo/Marketing/UpdateForAd.pm
 lib/Yahoo/Marketing/UpdateForKeyword.pm
 lib/Yahoo/Marketing/User.pm
 lib/Yahoo/Marketing/UserAuthorization.pm
 lib/Yahoo/Marketing/UserManagementService.pm
 lib/Yahoo/Marketing/VaultService.pm
+lib/Yahoo/Marketing/Warning.pm
 Makefile.PL
 MANIFEST
 META.yml			# Will be created by "make dist"
@@ -110,6 +112,7 @@ t/basic_report_request.t
 t/basic_report_service.t
 t/basic_response.t
 t/bid_information_service.t
+t/bid_update_info.t
 t/billing_user.t
 t/boilerplate.t
 t/bucket_type.t
@@ -167,6 +170,7 @@ t/lib/Yahoo/Marketing/Test/BasicReportRequest.pm
 t/lib/Yahoo/Marketing/Test/BasicReportService.pm
 t/lib/Yahoo/Marketing/Test/BasicResponse.pm
 t/lib/Yahoo/Marketing/Test/BidInformationService.pm
+t/lib/Yahoo/Marketing/Test/BidUpdateInfo.pm
 t/lib/Yahoo/Marketing/Test/BillingUser.pm
 t/lib/Yahoo/Marketing/Test/BucketType.pm
 t/lib/Yahoo/Marketing/Test/BudgetingService.pm
@@ -220,12 +224,14 @@ t/lib/Yahoo/Marketing/Test/ReportInfo.pm
 t/lib/Yahoo/Marketing/Test/ResponseStatusType.pm
 t/lib/Yahoo/Marketing/Test/Role.pm
 t/lib/Yahoo/Marketing/Test/SetGeographicLocationResponse.pm
+t/lib/Yahoo/Marketing/Test/SponsoredSearchMinBidRequest.pm
 t/lib/Yahoo/Marketing/Test/UpdateForAd.pm
 t/lib/Yahoo/Marketing/Test/UpdateForKeyword.pm
 t/lib/Yahoo/Marketing/Test/User.pm
 t/lib/Yahoo/Marketing/Test/UserAuthorization.pm
 t/lib/Yahoo/Marketing/Test/UserManagementService.pm
 t/lib/Yahoo/Marketing/Test/VaultService.pm
+t/lib/Yahoo/Marketing/Test/Warning.pm
 t/master_account.t
 t/master_account_service.t
 t/page_related_keyword_request_type.t
@@ -244,10 +250,12 @@ t/response_status_type.t
 t/role.t
 t/service.t
 t/set_geographic_location_response.t
+t/sponsored_search_min_bid_request.t
 t/update_for_ad.t
 t/update_for_keyword.t
 t/user.t
 t/user_authorization.t
 t/user_management_service.t
 t/vault_service.t
+t/warning.t
 t/z_cleanup.t

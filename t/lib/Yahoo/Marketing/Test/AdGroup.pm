@@ -9,7 +9,7 @@ use Test::More;
 
 use Yahoo::Marketing::AdGroup;
 
-sub test_can_create_ad_group_and_set_all_fields : Test(18) {
+sub test_can_create_ad_group_and_set_all_fields : Test(20) {
 
     my $ad_group = Yahoo::Marketing::AdGroup->new
                                             ->ID( 'id' )
@@ -17,7 +17,9 @@ sub test_can_create_ad_group_and_set_all_fields : Test(18) {
                                             ->adAutoOptimizationON( 'ad auto optimization on' )
                                             ->advancedMatchON( 'advanced match on' )
                                             ->campaignID( 'campaign id' )
+                                            ->contentMatchBidStatus( 'content match bid status' )
                                             ->contentMatchMaxBid( 'content match max bid' )
+                                            ->contentMatchMinBid( 'content match min bid' )
                                             ->contentMatchON( 'content match on' )
                                             ->name( 'name' )
                                             ->sponsoredSearchMaxBid( 'sponsored search max bid' )
@@ -38,7 +40,9 @@ sub test_can_create_ad_group_and_set_all_fields : Test(18) {
     is( $ad_group->adAutoOptimizationON, 'ad auto optimization on', 'can get ad auto optimization on' );
     is( $ad_group->advancedMatchON, 'advanced match on', 'can get advanced match on' );
     is( $ad_group->campaignID, 'campaign id', 'can get campaign id' );
+    is( $ad_group->contentMatchBidStatus, 'content match bid status', 'can get content match bid status' );
     is( $ad_group->contentMatchMaxBid, 'content match max bid', 'can get content match max bid' );
+    is( $ad_group->contentMatchMinBid, 'content match min bid', 'can get content match min bid' );
     is( $ad_group->contentMatchON, 'content match on', 'can get content match on' );
     is( $ad_group->name, 'name', 'can get name' );
     is( $ad_group->sponsoredSearchMaxBid, 'sponsored search max bid', 'can get sponsored search max bid' );

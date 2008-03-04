@@ -15,8 +15,6 @@ use Yahoo::Marketing::BillingUser;
 use Yahoo::Marketing::CreditCardInfo;
 use Yahoo::Marketing::UserManagementService;
 
-my $section = 'sandbox';
-
 sub SKIP_CLASS {
     my $self = shift;
     # 'not running post tests' is a true value
@@ -27,7 +25,7 @@ sub SKIP_CLASS {
 sub test_get_authorizations : Test(4) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $self->section );
 
     my @auth = $ysm_ws->getAuthorizationsForUser( username => $ysm_ws->username );
     ok( @auth, 'can get authorization' );
@@ -62,7 +60,7 @@ sub test_get_authorizations : Test(4) {
 sub test_get_available_roles_by_account_id : Test(2) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $self->section );
     my @roles = $ysm_ws->getAvailableRolesByAccountID(
         accountType => 'MasterAccount',
         accountID   => $ysm_ws->master_account,
@@ -82,7 +80,7 @@ sub test_get_available_roles_by_account_id : Test(2) {
 sub test_get_capabilities_for_role : Test(1) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $self->section );
     my @capabilities = $ysm_ws->getCapabilitiesForRole(
         role => Yahoo::Marketing::Role->new->name( 'MasterAccountAdministrator' ),
     );
@@ -94,7 +92,7 @@ sub test_get_capabilities_for_role : Test(1) {
 sub test_get_and_update_my_address : Test(2) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $self->section );
     my $address = Yahoo::Marketing::Address->new
                                            ->address1( '789 Grand Ave' )
                                            ->city('Burbank')
@@ -122,7 +120,7 @@ sub test_get_and_update_my_address : Test(2) {
 sub test_get_my_authorization : Test(2) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $self->section );
     my @auths = $ysm_ws->getMyAuthorizations;
 
     ok( @auths );
@@ -139,7 +137,7 @@ sub test_get_my_authorization : Test(2) {
 sub test_get_and_update_my_user_info : Test(3) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $self->section );
     my $user = $ysm_ws->getMyUserInfo;
 
     ok( $user, 'can get my user info' );
@@ -168,7 +166,7 @@ sub test_get_and_update_my_user_info : Test(3) {
 sub test_get_and_update_user_address : Test(3) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $self->section );
     my $address = $ysm_ws->getUserAddress( username => $ysm_ws->username );
 
     ok( $address );
@@ -195,7 +193,7 @@ sub test_get_and_update_user_address : Test(3) {
 sub test_get_and_update_user_info : Test(3) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $self->section );
     my $user = $ysm_ws->getUserInfo( username => $ysm_ws->username );
 
     ok( $user );
@@ -224,7 +222,7 @@ sub test_get_and_update_user_info : Test(3) {
 sub test_test_username : Test(2) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $self->section );
 
     # we know this username should not be available, we're using it!
     is( $ysm_ws->testUsername( username => $ysm_ws->username ), 'false', 'our username is not available' );
@@ -258,7 +256,7 @@ sub _make_username {
 sub get_user {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::UserManagementService->new->parse_config( section => $self->section );
 
     my @user_names = $ysm_ws->getUsersInCompany;
     foreach my $username ( @user_names ) {

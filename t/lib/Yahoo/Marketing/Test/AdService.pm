@@ -14,8 +14,6 @@ use Data::Dumper;
 
 #use SOAP::Lite +trace => [qw/ debug method fault /];
 
-my $section = 'sandbox';
-
 sub SKIP_CLASS {
     my $self = shift;
     # 'not running post tests' is a true value
@@ -54,7 +52,7 @@ sub test_can_add_ad : Test(4) {
     like( $ad->name, qr/^test ad \d+$/, 'name looks right' );
     like( $ad->ID, qr/^[\d]+$/, 'ID is numeric' );
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     ok( $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
 }
@@ -62,7 +60,7 @@ sub test_can_add_ad : Test(4) {
 sub test_dies_for_rejected_ad : Test(3) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
     my $ad = Yahoo::Marketing::Ad->new
                  ->accountID( $ysm_ws->account )
                  ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
@@ -88,15 +86,103 @@ sub test_dies_for_rejected_ad : Test(3) {
     );
     like( $reason, 
           qr/Contains a superlative phrase\.|Editorial review required\./, 
-          'editorial reason text is correct'    # we get different reasons in sandbox and qa`
+          'editorial reason text is correct'    # we get different reasons in sandbox and qa
     ); 
+}
+
+sub test_can_get_ads_by_ad_group_by_participates_in_marketplace_not_participating : Test(6) {
+    my ( $self ) = @_;
+
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
+
+    my $ad = $ysm_ws->addAd( Ad => Yahoo::Marketing::Ad->new
+                                                       ->accountID( $ysm_ws->account )
+                                                       ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
+                                                       ->name( 'test pending ad '.$$ )
+                                                       ->status( 'On' )
+                                                       ->title( 'sexual massage' )
+                                                       ->displayUrl( 'http://www.perl.com/' )
+                                                       ->url( 'http://www.perl.com/' )
+                                                       ->description( 'here\'s some great long description.  Not too long though.' )
+                                                       ->shortDescription( 'here\'s some pork & beans, by hi&lois.' )
+                                                       ->participatesInMarketplace( 'false' )
+                )->ad;
+
+
+    like( $ad->title, qr/[Ss]exual [Mm]assage/, 'title looks right' );
+    like( $ad->editorialStatus, qr/Pending/, 'editorial status is Pending' );
+
+    sleep 5;
+
+    my @response = $ysm_ws->getAdsByAdGroupByParticipatesInMarketplace( adGroupID => $self->common_test_data( 'test_ad_group' )->ID ,
+                                                                        participatesInMarketplace => 'false',
+                                                                      );
+
+    ok( @response );
+
+    my $is_found = 0;
+    foreach my $result_ad ( @response ){
+	$is_found = 1 if $result_ad->ID == $ad->ID;
+    }
+    is($is_found, 1);
+
+    my $found_reason = 0;
+    foreach my $ad ( @response ){
+        my $response = $ysm_ws->getReasonsForAdNotParticipatingInMarketplace( adID => $ad->ID );
+        $found_reason = 1 if $response;
+        diag( Dumper $response );
+    }
+    is($found_reason, 1);
+
+
+    # getAdsByAdGroupByParticipatesInMarketplace
+    # getReasonsForAdNotParticipatingInMarketplace
+
+    ok(   $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
+
+}
+
+sub test_can_get_ads_by_ad_group_by_participates_in_marketplace_participating : Test(2) {
+    my ( $self ) = @_;
+
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
+
+    my $ad = $ysm_ws->addAd( Ad => Yahoo::Marketing::Ad->new
+                                                       ->accountID( $ysm_ws->account )
+                                                       ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
+                                                       ->name( 'test pending ad '.$$ )
+                                                       ->status( 'On' )
+                                                       ->title( 'sexual massage' )
+                                                       ->displayUrl( 'http://www.perl.com/' )
+                                                       ->url( 'http://www.perl.com/' )
+                                                       ->description( 'here\'s some great long description.  Not too long though.' )
+                                                       ->shortDescription( 'here\'s some pork & beans, by hi&lois.' )
+                                                       ->participatesInMarketplace( 'true' )
+			     )->ad;
+    ok($ad);
+    sleep 5;
+
+    my $response = $ysm_ws->getAdsByAdGroupByParticipatesInMarketplace( adGroupID => $self->common_test_data( 'test_ad_group' )->ID ,
+                                                                        participatesInMarketplace => 'true',
+                                                                      );
+
+    # we may not actually get this Ad in response, since it needs editorial approve.
+    diag( Dumper $response );
+
+
+
+    # getAdsByAdGroupByParticipatesInMarketplace
+    # getReasonsForAdNotParticipatingInMarketplace
+
+    ok( $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
+
 }
 
 
 sub test_can_add_pending_ad : Test(11) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     my $response = $ysm_ws->addAd( Ad => Yahoo::Marketing::Ad->new
                                                              ->accountID( $ysm_ws->account )
@@ -131,7 +217,7 @@ sub test_can_add_pending_ad : Test(11) {
 sub test_can_get_update_change_for_ad : Test(7) {
     my ( $self ) = @_;
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     my $ad = $self->create_ad;
 
@@ -166,7 +252,7 @@ sub test_can_add_ads : Test(8) {
         like( $ad->ID, qr/^[\d]+$/, 'ID is numeric' );
     }
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     ok( $ysm_ws->deleteAds( adIDs => [ map { $_->ID } @ads ] , ), 'can delete ads');
 }
@@ -178,7 +264,7 @@ sub test_can_delete_ad : Test(4) {
 
     ok( $ad );
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     ok( $ysm_ws->deleteAd( adID => $ad->ID, ), 'can delete ad');
 
@@ -195,7 +281,7 @@ sub test_can_delete_ads : Test(8) {
 
     ok( scalar @ads );
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     ok( $ysm_ws->deleteAds( adIDs => [ map { $_->ID } @ads ] , ), 'can delete ads');
 
@@ -212,7 +298,7 @@ sub test_get_status_for_ad : Test(1) {
 
     my $ad = $self->common_test_data( 'test_ad' );
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     is( $ysm_ws->getStatusForAd( adID => $ad->ID ), 'On', 'status is On' );
 }
@@ -223,7 +309,7 @@ sub test_update_url_for_ad : Test(4) {
 
     my $ad = $self->common_test_data( 'test_ad' );
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     my $updated_ad = $ysm_ws->setAdUrl( adID => $ad->ID, url => "http://yahoo.com/$$" )->ad;  # note that we grab the ad out of the response here
 
@@ -242,7 +328,7 @@ sub test_update_status_for_ad : Test(4) {
 
     my $ad = $self->common_test_data( 'test_ad' );
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     ok( $ysm_ws->updateStatusForAd( adID => $ad->ID, status => 'Off' ) );
 
@@ -258,7 +344,7 @@ sub test_update_status_for_ads : Test(8) {
 
     my @ads = @{ $self->common_test_data( 'test_ads' ) };
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     ok( $ysm_ws->updateStatusForAds( adIDs => [ map { $_->ID } @ads ], status => 'Off' ) );
 
@@ -280,7 +366,7 @@ sub test_update_ads : Test(22) {
 
     my @ads = @{ $self->common_test_data( 'test_ads' ) };
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     ok( $ysm_ws->updateAds( ads      => [ $ads[0]->name( 'some updated name!' )
                                                  ->status( 'Off' )
@@ -337,7 +423,7 @@ sub test_can_get_ad : Test(3) {
 
     my $ad = $self->common_test_data( 'test_ad' );
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     my $fetched_ad = $ysm_ws->getAd( adID => $ad->ID );
 
@@ -351,7 +437,7 @@ sub test_can_get_ads : Test(10) {
 
     my @ads = @{ $self->common_test_data( 'test_ads' ) };
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     my @fetched_ads = $ysm_ws->getAds( adIDs => [ map { $_->ID } @ads ] );
 
@@ -373,7 +459,7 @@ sub test_can_get_ads_by_ad_group_id_by_editorial_status : Test(16) {
 
     my $ad_group = $self->create_ad_group;
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     my $ad = Yahoo::Marketing::Ad->new
                                  ->accountID( $ysm_ws->account )
@@ -431,7 +517,7 @@ sub test_can_get_ads_by_ad_group_id_by_status : Test(18) {
 
     my $ad_group = $self->create_ad_group;
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     my $ad = Yahoo::Marketing::Ad->new
                                  ->accountID( $ysm_ws->account )
@@ -490,7 +576,7 @@ sub test_can_get_ads_by_ad_group_id : Test(12) {
     my $ad_group1 = $self->create_ad_group;
     my $ad_group2 = $self->create_ad_group;
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     my $ad = Yahoo::Marketing::Ad->new
                                  ->accountID( $ysm_ws->account )
@@ -568,7 +654,7 @@ sub test_update_ad : Test(10) {
 
     my $ad = $self->common_test_data( 'test_ad' );
 
-    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::AdService->new->parse_config( section => $self->section );
 
     ok( my $response = $ysm_ws->updateAd( ad        => $ad->name( 'some updated ad name!' )
                                                           ->status( 'Off' )

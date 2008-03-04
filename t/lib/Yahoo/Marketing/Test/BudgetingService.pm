@@ -10,8 +10,6 @@ use Module::Build;
 
 use Yahoo::Marketing::BudgetingService;
 
-my $section = 'sandbox';
-
 sub SKIP_CLASS {
     my $self = shift;
     # 'not running post tests' is a true value
@@ -22,7 +20,7 @@ sub SKIP_CLASS {
 sub test_account_daily_spend_limit : Test(4) {
     my $self = shift;
 
-    my $ysm_ws = Yahoo::Marketing::BudgetingService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BudgetingService->new->parse_config( section => $self->section );
 
     $ysm_ws->updateAccountDailySpendLimit(
                  accountID => $ysm_ws->account,
@@ -47,7 +45,7 @@ sub test_campaign_daily_spend_limit : Test(7) {
     is( $campaign->campaignOptimizationON, 'false' );
 
     #NOTE: only if campaignOptimizationON is off can following features be used.
-    my $ysm_ws = Yahoo::Marketing::BudgetingService->new->parse_config( section => $section );
+    my $ysm_ws = Yahoo::Marketing::BudgetingService->new->parse_config( section => $self->section );
 
     my $spend_status = $ysm_ws->getCampaignDailySpendLimitStatus( campaignID => $campaign->ID );
 
