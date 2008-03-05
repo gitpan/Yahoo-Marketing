@@ -25,6 +25,7 @@ our %common_test_data;
 
 sub section {
     my $build; eval { $build = Module::Build->current; };
+    return if $@;   # guess we don't have a $build
 
     return $build->notes('config_section');
 }
@@ -33,6 +34,8 @@ sub startup_post_test_diag_settings : Test(startup) {
     my ( $self ) = @_;
 
     my $build; eval { $build = Module::Build->current; };
+    return if $@;   # guess we don't have a $build
+
     my $debug_level = $build->notes('SOAP_debug_level');
 
     if( $debug_level ){

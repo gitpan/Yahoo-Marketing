@@ -99,7 +99,11 @@ Please make sure they're properly installed on your system.
                      my $self = shift;
 
                      my $build = Module::Build->current;
-                     $build->notes(run_post_tests => '') unless $run_post;
+                     unless( $run_post ){
+                         $build->notes(run_post_tests => '');
+                         $build->notes(SOAP_debug_level => '');
+                         $build->notes(config_section => '');
+                     }
                      print STDERR "\nNOTE: we can run tests that will connect to Yahoo! Marketing's "
                                  ."\nEWS, verifying your login credentials and more completely testing "
                                  ."\nthat this package is performing correctly.  If you would like to "
