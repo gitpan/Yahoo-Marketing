@@ -68,4 +68,7 @@ Revision history for Yahoo-Marketing
         Override SOAP::Serializer::as_string.
 
 4.02    5 March 2008
-        Fix for tests under EU::MM
+        Fix for tests under EU::MM.
+
+4.03    6 March 2008
+        Remove the use of depreciated Yahoo::Marketing::ResponseType in Yahoo::Marketing::AdGroupOptimizationGuidelinesResponse.

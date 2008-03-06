@@ -4,9 +4,7 @@ package Yahoo::Marketing::AdGroupOptimizationGuidelinesResponse;
 
 use strict; use warnings;
 
-use Yahoo::Marketing::AdGroupOptimizationGuidelines;
-use Yahoo::Marketing::Error;
-use base qw/Yahoo::Marketing::ResponseType/;
+use base qw/Yahoo::Marketing::ComplexType/;
 
 =head1 NAME
 
@@ -31,10 +29,6 @@ sub _read_only_attributes {
 __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes, 
                            __PACKAGE__->_read_only_attributes
                          );
-
-sub _type_field {
-    return 'adGroupOptimizationGuidelines';
-}
 
 
 1;
