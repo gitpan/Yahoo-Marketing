@@ -9,11 +9,12 @@ use Test::More;
 
 use Yahoo::Marketing::Account;
 
-sub test_can_create_account_and_set_all_fields : Test(21) {
+sub test_can_create_account_and_set_all_fields : Test(23) {
 
     my $account = Yahoo::Marketing::Account->new
                                            ->ID( 'id' )
                                            ->advancedMatchON( 'advanced match on' )
+                                           ->businessItem( 'business item' )
                                            ->businessTypeCode( 'business type code' )
                                            ->contentMatchON( 'content match on' )
                                            ->displayURL( 'display url' )
@@ -27,6 +28,7 @@ sub test_can_create_account_and_set_all_fields : Test(21) {
                                            ->nameFurigana( 'name furigana' )
                                            ->nifCif( 'nif cif' )
                                            ->personalID( 'personal id' )
+                                           ->presidentName( 'president name' )
                                            ->sitePassword( 'site password' )
                                            ->siteUserName( 'site user name' )
                                            ->sponsoredSearchON( 'sponsored search on' )
@@ -38,6 +40,7 @@ sub test_can_create_account_and_set_all_fields : Test(21) {
 
     is( $account->ID, 'id', 'can get id' );
     is( $account->advancedMatchON, 'advanced match on', 'can get advanced match on' );
+    is( $account->businessItem, 'business item', 'can get business item' );
     is( $account->businessTypeCode, 'business type code', 'can get business type code' );
     is( $account->contentMatchON, 'content match on', 'can get content match on' );
     is( $account->displayURL, 'display url', 'can get display url' );
@@ -51,6 +54,7 @@ sub test_can_create_account_and_set_all_fields : Test(21) {
     is( $account->nameFurigana, 'name furigana', 'can get name furigana' );
     is( $account->nifCif, 'nif cif', 'can get nif cif' );
     is( $account->personalID, 'personal id', 'can get personal id' );
+    is( $account->presidentName, 'president name', 'can get president name' );
     is( $account->sitePassword, 'site password', 'can get site password' );
     is( $account->siteUserName, 'site user name', 'can get site user name' );
     is( $account->sponsoredSearchON, 'sponsored search on', 'can get sponsored search on' );

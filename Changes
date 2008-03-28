@@ -72,3 +72,6 @@ Revision history for Yahoo-Marketing
 
 4.03    6 March 2008
         Remove the use of depreciated Yahoo::Marketing::ResponseType in Yahoo::Marketing::AdGroupOptimizationGuidelinesResponse.
+
+4.04    28 March 2008
+        Add two new elements in Account data object.

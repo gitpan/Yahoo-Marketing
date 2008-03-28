@@ -16,6 +16,7 @@ sub _user_setable_attributes {
     return ( qw/ 
                  ID
                  advancedMatchON
+                 businessItem 
                  businessTypeCode
                  contentMatchON
                  displayURL
@@ -29,6 +30,7 @@ sub _user_setable_attributes {
                  nameFurigana
                  nifCif
                  personalID
+                 presidentName
                  sitePassword
                  siteUserName
                  sponsoredSearchON
@@ -67,6 +69,7 @@ Creates a new instance
 
     ID
     advancedMatchON
+    businessItem
     businessTypeCode
     contentMatchON
     displayURL
@@ -80,6 +83,7 @@ Creates a new instance
     nameFurigana
     nifCif
     personalID
+    presidentName
     sitePassword
     siteUserName
     sponsoredSearchON
