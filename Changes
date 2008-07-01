@@ -75,3 +75,6 @@ Revision history for Yahoo-Marketing
 
 4.04    28 March 2008
         Add two new elements in Account data object.
+
+4.05    1 July 2008
+        Make Yahoo::Marketing::Service more flexible to inherit.

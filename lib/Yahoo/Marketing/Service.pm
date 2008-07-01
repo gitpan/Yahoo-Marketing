@@ -337,7 +337,8 @@ sub _deserialize {
         $type =~ s/^tns://;
 
         # pull it in
-        my $class = 'Yahoo::Marketing::'.ucfirst( $type );
+        __PACKAGE__ =~ /^(.+)Service/;
+        my $class = ($1).ucfirst( $type );
         eval "require $class";
 
         die "whoops, couldn't load $class: $@" if $@;
@@ -393,11 +394,13 @@ sub _headers {
                          ->uri( $self->uri )
                          ->prefix('')
              ,
-             SOAP::Header->name('masterAccountID')
+             ( $self->_add_master_account_to_header and not $args{ no_master_account } )
+               ? SOAP::Header->name('masterAccountID')
                          ->type('string')
                          ->value( $self->master_account )
                          ->uri( $self->uri )
                          ->prefix('')
+               : ()
              ,
              ( $self->_add_account_to_header and not $args{ no_account } )
                ? SOAP::Header->name('accountID')
@@ -427,6 +430,9 @@ sub _headers {
 }
 
 sub _add_account_to_header { return 0; }  # default to false
+
+sub _add_master_account_to_header { return 1; }  # default to true
+
 
 sub _login_headers {
     my ( $self ) = @_;
