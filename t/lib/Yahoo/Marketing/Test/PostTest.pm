@@ -350,9 +350,9 @@ sub create_ad_group {
                                             ->name( 'test ad group '.($$ + $ad_group_count++) )
                                             ->status( 'On' )
                                             ->contentMatchON( 'true' )
-                                            ->contentMatchMaxBid( '0.18' )
+                                            ->contentMatchMaxBid( '90' )
                                             ->sponsoredSearchON( 'true' )
-                                            ->sponsoredSearchMaxBid( '0.28' )
+                                            ->sponsoredSearchMaxBid( '90' )
                                             ->adAutoOptimizationON( 'false' )
                    ;
 
@@ -378,9 +378,9 @@ sub create_ad_groups {
                                              ->name( 'test ad group '.($$ + $ad_group_count++).' 1' )
                                              ->status( 'On' )
                                              ->contentMatchON( 'true' )
-                                             ->contentMatchMaxBid( '0.18' )
+                                             ->contentMatchMaxBid( '90' )
                                              ->sponsoredSearchON( 'true' )
-                                             ->sponsoredSearchMaxBid( '0.28' )
+                                             ->sponsoredSearchMaxBid( '90' )
                                              ->adAutoOptimizationON( 'false' )
                     ;
 
@@ -389,9 +389,9 @@ sub create_ad_groups {
                                              ->name( 'test ad group '.($$ + $ad_group_count++).' 2' )
                                              ->status( 'On' )
                                              ->contentMatchON( 'true' )
-                                             ->contentMatchMaxBid( '0.18' )
+                                             ->contentMatchMaxBid( '90' )
                                              ->sponsoredSearchON( 'true' )
-                                             ->sponsoredSearchMaxBid( '0.28' )
+                                             ->sponsoredSearchMaxBid( '90' )
                                              ->adAutoOptimizationON( 'false' )
                     ;
 
@@ -400,9 +400,9 @@ sub create_ad_groups {
                                              ->name( 'test ad group '.($$ + $ad_group_count++).' 3' )
                                              ->status( 'On' )
                                              ->contentMatchON( 'true' )
-                                             ->contentMatchMaxBid( '0.18' )
+                                             ->contentMatchMaxBid( '90' )
                                              ->sponsoredSearchON( 'true' )
-                                             ->sponsoredSearchMaxBid( '0.28' )
+                                             ->sponsoredSearchMaxBid( '90' )
                                              ->adAutoOptimizationON( 'false' )
                     ;
 
@@ -521,7 +521,7 @@ sub create_keyword {
                                            ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
                                            ->text( $text )
                                            ->alternateText( 'test keyword alternate text '.( $$ + $keyword_count ) )
-                                           ->sponsoredSearchMaxBid( 1 )
+                                           ->sponsoredSearchMaxBid( 100 )
                                            ->status( 'On' )
                                            ->watchON( 'true' )
                                            ->advancedMatchON( 'true' )
@@ -547,7 +547,7 @@ sub create_keywords {
                                             ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
                                             ->text( 'test keyword text '.( $$ + $keyword_count ) )
                                             ->alternateText( 'test keyword alternate text '.( $$ + $keyword_count ) )
-                                            ->sponsoredSearchMaxBid( 1 )
+                                            ->sponsoredSearchMaxBid( 100 )
                                             ->status( 'On' )
                                             ->watchON( 'true' )
                                             ->advancedMatchON( 'true' )
@@ -557,7 +557,7 @@ sub create_keywords {
                                             ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
                                             ->text( 'test keyword text '.( $$ + $keyword_count ) )
                                             ->alternateText( 'test keyword alternate text '.( $$ + $keyword_count ) )
-                                            ->sponsoredSearchMaxBid( 1 )
+                                            ->sponsoredSearchMaxBid( 100 )
                                             ->status( 'On' )
                                             ->watchON( 'true' )
                                             ->advancedMatchON( 'true' )
@@ -567,7 +567,7 @@ sub create_keywords {
                                             ->adGroupID( $self->common_test_data( 'test_ad_group' )->ID )
                                             ->text( 'test keyword text '.( $$ + $keyword_count ) )
                                             ->alternateText( 'test keyword alternate text '.( $$ + $keyword_count ) )
-                                            ->sponsoredSearchMaxBid( 1 )
+                                            ->sponsoredSearchMaxBid( 100 )
                                             ->status( 'On' )
                                             ->watchON( 'true' )
                                             ->advancedMatchON( 'true' )

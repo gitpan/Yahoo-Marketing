@@ -78,3 +78,6 @@ Revision history for Yahoo-Marketing
 
 4.05    1 July 2008
         Make Yahoo::Marketing::Service more flexible to inherit.
+
+4.20    15 July 2008
+        Change for EWS V4.20. Add new data objects.

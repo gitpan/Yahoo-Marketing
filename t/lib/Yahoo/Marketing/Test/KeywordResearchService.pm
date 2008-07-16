@@ -13,6 +13,7 @@ use Yahoo::Marketing::KeywordInfoRequestType;
 use Yahoo::Marketing::RelatedKeywordRequestType;
 use Yahoo::Marketing::RangeDefinitionRequestType;
 use Yahoo::Marketing::PageRelatedKeywordRequestType;
+use Yahoo::Marketing::SubphraseKeywordRequestType;
 
 # use SOAP::Lite +trace => [qw/ debug method fault /];
 
@@ -205,6 +206,26 @@ sub test_get_range_definitions : Test(3) {
 }
 
 
+sub test_get_subphrase_keywords : Test(4) {
+    my ( $self ) = @_;
+
+    my $subphrase_keyword_request_type = Yahoo::Marketing::SubphraseKeywordRequestType->new
+        ->market( 'US' )
+        ->requiredPhraseFilters( [qw/red ipod/] );
+
+    my $ysm_ws = Yahoo::Marketing::KeywordResearchService->new->parse_config( section => $self->section );
+
+    my $result = $ysm_ws->getSubphraseKeywords(
+        subphraseKeywordRequest => $subphrase_keyword_request_type,
+    );
+
+    ok( $result );
+
+    ok( $result->notes->[0] );
+    ok( $result->relatedKeywords->[0]->canonical );
+    ok( $result->responseStatus->status );
+}
+
 1;
 
 __END__
@@ -214,3 +235,4 @@ __END__
 # getRelatedKeywords
 # getCanonicalKeywords
 # getCommonKeywords
+# getSubphraseKeywords

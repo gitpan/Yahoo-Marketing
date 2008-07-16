@@ -53,6 +53,7 @@ my @simple_type_exceptions = (qw/
     FileOutputType
     ForecastMatchType
     Importance
+    KeywordForecastMatchType
     KeywordStatus
     MasterAccountStatus
     NotParticipatingInMarketplaceReason
@@ -337,8 +338,8 @@ sub _deserialize {
         $type =~ s/^tns://;
 
         # pull it in
-        __PACKAGE__ =~ /^(.+)Service/;
-        my $class = ($1).ucfirst( $type );
+	my $pkg = $self->_class_name;
+        my $class = ($pkg).ucfirst( $type );
         eval "require $class";
 
         die "whoops, couldn't load $class: $@" if $@;
@@ -618,12 +619,8 @@ sub _complex_types {
 
 
 sub _class_name {
-    my $self = shift;
-    my $name =  (split /::/, ref $self)[-1] ;
-
-    confess "no name in _class_name!" unless $name;
-
-    return $name;
+    __PACKAGE__ =~ /^(.+)Service/;
+    return $1;
 }
 
 sub _escape_xml_baddies {
