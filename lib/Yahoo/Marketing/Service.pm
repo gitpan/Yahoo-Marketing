@@ -332,7 +332,7 @@ sub _deserialize {
     }elsif( $type =~ /ArrayOf(.*)/ ){
         my $element_type = $1;
         return [ map { $self->_deserialize( $method, $_, $element_type ) } ( ref $hash eq 'ARRAY' ? @{ $hash } : values %$hash ) ];
-    }elsif( $type !~ /^xsd:|^[Ss]tring$|^[Ii]nt$|^[Dd]ouble|^Continent$/ 
+    }elsif( $type !~ /^xsd:|^[Ss]tring$|^[Ii]nt$|^[Ll]ong$|^[Dd]ouble|^Continent$/ 
         and ! grep { $type =~ /^(tns:)?$_$/ } @simple_type_exceptions ){
 
         $type =~ s/^tns://;
@@ -628,9 +628,16 @@ sub _escape_xml_baddies {
     return unless defined $input;
     # trouble with HTML::Entities::encode_entities is it will happily double encode things
     # SOAP::Lite::encode_data also appears to have this problem
-    $input =~ s/&(?![#\w]+;)/&amp;/g;
-    $input =~ s/</&lt;/g;
-    $input =~ s/\]\]>/\]\]&gt;/g;  # From SOAP::Lite's encode_data
+
+    $input =~ s/&(?![#\w]+;)/&amp;/g; # encode &, but not the & in already encoded string (&amp;)
+
+    # if string is already wrapped <![CDATA[ ... ]]>, leave it as is. multi-line allowed by /s modifier.
+    if ( $input =~ /^<\!\[CDATA\[(.+)\]\]>$/s ) {
+        return $input;
+    }
+    # otherwise, encode < and >
+    $input =~ s/</&lt;/g;             # encode <
+    $input =~ s/>/&gt;/g;             # encode >
     return $input;
 }
 

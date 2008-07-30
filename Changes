@@ -81,3 +81,7 @@ Revision history for Yahoo-Marketing
 
 4.20    15 July 2008
         Change for EWS V4.20. Add new data objects.
+
+4.21    29 July 2008
+        Add 'Long' data type support.
+        Add CDATA section support.
