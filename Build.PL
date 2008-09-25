@@ -137,6 +137,7 @@ my $build = $builder->new(
         'Scalar::Util'               => '1.01',
         'Test::Class'                => '0.10',
         'Test::Simple'               => '0.60', # for displaying error message in tests correctly
+        'Error'                      => '0.15',
         'Cache::Cache'               => '1.01',
         'XML::XPath'                 => '1.10',
         'Crypt::SSLeay'              => '0.40',

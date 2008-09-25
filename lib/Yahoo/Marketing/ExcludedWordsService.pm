@@ -18,7 +18,7 @@ Yahoo::Marketing::ExcludedWordsService - an object that provides operations for 
 
 See EWS documentation online for available SOAP methods:
 
-http://searchmarketing.yahoo.com/developer/docs/V3/reference/services/ExcludedWordsService.php
+http://searchmarketing.yahoo.com/developer/docs/V4/reference/services/ExcludedWordsService.php
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

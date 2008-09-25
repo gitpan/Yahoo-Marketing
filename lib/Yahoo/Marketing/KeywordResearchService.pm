@@ -18,7 +18,7 @@ Yahoo::Marketing::KeywordResearchService - an object that provides operations fo
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V3/reference/services/KeywordResearchService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V4/reference/services/KeywordResearchService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

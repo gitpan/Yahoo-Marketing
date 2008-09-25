@@ -44,10 +44,13 @@ my @simple_type_exceptions = (qw/
     AdStatus
     BasicReportType
     BidStatus
+    BulkDownloadStatus
+    BulkFileType
     CampaignStatus
     Continent
     ConversionMetric
     DateRange
+    DistanceUnits
     EditorialStatus
     ErrorKeyType
     FileOutputType
@@ -60,6 +63,7 @@ my @simple_type_exceptions = (qw/
     RangeNameType
     ResponseStatusCodeType
     SignupStatus
+    TargetingAttributeType
     UserStatus
 /);
 
@@ -691,7 +695,7 @@ sub _serialize_argument {
     }elsif( my $type = $self->_complex_types( $method, $name ) ){
         return SOAP::Data->name( $name )
                          ->type( $type )
-                         ->value( $self->_escape_xml_baddies("$value") )  # force it stringy for now
+                         ->value( defined( $value ) ? $self->_escape_xml_baddies( $value ) : undef )  # force it stringy for now
         ;
     }
 

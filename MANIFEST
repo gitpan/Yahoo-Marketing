@@ -25,6 +25,8 @@ lib/Yahoo/Marketing/BidUpdateInfo.pm
 lib/Yahoo/Marketing/BillingUser.pm
 lib/Yahoo/Marketing/BucketType.pm
 lib/Yahoo/Marketing/BudgetingService.pm
+lib/Yahoo/Marketing/BulkDownloadStatusResponse.pm
+lib/Yahoo/Marketing/BulkService.pm
 lib/Yahoo/Marketing/Campaign.pm
 lib/Yahoo/Marketing/CampaignOptimizationGuidelines.pm
 lib/Yahoo/Marketing/CampaignOptimizationGuidelinesResponse.pm
@@ -52,6 +54,9 @@ lib/Yahoo/Marketing/ForecastRequestData.pm
 lib/Yahoo/Marketing/ForecastResponse.pm
 lib/Yahoo/Marketing/ForecastResponseData.pm
 lib/Yahoo/Marketing/ForecastService.pm
+lib/Yahoo/Marketing/GeographicalTargetingService.pm
+lib/Yahoo/Marketing/GeoTargetProbability.pm
+lib/Yahoo/Marketing/GeoTargetProbabilitySet.pm
 lib/Yahoo/Marketing/HistoricalKeyword.pm
 lib/Yahoo/Marketing/HistoricalKeywordResponse.pm
 lib/Yahoo/Marketing/HistoricalRequestData.pm
@@ -86,6 +91,7 @@ lib/Yahoo/Marketing/Service.pm
 lib/Yahoo/Marketing/SetGeographicLocationResponse.pm
 lib/Yahoo/Marketing/SponsoredSearchMinBidRequest.pm
 lib/Yahoo/Marketing/SubphraseKeywordRequestType.pm
+lib/Yahoo/Marketing/TargetingAttributeValue.pm
 lib/Yahoo/Marketing/UpdateForAd.pm
 lib/Yahoo/Marketing/UpdateForKeyword.pm
 lib/Yahoo/Marketing/User.pm
@@ -124,6 +130,8 @@ t/billing_user.t
 t/boilerplate.t
 t/bucket_type.t
 t/budgeting_service.t
+t/bulk_download_status_response.t
+t/bulk_service.t
 t/campaign.t
 t/campaign_optimization_guidelines.t
 t/campaign_optimization_guidelines_response.t
@@ -149,6 +157,9 @@ t/forecast_request_data.t
 t/forecast_response.t
 t/forecast_response_data.t
 t/forecast_service.t
+t/geo_target_probability.t
+t/geo_target_probability_set.t
+t/geographical_targeting_service.t
 t/historical_keyword.t
 t/historical_keyword_response.t
 t/historical_request_data.t
@@ -187,6 +198,8 @@ t/lib/Yahoo/Marketing/Test/BidUpdateInfo.pm
 t/lib/Yahoo/Marketing/Test/BillingUser.pm
 t/lib/Yahoo/Marketing/Test/BucketType.pm
 t/lib/Yahoo/Marketing/Test/BudgetingService.pm
+t/lib/Yahoo/Marketing/Test/BulkDownloadStatusResponse.pm
+t/lib/Yahoo/Marketing/Test/BulkService.pm
 t/lib/Yahoo/Marketing/Test/Cache.pm
 t/lib/Yahoo/Marketing/Test/Campaign.pm
 t/lib/Yahoo/Marketing/Test/CampaignOptimizationGuidelines.pm
@@ -212,6 +225,9 @@ t/lib/Yahoo/Marketing/Test/ForecastRequestData.pm
 t/lib/Yahoo/Marketing/Test/ForecastResponse.pm
 t/lib/Yahoo/Marketing/Test/ForecastResponseData.pm
 t/lib/Yahoo/Marketing/Test/ForecastService.pm
+t/lib/Yahoo/Marketing/Test/GeographicalTargetingService.pm
+t/lib/Yahoo/Marketing/Test/GeoTargetProbability.pm
+t/lib/Yahoo/Marketing/Test/GeoTargetProbabilitySet.pm
 t/lib/Yahoo/Marketing/Test/HistoricalKeyword.pm
 t/lib/Yahoo/Marketing/Test/HistoricalKeywordResponse.pm
 t/lib/Yahoo/Marketing/Test/HistoricalRequestData.pm
@@ -245,6 +261,7 @@ t/lib/Yahoo/Marketing/Test/Role.pm
 t/lib/Yahoo/Marketing/Test/SetGeographicLocationResponse.pm
 t/lib/Yahoo/Marketing/Test/SponsoredSearchMinBidRequest.pm
 t/lib/Yahoo/Marketing/Test/SubphraseKeywordRequestType.pm
+t/lib/Yahoo/Marketing/Test/TargetingAttributeValue.pm
 t/lib/Yahoo/Marketing/Test/UpdateForAd.pm
 t/lib/Yahoo/Marketing/Test/UpdateForKeyword.pm
 t/lib/Yahoo/Marketing/Test/User.pm
@@ -272,6 +289,7 @@ t/service.t
 t/set_geographic_location_response.t
 t/sponsored_search_min_bid_request.t
 t/sub_phrase_keyword_request_type.t
+t/targeting_attribute_value.t
 t/update_for_ad.t
 t/update_for_keyword.t
 t/user.t

@@ -10,6 +10,7 @@ WriteMakefile
                            'Crypt::SSLeay' => '0.40',
                            'DateTime::Format::ISO8601' => '0',
                            'DateTime::Format::W3CDTF' => '0',
+                           'Error' => '0.15',
                            'Module::Build' => '0.26',
                            'SOAP::Lite' => '0.66',
                            'Scalar::Util' => '1.01',

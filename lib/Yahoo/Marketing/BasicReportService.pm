@@ -18,7 +18,7 @@ Yahoo::Marketing::BasicReportService - an object that provides access to Yahoo M
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V3/reference/services/BasicReportService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V4/reference/services/BasicReportService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

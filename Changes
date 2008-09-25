@@ -85,3 +85,9 @@ Revision history for Yahoo-Marketing
 4.21    29 July 2008
         Add 'Long' data type support.
         Add CDATA section support.
+
+4.30    
+        25 September 2008
+        Change for EWS V4.30. Add new data objects.
+        Add attribute xsi:nil="true" to node if value is UNDEF.
+        

@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: Yahoo-Marketing
-version: 4.21
+version: 4.30
 author:
   - Jeff Lavallee <jeff@zeroclue.com>
 abstract: an interface for Yahoo! Search Marketing's Web Services.
