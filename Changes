@@ -91,3 +91,7 @@ Revision history for Yahoo-Marketing
         Change for EWS V4.30. Add new data objects.
         Add attribute xsi:nil="true" to node if value is UNDEF.
         
+4.31
+        1 November 2008
+        Fix bug to handle DateTime object correctly.
+        Add regionWOEIDs param to ForecastRequestData data object.

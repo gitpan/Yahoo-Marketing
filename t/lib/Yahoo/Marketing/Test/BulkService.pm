@@ -10,7 +10,7 @@ use Test::More;
 use Yahoo::Marketing::BulkService;
 use Data::Dumper;
 
- use SOAP::Lite +trace => [qw/ debug method fault /];
+# use SOAP::Lite +trace => [qw/ debug method fault /];
 
 sub SKIP_CLASS {
     my $self = shift;

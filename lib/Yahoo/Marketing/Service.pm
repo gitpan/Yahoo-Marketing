@@ -695,7 +695,7 @@ sub _serialize_argument {
     }elsif( my $type = $self->_complex_types( $method, $name ) ){
         return SOAP::Data->name( $name )
                          ->type( $type )
-                         ->value( defined( $value ) ? $self->_escape_xml_baddies( $value ) : undef )  # force it stringy for now
+                         ->value( defined( $value ) ? $self->_escape_xml_baddies( "$value" ) : undef ) # force it stringy for now
         ;
     }
 

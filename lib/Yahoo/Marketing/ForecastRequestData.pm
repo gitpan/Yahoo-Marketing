@@ -19,6 +19,7 @@ sub _user_setable_attributes {
                  geoTargets
                  marketID
                  matchTypes
+                 regionWOEIDs
                  sponsoredSearchMaxBid
             /  );
 }
@@ -56,6 +57,7 @@ Creates a new instance
     geoTargets
     marketID
     matchTypes
+    regionWOEIDs
     sponsoredSearchMaxBid
 
 =back
