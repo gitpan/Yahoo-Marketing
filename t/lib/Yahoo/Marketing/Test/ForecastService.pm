@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::ForecastService;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -9,7 +9,8 @@ use Test::More;
 use Module::Build;
 
 use Yahoo::Marketing::ForecastService;
-use Yahoo::Marketing::ForecastRequestData;
+use Yahoo::Marketing::KeywordForecastRequestData;
+use Yahoo::Marketing::AdGroupForecastRequestData;
 use Yahoo::Marketing::ForecastKeyword;
 use Yahoo::Marketing::ForecastKeywordBatch;
 use Yahoo::Marketing::HistoricalKeyword;
@@ -32,13 +33,10 @@ sub test_get_forecast_for_keyword : Test(15) {
 
     my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $self->section );
 
-    my $forecast_request_data = Yahoo::Marketing::ForecastRequestData->new
+    my $forecast_request_data = Yahoo::Marketing::KeywordForecastRequestData->new
         ->accountID( $ysm_ws->account )
-        #->contentMatchMaxBid( '0.88' )
-        ->marketID( 'US' )
-        #->matchTypes( [qw(SponsoredSearch )] )
-        ->matchTypes( [qw(SponsoredSearch )] )
-        ->sponsoredSearchMaxBid( '0.99' )
+        ->matchType( 'SponsoredSearch' )
+        ->maxBid( '10.01' )
     ;
 
     my $result = $ysm_ws->getForecastForKeyword(
@@ -52,20 +50,20 @@ sub test_get_forecast_for_keyword : Test(15) {
     my $forecast_response_detail = $result->forecastResponseDetail;
 
     ok( $forecast_response_detail );
-    like( $forecast_response_detail->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+    like( $forecast_response_detail->impressions->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_response_detail->maxBid, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_response_detail->missedClicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_response_detail->costPerClick, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
-    like( $forecast_response_detail->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+    like( $forecast_response_detail->clicks->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_response_detail->averagePosition, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
 
     my $forecast_landscape = $result->forecastLandscape;
     ok( $forecast_landscape);
-    like( $forecast_landscape->[0]->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+    like( $forecast_landscape->[0]->impressions->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_landscape->[0]->maxBid, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_landscape->[0]->missedClicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_landscape->[0]->costPerClick, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
-    like( $forecast_landscape->[0]->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+    like( $forecast_landscape->[0]->clicks->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_landscape->[0]->averagePosition, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
 }
 
@@ -77,12 +75,10 @@ sub test_get_forecast_for_keywords : Test(15) {
 
     my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $self->section );
 
-    my $forecast_request_data = Yahoo::Marketing::ForecastRequestData->new
+    my $forecast_request_data = Yahoo::Marketing::KeywordForecastRequestData->new
         ->accountID( $ysm_ws->account )
-        #->contentMatchMaxBid( '0.77' )
-        ->marketID( 'US' )
-        ->matchTypes( [qw(SponsoredSearch )] )
-        ->sponsoredSearchMaxBid( '3.66' )
+        ->matchType( 'SponsoredSearch' )
+        ->maxBid( '3.66' )
     ;
 
     my @forecast_keywords = (
@@ -106,11 +102,11 @@ sub test_get_forecast_for_keywords : Test(15) {
     my $default_response_by_ad_group = $result->defaultResponseByAdGroup;
     if( $default_response_by_ad_group and defined $default_response_by_ad_group->impressions ){
         ok( $default_response_by_ad_group );
-        like( $default_response_by_ad_group->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+        like( $default_response_by_ad_group->impressions->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $default_response_by_ad_group->maxBid, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $default_response_by_ad_group->missedClicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $default_response_by_ad_group->costPerClick, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
-        like( $default_response_by_ad_group->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+        like( $default_response_by_ad_group->clicks->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $default_response_by_ad_group->averagePosition, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     }else{
         diag("no default [forecast data] response by ad group, faking next 7 tests");
@@ -120,11 +116,11 @@ sub test_get_forecast_for_keywords : Test(15) {
     my $landscape_by_ad_group = $result->landscapeByAdGroup;
     if( $landscape_by_ad_group and defined $landscape_by_ad_group->[0]->impressions ){
         ok( $landscape_by_ad_group );
-        like( $landscape_by_ad_group->[0]->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+        like( $landscape_by_ad_group->[0]->impressions->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $landscape_by_ad_group->[0]->maxBid, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $landscape_by_ad_group->[0]->missedClicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $landscape_by_ad_group->[0]->costPerClick, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
-        like( $landscape_by_ad_group->[0]->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+        like( $landscape_by_ad_group->[0]->clicks->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $landscape_by_ad_group->[0]->averagePosition, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     }else{
         diag("no default [forecast data] response by ad group, faking next 7 tests");
@@ -143,12 +139,10 @@ sub test_get_forecast_by_ad_group : Test(15) {
 
     my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $self->section );
 
-    my $forecast_request_data = Yahoo::Marketing::ForecastRequestData->new
+    my $forecast_request_data = Yahoo::Marketing::AdGroupForecastRequestData->new
         ->accountID( $ysm_ws->account )
-        #->contentMatchMaxBid( '0.55' )
-        ->marketID( 'US' )
-        ->matchTypes( [qw(SponsoredSearch )] )
-        ->sponsoredSearchMaxBid( '0.33' )
+        ->matchType( 'SponsoredSearch' )
+        ->maxBid( '0.33' )
     ;
 
     my $result = $ysm_ws->getForecastByAdGroup(
@@ -160,20 +154,20 @@ sub test_get_forecast_by_ad_group : Test(15) {
 
     my $forecast_response_detail = $result->forecastResponseDetail;
     ok( $forecast_response_detail );
-    like( $forecast_response_detail->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+    like( $forecast_response_detail->impressions->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_response_detail->maxBid, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_response_detail->missedClicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_response_detail->costPerClick, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
-    like( $forecast_response_detail->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+    like( $forecast_response_detail->clicks->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_response_detail->averagePosition, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
 
     my $forecast_landscape = $result->forecastLandscape;
     ok( $forecast_landscape);
-    like( $forecast_landscape->[0]->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+    like( $forecast_landscape->[0]->impressions->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_landscape->[0]->maxBid, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_landscape->[0]->missedClicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_landscape->[0]->costPerClick, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
-    like( $forecast_landscape->[0]->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+    like( $forecast_landscape->[0]->clicks->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     like( $forecast_landscape->[0]->averagePosition, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
 }
 
@@ -188,42 +182,41 @@ sub test_get_forecast_for_keyword_batch : Test(16) {
     my $forecast_keyword_batch2 = Yahoo::Marketing::ForecastKeywordBatch->new
         ->keyword( 'iphone' );
 
-    my $forecast_request_data = Yahoo::Marketing::ForecastRequestData->new
+    my $forecast_request_data = Yahoo::Marketing::KeywordForecastRequestData->new
         ->accountID( $ysm_ws->account )
-        ->marketID( 'US' )
-        ->matchTypes( [qw(SponsoredSearch )] )
-        ->sponsoredSearchMaxBid( '3.66' )
+        ->matchType( 'SponsoredSearch' )
+        ->maxBid( '3.66' )
     ;
 
-    my @result = $ysm_ws->getForecastForKeywordBatch(
+    my $result = $ysm_ws->getForecastForKeywordBatch(
                               keywords            => [ $forecast_keyword_batch1, $forecast_keyword_batch2 ],
                               forecastRequestData => $forecast_request_data,
                           );
-    ok( @result );
-    ok( $result[0]->forecastResponseDetail );
+    ok( $result );
+    ok( $result->forecastKeywordBatchResponseData );
 
-    my $forecast_response_detail = $result[0]->forecastResponseDetail;
+    my $forecast_response_detail = $result->forecastKeywordBatchResponseData->[0]->forecastResponseDetail;
     if( $forecast_response_detail and defined $forecast_response_detail->impressions ){
         ok( $forecast_response_detail );
-        like( $forecast_response_detail->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+        like( $forecast_response_detail->impressions->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $forecast_response_detail->maxBid, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $forecast_response_detail->missedClicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $forecast_response_detail->costPerClick, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
-        like( $forecast_response_detail->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+        like( $forecast_response_detail->clicks->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $forecast_response_detail->averagePosition, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     }else{
         diag("no forecast response detail, faking next 7 tests");
         ok(1) for (1..7);
     }
 
-    my $forecast_landscape = $result[0]->forecastLandscape;
+    my $forecast_landscape = $result->forecastKeywordBatchResponseData->[0]->forecastLandscape;
     if( $forecast_landscape and defined $forecast_landscape->[0]->impressions ){
         ok( $forecast_landscape );
-        like( $forecast_landscape->[0]->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+        like( $forecast_landscape->[0]->impressions->impressions, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $forecast_landscape->[0]->maxBid, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $forecast_landscape->[0]->missedClicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $forecast_landscape->[0]->costPerClick, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
-        like( $forecast_landscape->[0]->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
+        like( $forecast_landscape->[0]->clicks->clicks, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $forecast_landscape->[0]->averagePosition, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
     }else{
         diag("no forecast landscape, faking next 7 tests");
@@ -233,7 +226,7 @@ sub test_get_forecast_for_keyword_batch : Test(16) {
 }
 
 
-sub test_get_historical_data_for_keywords : Test(6) {
+sub test_get_historical_data_for_keywords : Test(4) {
     my $self = shift;
 
     my $ysm_ws = Yahoo::Marketing::ForecastService->new->parse_config( section => $self->section );
@@ -255,21 +248,19 @@ sub test_get_historical_data_for_keywords : Test(6) {
     my $historical_request_data = Yahoo::Marketing::HistoricalRequestData->new
         ->accountID( $ysm_ws->account )
         ->marketID( 'US' )
-        ->matchTypes( [qw(SponsoredSearch )] )
+        ->matchType( 'SponsoredSearch' )
         ->startDate( $start_datetime )
         ->endDate( $end_datetime )
     ;
 
-    my @result = $ysm_ws->getHistoricalDataForKeywords(
+    my $result = $ysm_ws->getHistoricalDataForKeywords(
                               keywords              => [ $historical_keyword1, $historical_keyword2 ],
                               historicalRequestData => $historical_request_data,
                           );
-    ok( @result );
-    ok( $result[0]->keyword );
-    ok( $result[0]->matchTypes->[0] );
-    ok( $result[0]->historicalData );
+    ok( $result );
+    is( $result->operationSucceeded, 'true' );
 
-    my $historical_data = $result[0]->historicalData;
+    my $historical_data = $result->historicalKeywordResponseData->[0]->historicalData;
     if( $historical_data->[0] and ($historical_data->[0]->operationSucceeded eq 'true')){
         like( $historical_data->[0]->avgSearches, qr/^\d+(\.\d+)?$/, 'looks like a float number' );
         like( $historical_data->[0]->competitiveRating, qr/^\d+$/, 'looks like a long number' );

@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::BasicReportService;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -12,7 +12,7 @@ use Yahoo::Marketing::BasicReportRequest;
 use Yahoo::Marketing::BasicReportService;
 use Yahoo::Marketing::ReportInfo;
 use Yahoo::Marketing::FileOutputFormat;
-#use SOAP::Lite +trace => [qw/ debug method fault /];
+# use SOAP::Lite +trace => [qw/ debug method fault /];
 
 sub SKIP_CLASS {
     my $self = shift;
@@ -20,6 +20,76 @@ sub SKIP_CLASS {
     return 'not running post tests' unless $self->run_post_tests;
     return;
 }
+
+# delete all existing reports at beginning and ending
+sub startup_test_basic_report_service : Test(startup) {
+    my ( $self ) = @_;
+
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
+
+    my @report_info = $ysm_ws->getReportList(
+        onlyCompleted => 'false',
+    );
+
+    foreach my $info ( @report_info ) {
+        $ysm_ws->deleteReport(
+            reportID => $info->reportID,
+        );
+    }
+
+    $self->common_test_data( 'test_campaign', $self->create_campaign ) unless defined $self->common_test_data( 'test_campaign' );
+
+}
+
+sub shutdown_test_campaign_service : Test(shutdown) {
+    my ( $self ) = @_;
+
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
+
+    my @report_info = $ysm_ws->getReportList(
+        onlyCompleted => 'false',
+    );
+
+    foreach my $info ( @report_info ) {
+        $ysm_ws->deleteReport(
+            reportID => $info->reportID,
+        );
+    }
+
+    $self->cleanup_campaign;
+}
+
+
+sub test_set_and_get_opt_in_reporting_for_campaigns : Test(10) {
+    my $self = shift;
+
+    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
+
+    my @responses = $ysm_ws->setOptInReportingForCampaigns(
+        optInReporting => 'DemographicReporting',
+        accountID => $ysm_ws->account,
+        campaignIDs => [$self->common_test_data( 'test_campaign' )->ID],
+    );
+
+    ok(@responses);
+    is($responses[0]->campaignID, $self->common_test_data( 'test_campaign' )->ID);
+    is($responses[0]->operationSucceeded, 'true' );
+    is($responses[0]->optInStatus->[0]->optInEnabled, 'true');
+    is($responses[0]->optInStatus->[0]->optInReporting, 'DemographicReporting' );
+
+
+    @responses = $ysm_ws->getOptInReportingForCampaigns(
+        accountID => $ysm_ws->account,
+        campaignIDs => [$self->common_test_data( 'test_campaign' )->ID],
+    );
+
+    ok(@responses);
+    is($responses[0]->campaignID, $self->common_test_data( 'test_campaign' )->ID);
+    is($responses[0]->operationSucceeded, 'true' );
+    is($responses[0]->optInStatus->[0]->optInEnabled, 'true');
+    is($responses[0]->optInStatus->[0]->optInReporting, 'DemographicReporting' );
+}
+
 
 sub test_is_books_closed : Test(1) {
     my $self = shift;
@@ -280,32 +350,6 @@ sub test_get_report_output_urls : Test(4) {
     like( $report_urls[0], qr{^http(s?)://}, 'looks like a URL' );
     like( $report_urls[1], qr{^http(s?)://}, 'looks like a URL' );
 };
-
-sub test_only_hold_5_reports : Test(4) {
-
-    my $self = shift;
-
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
-    my @report_list = $ysm_ws->getReportList( onlyCompleted => 'false' );
-
-    ok( @report_list <= 5, 'less then 5' );
-
-    foreach my $i ( 1..6 ) {
-        my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
-            ->reportName( "account aggregation report $i" )
-            ->reportType( 'AccountSummary' )
-            ->dateRange( 'LastCalendarMonth' );
-        my $reportID = $ysm_ws->addReportRequestWithAccountAggregation(
-            reportRequest => $basic_report_request,
-        );
-    }
-
-    @report_list = $ysm_ws->getReportList( onlyCompleted => 'false' );
-    ok( @report_list <= 5, 'less then 5' );
-
-    ok( $report_list[0]->reportName eq 'account aggregation report 6' );
-    ok( $report_list[4]->reportName eq 'account aggregation report 2' );
-}
 
 
 1;

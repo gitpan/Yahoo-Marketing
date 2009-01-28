@@ -1,5 +1,5 @@
 package Yahoo::Marketing::BasicReportService;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -18,7 +18,7 @@ Yahoo::Marketing::BasicReportService - an object that provides access to Yahoo M
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V4/reference/services/BasicReportService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V5/reference/services/BasicReportService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

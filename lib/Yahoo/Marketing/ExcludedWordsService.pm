@@ -1,5 +1,5 @@
 package Yahoo::Marketing::ExcludedWordsService;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -18,7 +18,7 @@ Yahoo::Marketing::ExcludedWordsService - an object that provides operations for 
 
 See EWS documentation online for available SOAP methods:
 
-http://searchmarketing.yahoo.com/developer/docs/V4/reference/services/ExcludedWordsService.php
+http://searchmarketing.yahoo.com/developer/docs/V5/reference/services/ExcludedWordsService.php
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

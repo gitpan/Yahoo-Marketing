@@ -1,5 +1,5 @@
 package Yahoo::Marketing::BidInformationService;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -18,7 +18,7 @@ Yahoo::Marketing::BidInformationService - an object that provides operations tha
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V4/reference/services/BidInformationService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V5/reference/services/BidInformationService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

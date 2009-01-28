@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::CampaignService;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -380,100 +380,6 @@ sub test_can_delete_campaign : Test(2) {
     is( $fetched_campaign->status, 'Deleted', 'campaign has Deleted status' );
 }
 
-sub test_can_set_get_delete_geographic_location_for_campaign : Test(18) {
-    my ( $self ) = @_;
-
-    my $campaign = $self->create_campaign;
-
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
-
-    my $response = $ysm_ws->setGeographicLocationForCampaign(
-        campaignID => $campaign->ID,
-        geoStrings => [ 'springfield' ],
-    );
-
-    ok( $response );
-
-    isa_ok( $response, 'Yahoo::Marketing::SetGeographicLocationResponse' );
-    is( $response->setSucceeded, 'false' );
-    ok( not $response->stringsWithNoMatches );
-    ok( $response->ambiguousMatches );
-    ok( ref $response->ambiguousMatches->[0] );
-    isa_ok( $response->ambiguousMatches->[0], 'Yahoo::Marketing::AmbiguousGeoMatch' );
-    is( $response->ambiguousMatches->[0]->geoString, 'springfield' );
-    ok( @{ $response->ambiguousMatches->[0]->possibleMatches } );
-
-    my $new_response = $ysm_ws->setGeographicLocationForCampaign(
-        campaignID => $campaign->ID,
-        geoStrings => [ $response->ambiguousMatches->[0]->possibleMatches->[0] ],
-    );
-
-    ok( $new_response );
-    is( $new_response->setSucceeded, 'true' );
-    ok( not $new_response->stringsWithNoMatches );
-    ok( not $new_response->ambiguousMatches );
-
-    my @locations = $ysm_ws->getGeographicLocationForCampaign(
-        campaignID => $campaign->ID,
-    );
-
-    ok( @locations );
-    like( $locations[0], qr/Springfield/ );
-
-    ok ( $ysm_ws->deleteGeographicLocationFromCampaign( campaignID => $campaign->ID ) );
-
-    @locations = $ysm_ws->getGeographicLocationForCampaign(
-        campaignID => $campaign->ID,
-    );
-
-    # if no geo location set, the action returns empty.
-    ok( not @locations );
-    ok( $ysm_ws->deleteCampaign( campaignID => $campaign->ID ) );
-}
-
-sub test_set_get_delete_geographic_location_for_campaign_works_for_unambiguous_match : Test(3) {
-    my ( $self ) = @_;
-
-    my $campaign = $self->create_campaign;
-
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
-
-    my $response = $ysm_ws->setGeographicLocationForCampaign(
-        campaignID => $campaign->ID,
-        geoStrings => [ 'New York, NY, United States' ],
-    );
-
-    ok( $response );
-
-    is( ref $response, 'Yahoo::Marketing::SetGeographicLocationResponse' );
-    is( $response->setSucceeded, 'true' );
-}
-
-sub test_set_get_delete_geographic_location_for_campaign_doesnt_fail_for_bad_location : Test(5) {
-    my ( $self ) = @_;
-
-    my $silly_geo_string = 'this is a really silly geo string that shouldnt return any ambiguous matches at all';
-
-    my $campaign = $self->create_campaign;
-
-    my $ysm_ws = Yahoo::Marketing::CampaignService->new->parse_config( section => $self->section );
-
-    my $response = $ysm_ws->setGeographicLocationForCampaign(
-        campaignID => $campaign->ID,
-        geoStrings => [ $silly_geo_string ],
-    );
-
-    ok( $response );
-
-    is( ref $response, 'Yahoo::Marketing::SetGeographicLocationResponse' );
-
-    return "silly geo string worked, skipping further tests" if $response->setSucceeded eq 'true';
-
-    is( $response->setSucceeded, 'false' );
-    is( $response->stringsWithNoMatches->[0], $silly_geo_string );
-
-    ok( not $response->ambiguousMatches );
-}
 
 sub test_can_get_min_mid_for_campaign_optimization_guidelines : Test(1) {
     my ( $self ) = @_;
@@ -502,6 +408,7 @@ sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(5) {
     my $campaignOptimizationGuidelines = Yahoo::Marketing::CampaignOptimizationGuidelines->new
                                              ->campaignID( $campaign->ID )
                                              ->conversionMetric( 'Revenue' )
+                                             ->conversionImportance( 'High' )
                                              ->ROAS( 100.0 )                        # ROAS (return on ad spend) is required when conversionMetric is 'Revenue'.  % value
                                              ->averageConversionRate( 0.04 )        # also required as above reason
                                              ->averageRevenuePerConversion( 0.03 )  # also required as above reason
@@ -509,8 +416,8 @@ sub test_can_set_and_get_optimization_guidelines_for_campaign : Test(5) {
                                              ->CPM( 0.1 )
                                              ->impressionImportance( 'Low' )
                                              ->leadImportance( 'Low' )
-                                             ->taggedForConversion( 1 )
-                                             ->taggedForRevenue( 0 )
+                                             ->taggedForConversion( 'true' )
+                                             ->taggedForRevenue( 'false' )
                                              ->maxBid( 1.00 )
                                              ->bidLimitHeadroom( 10.0 )             #  % value
                                              ->monthlySpendRate( 100.00 )

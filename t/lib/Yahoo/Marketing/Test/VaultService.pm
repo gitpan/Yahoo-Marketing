@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::VaultService;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -55,7 +55,7 @@ sub test_add_new_customer : Test(8) {
                                            ->postalCode( '94089' )
                                            ->state( 'CA' )
     ;
-    my $master_account = $ysm_ws->addNewCustomer( company            => Yahoo::Marketing::Company->new
+    my $account_aggregate = $ysm_ws->addNewCustomer( company            => Yahoo::Marketing::Company->new
                                                                                                  ->companyName( 'new test company' )
                                                   ,
                                                   masterAccount      => Yahoo::Marketing::MasterAccount->new
@@ -87,6 +87,7 @@ sub test_add_new_customer : Test(8) {
                                   )
     ;
 
+    my $master_account = $account_aggregate->masterAccount;
     ok( $master_account );
     like( $master_account->ID, qr/^\d+$/, 'ID is numeric' );
     is( $master_account->currencyID,  'USD', 'Currency ID is correct' );

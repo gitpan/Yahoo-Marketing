@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::ForecastKeyword;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -9,21 +9,17 @@ use Test::More;
 
 use Yahoo::Marketing::ForecastKeyword;
 
-sub test_can_create_forecast_keyword_and_set_all_fields : Test(5) {
+sub test_can_create_forecast_keyword_and_set_all_fields : Test(3) {
 
     my $forecast_keyword = Yahoo::Marketing::ForecastKeyword->new
-                                                            ->contentMatchMaxBid( 'content match max bid' )
+                                                            ->customBid( 'custom bid' )
                                                             ->keyword( 'keyword' )
-                                                            ->matchType( 'match type' )
-                                                            ->sponsoredSearchMaxBid( 'sponsored search max bid' )
                    ;
 
     ok( $forecast_keyword );
 
-    is( $forecast_keyword->contentMatchMaxBid, 'content match max bid', 'can get content match max bid' );
+    is( $forecast_keyword->customBid, 'custom bid', 'can get custom bid' );
     is( $forecast_keyword->keyword, 'keyword', 'can get keyword' );
-    is( $forecast_keyword->matchType, 'match type', 'can get match type' );
-    is( $forecast_keyword->sponsoredSearchMaxBid, 'sponsored search max bid', 'can get sponsored search max bid' );
 
 };
 

@@ -86,12 +86,13 @@ Revision history for Yahoo-Marketing
         Add 'Long' data type support.
         Add CDATA section support.
 
-4.30    
-        25 September 2008
+4.30    25 September 2008
         Change for EWS V4.30. Add new data objects.
         Add attribute xsi:nil="true" to node if value is UNDEF.
         
-4.31
-        1 November 2008
+4.31    1 November 2008
         Fix bug to handle DateTime object correctly.
         Add regionWOEIDs param to ForecastRequestData data object.
+
+5.01    28 January 2009
+        Major version # bumped for EWS V5.  All changes neccessary to support V5 added.

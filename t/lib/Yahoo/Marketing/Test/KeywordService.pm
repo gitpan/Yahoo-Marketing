@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Test::KeywordService;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -136,7 +136,7 @@ sub test_can_add_keyword : Test(8) {
     like( $added_keyword->ID, qr/^[\d]+$/, 'ID is numeric' );
     is(   $added_keyword->watchON, 'true', 'watchON is true' );
     is(   $added_keyword->advancedMatchON, 'true', 'advancedMatchON is true' );
-    is(   $added_keyword->sponsoredSearchMaxBid, '1.0', 'sponsoredSearchMaxBid is set correctly' );
+    is(   $added_keyword->sponsoredSearchMaxBid, '100.0', 'sponsoredSearchMaxBid is set correctly' );
     like( $added_keyword->editorialStatus, qr/^Pending|Approved|Rejected|Suspended$/, 'editorialStatus seems right' );
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $self->section );
@@ -188,7 +188,7 @@ sub test_can_add_keywords : Test(22) {
         like( $added_keyword->ID, qr/^[\d]+$/, 'ID is numeric' );
         is(   $added_keyword->watchON, 'true', 'watchON is true' );
         is(   $added_keyword->advancedMatchON, 'true', 'advancedMatchON is true' );
-        is(   $added_keyword->sponsoredSearchMaxBid, '1.0', 'sponsoredSearchMaxBid is set correctly' );
+        is(   $added_keyword->sponsoredSearchMaxBid, '100.0', 'sponsoredSearchMaxBid is set correctly' );
         like( $added_keyword->editorialStatus, qr/^Pending|Approved|Rejected|Suspended$/, 'editorialStatus seems right' );
     }
 
@@ -246,7 +246,7 @@ sub test_can_get_keyword : Test(7) {
     like( $fetched_keyword->ID, qr/^[\d]+$/, 'ID is numeric' );
     is(   $fetched_keyword->watchON, 'true', 'watchON is true' );
     is(   $fetched_keyword->advancedMatchON, 'true', 'advancedMatchON is true' );
-    is(   $fetched_keyword->sponsoredSearchMaxBid, '1.0', 'sponsoredSearchMaxBid is set correctly' );
+    is(   $fetched_keyword->sponsoredSearchMaxBid, '100.0', 'sponsoredSearchMaxBid is set correctly' );
     like( $fetched_keyword->editorialStatus, qr/^Pending|Approved|Rejected|Suspended$/, 'editorialStatus seems right' );
 }
 
@@ -264,7 +264,7 @@ sub test_can_get_keywords : Test(21) {
         like( $fetched_keyword->ID, qr/^[\d]+$/, 'ID is numeric' );
         is(   $fetched_keyword->watchON, 'true', 'watchON is true' );
         is(   $fetched_keyword->advancedMatchON, 'true', 'advancedMatchON is true' );
-        is(   $fetched_keyword->sponsoredSearchMaxBid, '1.0', 'sponsoredSearchMaxBid is set correctly' );
+        is(   $fetched_keyword->sponsoredSearchMaxBid, '100.0', 'sponsoredSearchMaxBid is set correctly' );
         like( $fetched_keyword->editorialStatus, qr/^Pending|Approved|Rejected|Suspended$/, 'editorialStatus seems right' );
     }
 }
@@ -288,7 +288,7 @@ sub test_can_get_keywords_by_account_id : Test(35) {
         like( $fetched_keyword->ID, qr/^[\d]+$/, 'ID is numeric' );
         is(   $fetched_keyword->watchON, 'true', 'watchON is true' );
         is(   $fetched_keyword->advancedMatchON, 'true', 'advancedMatchON is true' );
-        is(   $fetched_keyword->sponsoredSearchMaxBid, '1.0', 'sponsoredSearchMaxBid is set correctly' );
+        is(   $fetched_keyword->sponsoredSearchMaxBid, '100.0', 'sponsoredSearchMaxBid is set correctly' );
         is(   $fetched_keyword->editorialStatus, 'Approved', 'editorialStatus is approved' );
     }
 }
@@ -314,7 +314,7 @@ sub test_can_get_keywords_by_ad_group_id : Test(35) {
         like( $fetched_keyword->ID, qr/^[\d]+$/, 'ID is numeric' );
         is(   $fetched_keyword->watchON, 'true', 'watchON is true' );
         is(   $fetched_keyword->advancedMatchON, 'true', 'advancedMatchON is true' );
-        is(   $fetched_keyword->sponsoredSearchMaxBid, '1.0', 'sponsoredSearchMaxBid is set correctly' );
+        is(   $fetched_keyword->sponsoredSearchMaxBid, '100.0', 'sponsoredSearchMaxBid is set correctly' );
         like( $fetched_keyword->editorialStatus, qr/^Pending|Approved|Rejected|Suspended$/, 'editorialStatus seems right' );
     }
 }
@@ -345,7 +345,7 @@ sub test_can_get_keywords_by_ad_group_id_by_editorial_status : Test(35) {
         like( $fetched_keyword->ID, qr/^[\d]+$/, 'ID is numeric' );
         is(   $fetched_keyword->watchON, 'true', 'watchON is true' );
         is(   $fetched_keyword->advancedMatchON, 'true', 'advancedMatchON is true' );
-        is(   $fetched_keyword->sponsoredSearchMaxBid, '1.0', 'sponsoredSearchMaxBid is set correctly' );
+        is(   $fetched_keyword->sponsoredSearchMaxBid, '100.0', 'sponsoredSearchMaxBid is set correctly' );
         like( $fetched_keyword->editorialStatus, qr/^Pending|Approved$/, 'editorialStatus seems right' );
     }
 }
@@ -370,7 +370,7 @@ sub test_can_get_keywords_by_ad_group_id_by_status : Test(35) {
         like( $fetched_keyword->ID, qr/^[\d]+$/, 'ID is numeric' );
         is(   $fetched_keyword->watchON, 'true', 'watchON is true' );
         is(   $fetched_keyword->advancedMatchON, 'true', 'advancedMatchON is true' );
-        is(   $fetched_keyword->sponsoredSearchMaxBid, '1.0', 'sponsoredSearchMaxBid is set correctly' );
+        is(   $fetched_keyword->sponsoredSearchMaxBid, '100.0', 'sponsoredSearchMaxBid is set correctly' );
         like( $fetched_keyword->editorialStatus, qr/^Pending|Approved|Rejected|Suspended$/, 'editorialStatus seems right' );
     }
 }
@@ -379,7 +379,7 @@ sub test_can_get_keyword_sponsored_search_max_bid : Test(1) {
     my ( $self ) = @_;
 
     my $ysm_ws = Yahoo::Marketing::KeywordService->new->parse_config( section => $self->section );
-    is( $ysm_ws->getKeywordSponsoredSearchMaxBid( keywordID => $self->common_test_data( 'test_keyword' )->ID ), '1.0' );
+    is( $ysm_ws->getKeywordSponsoredSearchMaxBid( keywordID => $self->common_test_data( 'test_keyword' )->ID ), '100.0' );
 }
 
 

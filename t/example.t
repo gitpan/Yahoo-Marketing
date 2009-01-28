@@ -1,11 +1,11 @@
 #!perl 
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 
 # This example follows the example perl code at
 #
-# http://searchmarketing.yahoo.com/developer/docs/V4/sample_code/perl.php
+# http://searchmarketing.yahoo.com/developer/docs/V5/sample_code/perl.php
 #
 # only it uses the Yahoo::Marketing modules to perform the same functions.
 #

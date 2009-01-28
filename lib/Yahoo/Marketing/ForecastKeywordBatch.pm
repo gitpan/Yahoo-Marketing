@@ -1,5 +1,5 @@
 package Yahoo::Marketing::ForecastKeywordBatch;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -8,17 +8,16 @@ use base qw/Yahoo::Marketing::ComplexType/;
 
 =head1 NAME
 
-Yahoo::Marketing::ForecastKeywordBatch - an object to represent the keyword and (optional) AD Group data required for a forecast. 
+Yahoo::Marketing::ForecastKeywordBatch - an object to represent a Yahoo Marketing ForecastKeywordBatch.
 
 =cut
 
 sub _user_setable_attributes {
     return ( qw/ 
-	     adGroupID
-             contentMatchMaxBid
-             keyword
-             matchTypes
-             sponsoredSearchMaxBid
+                 adGroupID
+                 keyword
+                 matchType
+                 maxBidOverride
             /  );
 }
 
@@ -35,27 +34,26 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 1;
 =head1 SYNOPSIS
 
-See L<http://searchmarketing.yahoo.com/developer/docs/V4/reference/dataObjects.php> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V5/reference/dataObjects.php> for documentation of the various data objects.
 
-
-=head2 new
-
-Creates a new instance
 
 =cut
 
 =head1 METHODS
+
+=head2 new
+
+Creates a new instance
 
 =head2 get/set methods
 
 =over 8
 
     adGroupID
-    contentMatchMaxBid
     keyword
-    matchTypes
-    sponsoredSearchMaxBid
-    
+    matchType
+    maxBidOverride
+
 =back
 
 =head2 get (read only) methods

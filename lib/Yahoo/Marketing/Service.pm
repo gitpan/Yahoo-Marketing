@@ -1,5 +1,5 @@
 package Yahoo::Marketing::Service;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings; 
@@ -40,6 +40,7 @@ __PACKAGE__->mk_accessors( qw/ username
 my @simple_type_exceptions = (qw/
     AccountStatus
     AccountType
+    AdGroupForecastMatchType
     AdGroupStatus
     AdStatus
     BasicReportType
@@ -50,20 +51,28 @@ my @simple_type_exceptions = (qw/
     Continent
     ConversionMetric
     DateRange
+    DayOfTheWeek
     DistanceUnits
     EditorialStatus
     ErrorKeyType
     FileOutputType
     ForecastMatchType
+    Gender
     Importance
     KeywordForecastMatchType
     KeywordStatus
     MasterAccountStatus
     NotParticipatingInMarketplaceReason
+    OptInReporting
     RangeNameType
     ResponseStatusCodeType
     SignupStatus
-    TargetingAttributeType
+    SpendCapTactic
+    SpendCapType
+    TacticType
+    TargetableLevel
+    TargetingPremiumType
+    UnderAgeFilter
     UserStatus
 /);
 
@@ -75,9 +84,9 @@ sub new {
     $args{ use_wsse_security_headers } = 1       unless exists $args{ use_wsse_security_headers };
     $args{ use_location_service }      = 1       unless exists $args{ use_location_service };
     $args{ cache_expire_time }         = '1 day' unless exists $args{ cache_expire_time };
-    $args{ version }                   = 'V4'    unless exists $args{ version };
+    $args{ version }                   = 'V5'    unless exists $args{ version };
 
-    $args{ uri } = 'http://marketing.ews.yahooapis.com/V4' 
+    $args{ uri } = 'http://marketing.ews.yahooapis.com/V5' 
         unless exists $args{ uri };
 
     my $self = bless \%args, $class;
@@ -756,7 +765,7 @@ See also perldoc Yahoo::Marketing::AccountService
 
 Please see the API docs at 
 
-L<http://searchmarketing.yahoo.com/developer/docs/V4/gsg/index.php#services>
+L<http://searchmarketing.yahoo.com/developer/docs/V5/gsg/index.php#services>
 
 for details about what methods are available from each of the Services.
 
@@ -793,7 +802,7 @@ Get/set the version to be used for requests
 
 Get/set the URI to be used for requests.  
 
-Defaults to http://marketing.ews.yahooapis.com/V4
+Defaults to http://marketing.ews.yahooapis.com/V5
 
 =head2 master_account
 
@@ -805,7 +814,7 @@ Get/set the account to be used for requests.  Not all requests require an accoun
 Any service that deals with Campaigns (or Ad Groups, Ads, or Keywords) requires account
 to be set.
 
-L<http://searchmarketing.yahoo.com/developer/docs/V4/gsg/requests.php#header>
+L<http://searchmarketing.yahoo.com/developer/docs/V5/gsg/requests.php#header>
 
 =head2 immortal
 
@@ -819,13 +828,13 @@ Defaults to false.
 
 Get/set the onBehalfOfUsername to be used for requests.  
 
-L<http://searchmarketing.yahoo.com/developer/docs/V4/gsg/auth.php#onbehalfof>
+L<http://searchmarketing.yahoo.com/developer/docs/V5/gsg/auth.php#onbehalfof>
 
 =head2 on_behalf_of_password
 
 Get/set the onBehalfOfPassword to be used for requests.  
 
-L<http://searchmarketing.yahoo.com/developer/docs/V4/gsg/auth.php#onbehalfof>
+L<http://searchmarketing.yahoo.com/developer/docs/V5/gsg/auth.php#onbehalfof>
 
 =head2 use_wsse_security_headers
 

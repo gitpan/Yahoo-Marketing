@@ -1,5 +1,5 @@
 package Yahoo::Marketing::ForecastService;
-# Copyright (c) 2007 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 
 use strict; use warnings;
@@ -18,7 +18,7 @@ Yahoo::Marketing::ForecastService - an object that let you know the results you 
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V4/reference/services/ForecastService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V5/reference/services/ForecastService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

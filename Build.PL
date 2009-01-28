@@ -1,5 +1,5 @@
 use strict;
-# Copyright (c) 2006 Yahoo! Inc.  All rights reserved.  
+# Copyright (c) 2009 Yahoo! Inc.  All rights reserved.  
 # The copyrights to the contents of this file are licensed under the Perl Artistic License (ver. 15 Aug 1997) 
 use warnings;
 use Module::Build;
@@ -12,8 +12,8 @@ my $builder = Module::Build->subclass(
 
                  my %config_defaults = ( endpoint       => 'https://sandbox.marketing.ews.yahooapis.com/services',
                                          vault_endpoint => 'https://sandbox.vmarketing.ews.yahooapis.com/services',
-                                         uri            => 'http://marketing.ews.yahooapis.com/V4',
-                                         version        => 'V4',
+                                         uri            => 'http://marketing.ews.yahooapis.com/V5',
+                                         version        => 'V5',
                                        );
 
                  sub ACTION_posttest {
