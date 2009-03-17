@@ -96,3 +96,6 @@ Revision history for Yahoo-Marketing
 
 5.01    28 January 2009
         Major version # bumped for EWS V5.  All changes neccessary to support V5 added.
+
+5.02    17 March 2009
+        Change parameter in HistoricalKeyword data object.

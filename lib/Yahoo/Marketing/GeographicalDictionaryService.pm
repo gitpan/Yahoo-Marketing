@@ -9,7 +9,7 @@ use base qw/Yahoo::Marketing::Service/;
 
 =head1 NAME
 
-Yahoo::Marketing::CampaignService - an object that provides access to Yahoo Marketing's Geographical Dictionary SOAP Service.
+Yahoo::Marketing::GeographicalDictionaryService - an object that provides access to Yahoo Marketing's Geographical Dictionary SOAP Service.
 
 =cut
 

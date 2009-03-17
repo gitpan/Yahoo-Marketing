@@ -13,13 +13,13 @@ sub test_can_create_historical_keyword : Test(3) {
 
     my $historical_keyword = Yahoo::Marketing::HistoricalKeyword->new
                                                                 ->keyword( 'keyword' )
-                                                                ->matchTypes( 'match types' )
+                                                                ->matchType( 'match type' )
                    ;
 
     ok( $historical_keyword );
 
     is( $historical_keyword->keyword, 'keyword', 'can get keyword' );
-    is( $historical_keyword->matchTypes, 'match types', 'can get match types' );
+    is( $historical_keyword->matchType, 'match type', 'can get match type' );
 
 };
 

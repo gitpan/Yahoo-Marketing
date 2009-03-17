@@ -9,7 +9,7 @@ use base qw/Yahoo::Marketing::Service/;
 
 =head1 NAME
 
-Yahoo::Marketing::TargetingConverterService - an object that provides access to Yahoo Marketing's Upgrade SOAP Service.
+Yahoo::Marketing::UpgradeService - an object that provides access to Yahoo Marketing's Upgrade SOAP Service.
 
 =cut
 

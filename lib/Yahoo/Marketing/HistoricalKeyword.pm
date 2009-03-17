@@ -15,7 +15,7 @@ Yahoo::Marketing::HistoricalKeyword - an object to represent keywords used for g
 sub _user_setable_attributes {
     return ( qw/ 
              keyword
-             matchTypes
+             matchType
             /  );
 }
 
@@ -48,7 +48,7 @@ Creates a new instance
 =over 8
 
     keyword
-    matchTypes
+    matchType
 
 =back
 
