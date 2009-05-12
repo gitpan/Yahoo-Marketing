@@ -13,6 +13,7 @@ use bytes;
 use SOAP::Lite on_action => sub { sprintf '' };
 use Scalar::Util qw/ blessed /;
 use Cache::FileCache;
+use Encode qw/is_utf8 _utf8_on/;
 use Yahoo::Marketing::ApiFault;
 
 our $service_data;
@@ -642,6 +643,7 @@ sub _escape_xml_baddies {
     # trouble with HTML::Entities::encode_entities is it will happily double encode things
     # SOAP::Lite::encode_data also appears to have this problem
 
+    my $on_utf8 = is_utf8($input);
     $input =~ s/&(?![#\w]+;)/&amp;/g; # encode &, but not the & in already encoded string (&amp;)
 
     # if string is already wrapped <![CDATA[ ... ]]>, leave it as is. multi-line allowed by /s modifier.
@@ -651,6 +653,9 @@ sub _escape_xml_baddies {
     # otherwise, encode < and >
     $input =~ s/</&lt;/g;             # encode <
     $input =~ s/>/&gt;/g;             # encode >
+
+    utf8_on($input) if $on_utf8;
+
     return $input;
 }
 

@@ -99,3 +99,6 @@ Revision history for Yahoo-Marketing
 
 5.02    17 March 2009
         Change parameter in HistoricalKeyword data object.
+
+5.03    12 May 2009
+        Fix encoding problem for the string contains '&'.
