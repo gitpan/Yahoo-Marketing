@@ -12,13 +12,13 @@ Yahoo::Marketing - an interface for Yahoo! Search Marketing's Web Services.
 
 =head1 VERSION
 
-Version 5.03
+Version 5.04
 
 =cut
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '5.03';
+our $VERSION = '5.04';
 
 
 =head1 SYNOPSIS

@@ -38,7 +38,8 @@ __PACKAGE__->mk_accessors( qw/ username
                                immortal
                           / );
 
-my @simple_type_exceptions = (qw/
+sub simple_type_exceptions {
+    return (qw/
     AccountStatus
     AccountType
     AdGroupForecastMatchType
@@ -76,6 +77,7 @@ my @simple_type_exceptions = (qw/
     UnderAgeFilter
     UserStatus
 /);
+}
 
 
 sub new {
@@ -347,7 +349,7 @@ sub _deserialize {
         my $element_type = $1;
         return [ map { $self->_deserialize( $method, $_, $element_type ) } ( ref $hash eq 'ARRAY' ? @{ $hash } : values %$hash ) ];
     }elsif( $type !~ /^xsd:|^[Ss]tring$|^[Ii]nt$|^[Ll]ong$|^[Dd]ouble|^Continent$/ 
-        and ! grep { $type =~ /^(tns:)?$_$/ } @simple_type_exceptions ){
+        and ! grep { $type =~ /^(tns:)?$_$/ } $self->simple_type_exceptions ){
 
         $type =~ s/^tns://;
 

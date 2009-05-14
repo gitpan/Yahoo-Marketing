@@ -102,3 +102,6 @@ Revision history for Yahoo-Marketing
 
 5.03    12 May 2009
         Fix encoding problem for the string contains '&'.
+
+5.04    14 May 2009
+        Change simple_type_exceptions to be a method.
