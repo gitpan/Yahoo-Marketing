@@ -105,3 +105,6 @@ Revision history for Yahoo-Marketing
 
 5.04    14 May 2009
         Change simple_type_exceptions to be a method.
+
+5.05    15 May 2009
+        Add documentation for simple_type_exceptions to avoid 'naked subroutine' complaint.

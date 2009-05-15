@@ -785,6 +785,10 @@ No exported functions
 
 =cut
 
+=head2 simple_type_exceptions
+
+Return all simple data type exceptions
+
 =head2 new
 
 Creates a new instance.
