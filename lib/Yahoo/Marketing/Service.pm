@@ -656,7 +656,7 @@ sub _escape_xml_baddies {
     $input =~ s/</&lt;/g;             # encode <
     $input =~ s/>/&gt;/g;             # encode >
 
-    utf8_on($input) if $on_utf8;
+    _utf8_on($input) if $on_utf8;
 
     return $input;
 }
