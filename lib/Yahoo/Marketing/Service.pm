@@ -48,6 +48,7 @@ sub simple_type_exceptions {
     BasicReportType
     BidStatus
     BulkDownloadStatus
+    BulkFeedbackFileType
     BulkFileType
     CampaignStatus
     Continent

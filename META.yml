@@ -1,6 +1,6 @@
 ---
 name: Yahoo-Marketing
-version: 5.06
+version: 5.10
 author:
   - 'Jeff Lavallee <jeff@zeroclue.com>'
 abstract: an interface for Yahoo! Search Marketing's Web Services.
@@ -30,7 +30,7 @@ build_requires:
 provides:
   Yahoo::Marketing:
     file: lib/Yahoo/Marketing.pm
-    version: 5.06
+    version: 5.10
   Yahoo::Marketing::Account:
     file: lib/Yahoo/Marketing/Account.pm
   Yahoo::Marketing::AccountAggregate:
@@ -87,10 +87,16 @@ provides:
     file: lib/Yahoo/Marketing/BucketType.pm
   Yahoo::Marketing::BudgetingService:
     file: lib/Yahoo/Marketing/BudgetingService.pm
+  Yahoo::Marketing::BulkDownloadStatusInfo:
+    file: lib/Yahoo/Marketing/BulkDownloadStatusInfo.pm
   Yahoo::Marketing::BulkDownloadStatusResponse:
     file: lib/Yahoo/Marketing/BulkDownloadStatusResponse.pm
   Yahoo::Marketing::BulkService:
     file: lib/Yahoo/Marketing/BulkService.pm
+  Yahoo::Marketing::BulkUploadStatusResponse:
+    file: lib/Yahoo/Marketing/BulkUploadStatusResponse.pm
+  Yahoo::Marketing::BulkUploadTokenUrlResponse:
+    file: lib/Yahoo/Marketing/BulkUploadTokenUrlResponse.pm
   Yahoo::Marketing::Campaign:
     file: lib/Yahoo/Marketing/Campaign.pm
   Yahoo::Marketing::CampaignOptimizationGuidelines:
