@@ -101,6 +101,7 @@ lib/Yahoo/Marketing/KeywordService.pm
 lib/Yahoo/Marketing/LocationService.pm
 lib/Yahoo/Marketing/MasterAccount.pm
 lib/Yahoo/Marketing/MasterAccountService.pm
+lib/Yahoo/Marketing/MobileDictionaryService.pm
 lib/Yahoo/Marketing/Network.pm
 lib/Yahoo/Marketing/OptInAdGroupResponse.pm
 lib/Yahoo/Marketing/OptInCampaignResponse.pm
@@ -340,6 +341,7 @@ t/lib/Yahoo/Marketing/Test/KeywordResponse.pm
 t/lib/Yahoo/Marketing/Test/KeywordService.pm
 t/lib/Yahoo/Marketing/Test/MasterAccount.pm
 t/lib/Yahoo/Marketing/Test/MasterAccountService.pm
+t/lib/Yahoo/Marketing/Test/MobileDictionaryService.pm
 t/lib/Yahoo/Marketing/Test/Network.pm
 t/lib/Yahoo/Marketing/Test/OptInAdGroupResponse.pm
 t/lib/Yahoo/Marketing/Test/OptInCampaignResponse.pm
@@ -381,6 +383,7 @@ t/lib/Yahoo/Marketing/Test/VaultService.pm
 t/lib/Yahoo/Marketing/Test/Warning.pm
 t/master_account.t
 t/master_account_service.t
+t/mobile_dictionary_service.t
 t/network.t
 t/opt_in_ad_group_response.t
 t/opt_in_campaign_response.t
