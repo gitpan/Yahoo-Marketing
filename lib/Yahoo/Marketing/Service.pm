@@ -45,7 +45,7 @@ sub simple_type_exceptions {
     AdGroupForecastMatchType
     AdGroupStatus
     AdStatus
-    BasicReportType
+    BasicReportType    
     BidStatus
     BulkDownloadStatus
     BulkFeedbackFileType
@@ -67,6 +67,7 @@ sub simple_type_exceptions {
     MasterAccountStatus
     NotParticipatingInMarketplaceReason
     OptInReporting
+    ParticipationStatus
     RangeNameType
     ResponseStatusCodeType
     SignupStatus

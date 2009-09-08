@@ -1,6 +1,6 @@
 ---
 name: Yahoo-Marketing
-version: 5.10
+version: 5.20
 author:
   - 'Jeff Lavallee <jeff@zeroclue.com>'
 abstract: an interface for Yahoo! Search Marketing's Web Services.
@@ -30,11 +30,13 @@ build_requires:
 provides:
   Yahoo::Marketing:
     file: lib/Yahoo/Marketing.pm
-    version: 5.10
+    version: 5.20
   Yahoo::Marketing::Account:
     file: lib/Yahoo/Marketing/Account.pm
   Yahoo::Marketing::AccountAggregate:
     file: lib/Yahoo/Marketing/AccountAggregate.pm
+  Yahoo::Marketing::AccountBalance:
+    file: lib/Yahoo/Marketing/AccountBalance.pm
   Yahoo::Marketing::AccountService:
     file: lib/Yahoo/Marketing/AccountService.pm
   Yahoo::Marketing::Ad:
@@ -77,6 +79,8 @@ provides:
     file: lib/Yahoo/Marketing/BasicResponse.pm
   Yahoo::Marketing::BidInformation:
     file: lib/Yahoo/Marketing/BidInformation.pm
+  Yahoo::Marketing::BidInformationRequest:
+    file: lib/Yahoo/Marketing/BidInformationRequest.pm
   Yahoo::Marketing::BidInformationService:
     file: lib/Yahoo/Marketing/BidInformationService.pm
   Yahoo::Marketing::BidUpdateInfo:
@@ -109,6 +113,12 @@ provides:
     file: lib/Yahoo/Marketing/CampaignService.pm
   Yahoo::Marketing::Capability:
     file: lib/Yahoo/Marketing/Capability.pm
+  Yahoo::Marketing::Carrier:
+    file: lib/Yahoo/Marketing/Carrier.pm
+  Yahoo::Marketing::CarrierBidInformation:
+    file: lib/Yahoo/Marketing/CarrierBidInformation.pm
+  Yahoo::Marketing::CarrierBidInformationRequest:
+    file: lib/Yahoo/Marketing/CarrierBidInformationRequest.pm
   Yahoo::Marketing::CombinedAccountStatus:
     file: lib/Yahoo/Marketing/CombinedAccountStatus.pm
   Yahoo::Marketing::Company:
@@ -205,6 +215,8 @@ provides:
     file: lib/Yahoo/Marketing/KeywordOptimizationGuidelines.pm
   Yahoo::Marketing::KeywordOptimizationGuidelinesResponse:
     file: lib/Yahoo/Marketing/KeywordOptimizationGuidelinesResponse.pm
+  Yahoo::Marketing::KeywordParticipationStatus:
+    file: lib/Yahoo/Marketing/KeywordParticipationStatus.pm
   Yahoo::Marketing::KeywordRejectionReasons:
     file: lib/Yahoo/Marketing/KeywordRejectionReasons.pm
   Yahoo::Marketing::KeywordResearchService:
@@ -219,6 +231,8 @@ provides:
     file: lib/Yahoo/Marketing/MasterAccount.pm
   Yahoo::Marketing::MasterAccountService:
     file: lib/Yahoo/Marketing/MasterAccountService.pm
+  Yahoo::Marketing::Network:
+    file: lib/Yahoo/Marketing/Network.pm
   Yahoo::Marketing::OptInAdGroupResponse:
     file: lib/Yahoo/Marketing/OptInAdGroupResponse.pm
   Yahoo::Marketing::OptInCampaignResponse:
@@ -227,6 +241,8 @@ provides:
     file: lib/Yahoo/Marketing/OptInStatus.pm
   Yahoo::Marketing::PageRelatedKeywordRequestType:
     file: lib/Yahoo/Marketing/PageRelatedKeywordRequestType.pm
+  Yahoo::Marketing::PaymentInfo:
+    file: lib/Yahoo/Marketing/PaymentInfo.pm
   Yahoo::Marketing::PaymentMethodInfo:
     file: lib/Yahoo/Marketing/PaymentMethodInfo.pm
   Yahoo::Marketing::RangeDefinitionRequestType:
