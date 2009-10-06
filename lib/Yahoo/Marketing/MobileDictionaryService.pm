@@ -17,7 +17,7 @@ Yahoo::Marketing::MobileDictionaryService - an object that provides operations f
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V5/reference/services/MobileDictionaryService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/services/MobileDictionaryService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

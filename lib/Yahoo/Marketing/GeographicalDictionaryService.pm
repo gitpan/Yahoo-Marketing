@@ -18,7 +18,7 @@ Yahoo::Marketing::GeographicalDictionaryService - an object that provides access
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V5/reference/services/GeographicalDictionaryService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/services/GeographicalDictionaryService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

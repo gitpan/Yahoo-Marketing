@@ -5,7 +5,7 @@
 
 # This example follows the example perl code at
 #
-# http://searchmarketing.yahoo.com/developer/docs/V5/sample_code/perl.php
+# http://searchmarketing.yahoo.com/developer/docs/V6/sample_code/perl.php
 #
 # only it uses the Yahoo::Marketing modules to perform the same functions.
 #

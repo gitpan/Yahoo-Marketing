@@ -55,6 +55,7 @@ lib/Yahoo/Marketing/DayPart.pm
 lib/Yahoo/Marketing/DayPartingTarget.pm
 lib/Yahoo/Marketing/DayPartingTargeting.pm
 lib/Yahoo/Marketing/DemographicTargeting.pm
+lib/Yahoo/Marketing/DownloadFile.pm
 lib/Yahoo/Marketing/EditorialReasons.pm
 lib/Yahoo/Marketing/Error.pm
 lib/Yahoo/Marketing/ErrorType.pm
@@ -103,12 +104,16 @@ lib/Yahoo/Marketing/MasterAccount.pm
 lib/Yahoo/Marketing/MasterAccountService.pm
 lib/Yahoo/Marketing/MobileDictionaryService.pm
 lib/Yahoo/Marketing/Network.pm
+lib/Yahoo/Marketing/NetworkDistribution.pm
+lib/Yahoo/Marketing/NetworkTarget.pm
 lib/Yahoo/Marketing/OptInAdGroupResponse.pm
 lib/Yahoo/Marketing/OptInCampaignResponse.pm
 lib/Yahoo/Marketing/OptInStatus.pm
 lib/Yahoo/Marketing/PageRelatedKeywordRequestType.pm
 lib/Yahoo/Marketing/PaymentInfo.pm
 lib/Yahoo/Marketing/PaymentMethodInfo.pm
+lib/Yahoo/Marketing/Preferences.pm
+lib/Yahoo/Marketing/ProcessStatus.pm
 lib/Yahoo/Marketing/RangeDefinitionRequestType.pm
 lib/Yahoo/Marketing/RangeDefinitionResponseType.pm
 lib/Yahoo/Marketing/RangeDefinitionType.pm
@@ -116,7 +121,9 @@ lib/Yahoo/Marketing/RangeValueType.pm
 lib/Yahoo/Marketing/RelatedKeywordRequestType.pm
 lib/Yahoo/Marketing/RelatedKeywordResponseType.pm
 lib/Yahoo/Marketing/RelatedKeywordType.pm
+lib/Yahoo/Marketing/ReportDownloadInfo.pm
 lib/Yahoo/Marketing/ReportInfo.pm
+lib/Yahoo/Marketing/Response.pm
 lib/Yahoo/Marketing/ResponseStatusType.pm
 lib/Yahoo/Marketing/Role.pm
 lib/Yahoo/Marketing/Service.pm
@@ -124,6 +131,7 @@ lib/Yahoo/Marketing/SetGeographicLocationResponse.pm
 lib/Yahoo/Marketing/SpendLimit.pm
 lib/Yahoo/Marketing/SponsoredSearchMinBidRequest.pm
 lib/Yahoo/Marketing/SubphraseKeywordRequestType.pm
+lib/Yahoo/Marketing/Summary.pm
 lib/Yahoo/Marketing/TacticSpendCap.pm
 lib/Yahoo/Marketing/TargetingAttribute.pm
 lib/Yahoo/Marketing/TargetingAttributeDescriptor.pm
@@ -133,9 +141,9 @@ lib/Yahoo/Marketing/TargetingPremium.pm
 lib/Yahoo/Marketing/TargetingProfile.pm
 lib/Yahoo/Marketing/TargetingService.pm
 lib/Yahoo/Marketing/TargetingType.pm
+lib/Yahoo/Marketing/Token.pm
 lib/Yahoo/Marketing/UpdateForAd.pm
 lib/Yahoo/Marketing/UpdateForKeyword.pm
-lib/Yahoo/Marketing/UpgradeService.pm
 lib/Yahoo/Marketing/User.pm
 lib/Yahoo/Marketing/UserAuthorization.pm
 lib/Yahoo/Marketing/UserManagementService.pm
@@ -201,6 +209,7 @@ t/day_part.t
 t/day_parting_target.t
 t/day_parting_targeting.t
 t/demographic_targeting.t
+t/download_file.t
 t/error.t
 t/error_type.t
 t/example.t
@@ -297,6 +306,7 @@ t/lib/Yahoo/Marketing/Test/DayPart.pm
 t/lib/Yahoo/Marketing/Test/DayPartingTarget.pm
 t/lib/Yahoo/Marketing/Test/DayPartingTargeting.pm
 t/lib/Yahoo/Marketing/Test/DemographicTargeting.pm
+t/lib/Yahoo/Marketing/Test/DownloadFile.pm
 t/lib/Yahoo/Marketing/Test/Error.pm
 t/lib/Yahoo/Marketing/Test/ErrorType.pm
 t/lib/Yahoo/Marketing/Test/ExcludedWord.pm
@@ -343,6 +353,8 @@ t/lib/Yahoo/Marketing/Test/MasterAccount.pm
 t/lib/Yahoo/Marketing/Test/MasterAccountService.pm
 t/lib/Yahoo/Marketing/Test/MobileDictionaryService.pm
 t/lib/Yahoo/Marketing/Test/Network.pm
+t/lib/Yahoo/Marketing/Test/NetworkDistribution.pm
+t/lib/Yahoo/Marketing/Test/NetworkTarget.pm
 t/lib/Yahoo/Marketing/Test/OptInAdGroupResponse.pm
 t/lib/Yahoo/Marketing/Test/OptInCampaignResponse.pm
 t/lib/Yahoo/Marketing/Test/OptInStatus.pm
@@ -350,6 +362,8 @@ t/lib/Yahoo/Marketing/Test/PageRelatedKeywordRequestType.pm
 t/lib/Yahoo/Marketing/Test/PaymentInfo.pm
 t/lib/Yahoo/Marketing/Test/PaymentMethodInfo.pm
 t/lib/Yahoo/Marketing/Test/PostTest.pm
+t/lib/Yahoo/Marketing/Test/Preferences.pm
+t/lib/Yahoo/Marketing/Test/ProcessStatus.pm
 t/lib/Yahoo/Marketing/Test/RangeDefinitionRequestType.pm
 t/lib/Yahoo/Marketing/Test/RangeDefinitionResponseType.pm
 t/lib/Yahoo/Marketing/Test/RangeDefinitionType.pm
@@ -357,13 +371,16 @@ t/lib/Yahoo/Marketing/Test/RangeValueType.pm
 t/lib/Yahoo/Marketing/Test/RelatedKeywordRequestType.pm
 t/lib/Yahoo/Marketing/Test/RelatedKeywordResponseType.pm
 t/lib/Yahoo/Marketing/Test/RelatedKeywordType.pm
+t/lib/Yahoo/Marketing/Test/ReportDownloadInfo.pm
 t/lib/Yahoo/Marketing/Test/ReportInfo.pm
+t/lib/Yahoo/Marketing/Test/Response.pm
 t/lib/Yahoo/Marketing/Test/ResponseStatusType.pm
 t/lib/Yahoo/Marketing/Test/Role.pm
 t/lib/Yahoo/Marketing/Test/SetGeographicLocationResponse.pm
 t/lib/Yahoo/Marketing/Test/SpendLimit.pm
 t/lib/Yahoo/Marketing/Test/SponsoredSearchMinBidRequest.pm
 t/lib/Yahoo/Marketing/Test/SubphraseKeywordRequestType.pm
+t/lib/Yahoo/Marketing/Test/Summary.pm
 t/lib/Yahoo/Marketing/Test/TacticSpendCap.pm
 t/lib/Yahoo/Marketing/Test/TargetingAttribute.pm
 t/lib/Yahoo/Marketing/Test/TargetingAttributeDescriptor.pm
@@ -373,9 +390,9 @@ t/lib/Yahoo/Marketing/Test/TargetingPremium.pm
 t/lib/Yahoo/Marketing/Test/TargetingProfile.pm
 t/lib/Yahoo/Marketing/Test/TargetingService.pm
 t/lib/Yahoo/Marketing/Test/TargetingType.pm
+t/lib/Yahoo/Marketing/Test/Token.pm
 t/lib/Yahoo/Marketing/Test/UpdateForAd.pm
 t/lib/Yahoo/Marketing/Test/UpdateForKeyword.pm
-t/lib/Yahoo/Marketing/Test/UpgradeService.pm
 t/lib/Yahoo/Marketing/Test/User.pm
 t/lib/Yahoo/Marketing/Test/UserAuthorization.pm
 t/lib/Yahoo/Marketing/Test/UserManagementService.pm
@@ -385,6 +402,8 @@ t/master_account.t
 t/master_account_service.t
 t/mobile_dictionary_service.t
 t/network.t
+t/network_distribution.t
+t/network_target.t
 t/opt_in_ad_group_response.t
 t/opt_in_campaign_response.t
 t/opt_in_status.t
@@ -393,6 +412,8 @@ t/payment_info.t
 t/payment_method_info.t
 t/pod-coverage.t
 t/pod.t
+t/preferences.t
+t/process_status.t
 t/range_definition_request_type.t
 t/range_definition_response_type.t
 t/range_definition_type.t
@@ -400,7 +421,9 @@ t/range_value_type.t
 t/related_keyword_request_type.t
 t/related_keyword_response_type.t
 t/related_keyword_type.t
+t/report_download_info.t
 t/report_info.t
+t/response.t
 t/response_status_type.t
 t/role.t
 t/service.t
@@ -408,6 +431,7 @@ t/set_geographic_location_response.t
 t/spend_limit.t
 t/sponsored_search_min_bid_request.t
 t/sub_phrase_keyword_request_type.t
+t/summary.t
 t/tactic_spend_cap.t
 t/targeting_attribute.t
 t/targeting_attribute_descriptor.t
@@ -417,9 +441,9 @@ t/targeting_premium.t
 t/targeting_profile.t
 t/targeting_service.t
 t/targeting_type.t
+t/token.t
 t/update_for_ad.t
 t/update_for_keyword.t
-t/upgrade_service.t
 t/user.t
 t/user_authorization.t
 t/user_management_service.t

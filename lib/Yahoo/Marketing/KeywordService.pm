@@ -18,7 +18,7 @@ Yahoo::Marketing::KeywordService - an object that provides access to Yahoo Marke
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V5/reference/services/KeywordService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/services/KeywordService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

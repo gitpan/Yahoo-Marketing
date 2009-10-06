@@ -1,6 +1,6 @@
 ---
 name: Yahoo-Marketing
-version: 5.21
+version: 6.01
 author:
   - 'Jeff Lavallee <jeff@zeroclue.com>'
 abstract: an interface for Yahoo! Search Marketing's Web Services.
@@ -30,7 +30,7 @@ build_requires:
 provides:
   Yahoo::Marketing:
     file: lib/Yahoo/Marketing.pm
-    version: 5.21
+    version: 6.01
   Yahoo::Marketing::Account:
     file: lib/Yahoo/Marketing/Account.pm
   Yahoo::Marketing::AccountAggregate:
@@ -139,6 +139,8 @@ provides:
     file: lib/Yahoo/Marketing/DayPartingTargeting.pm
   Yahoo::Marketing::DemographicTargeting:
     file: lib/Yahoo/Marketing/DemographicTargeting.pm
+  Yahoo::Marketing::DownloadFile:
+    file: lib/Yahoo/Marketing/DownloadFile.pm
   Yahoo::Marketing::EditorialReasons:
     file: lib/Yahoo/Marketing/EditorialReasons.pm
   Yahoo::Marketing::Error:
@@ -235,6 +237,10 @@ provides:
     file: lib/Yahoo/Marketing/MobileDictionaryService.pm
   Yahoo::Marketing::Network:
     file: lib/Yahoo/Marketing/Network.pm
+  Yahoo::Marketing::NetworkDistribution:
+    file: lib/Yahoo/Marketing/NetworkDistribution.pm
+  Yahoo::Marketing::NetworkTarget:
+    file: lib/Yahoo/Marketing/NetworkTarget.pm
   Yahoo::Marketing::OptInAdGroupResponse:
     file: lib/Yahoo/Marketing/OptInAdGroupResponse.pm
   Yahoo::Marketing::OptInCampaignResponse:
@@ -247,6 +253,10 @@ provides:
     file: lib/Yahoo/Marketing/PaymentInfo.pm
   Yahoo::Marketing::PaymentMethodInfo:
     file: lib/Yahoo/Marketing/PaymentMethodInfo.pm
+  Yahoo::Marketing::Preferences:
+    file: lib/Yahoo/Marketing/Preferences.pm
+  Yahoo::Marketing::ProcessStatus:
+    file: lib/Yahoo/Marketing/ProcessStatus.pm
   Yahoo::Marketing::RangeDefinitionRequestType:
     file: lib/Yahoo/Marketing/RangeDefinitionRequestType.pm
   Yahoo::Marketing::RangeDefinitionResponseType:
@@ -261,8 +271,12 @@ provides:
     file: lib/Yahoo/Marketing/RelatedKeywordResponseType.pm
   Yahoo::Marketing::RelatedKeywordType:
     file: lib/Yahoo/Marketing/RelatedKeywordType.pm
+  Yahoo::Marketing::ReportDownloadInfo:
+    file: lib/Yahoo/Marketing/ReportDownloadInfo.pm
   Yahoo::Marketing::ReportInfo:
     file: lib/Yahoo/Marketing/ReportInfo.pm
+  Yahoo::Marketing::Response:
+    file: lib/Yahoo/Marketing/Response.pm
   Yahoo::Marketing::ResponseStatusType:
     file: lib/Yahoo/Marketing/ResponseStatusType.pm
   Yahoo::Marketing::Role:
@@ -277,6 +291,8 @@ provides:
     file: lib/Yahoo/Marketing/SponsoredSearchMinBidRequest.pm
   Yahoo::Marketing::SubphraseKeywordRequestType:
     file: lib/Yahoo/Marketing/SubphraseKeywordRequestType.pm
+  Yahoo::Marketing::Summary:
+    file: lib/Yahoo/Marketing/Summary.pm
   Yahoo::Marketing::TacticSpendCap:
     file: lib/Yahoo/Marketing/TacticSpendCap.pm
   Yahoo::Marketing::TargetingAttribute:
@@ -295,12 +311,12 @@ provides:
     file: lib/Yahoo/Marketing/TargetingService.pm
   Yahoo::Marketing::TargetingType:
     file: lib/Yahoo/Marketing/TargetingType.pm
+  Yahoo::Marketing::Token:
+    file: lib/Yahoo/Marketing/Token.pm
   Yahoo::Marketing::UpdateForAd:
     file: lib/Yahoo/Marketing/UpdateForAd.pm
   Yahoo::Marketing::UpdateForKeyword:
     file: lib/Yahoo/Marketing/UpdateForKeyword.pm
-  Yahoo::Marketing::UpgradeService:
-    file: lib/Yahoo/Marketing/UpgradeService.pm
   Yahoo::Marketing::User:
     file: lib/Yahoo/Marketing/User.pm
   Yahoo::Marketing::UserAuthorization:

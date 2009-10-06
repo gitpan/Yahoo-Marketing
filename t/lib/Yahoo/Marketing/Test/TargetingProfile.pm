@@ -9,12 +9,13 @@ use Test::More;
 
 use Yahoo::Marketing::TargetingProfile;
 
-sub test_can_create_targeting_profile_and_set_all_fields : Test(4) {
+sub test_can_create_targeting_profile_and_set_all_fields : Test(5) {
 
     my $targeting_profile = Yahoo::Marketing::TargetingProfile->new
                                                               ->dayPartingTargeting( 'day parting targeting' )
                                                               ->demographicTargeting( 'demographic targeting' )
                                                               ->geoTargets( 'geo targets' )
+                                                              ->networkDistribution( 'network distribution' )
                    ;
 
     ok( $targeting_profile );
@@ -22,6 +23,7 @@ sub test_can_create_targeting_profile_and_set_all_fields : Test(4) {
     is( $targeting_profile->dayPartingTargeting, 'day parting targeting', 'can get day parting targeting' );
     is( $targeting_profile->demographicTargeting, 'demographic targeting', 'can get demographic targeting' );
     is( $targeting_profile->geoTargets, 'geo targets', 'can get geo targets' );
+    is( $targeting_profile->networkDistribution, 'network distribution', 'can get network distribution' );
 
 };
 

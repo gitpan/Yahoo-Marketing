@@ -15,8 +15,8 @@ ok( $ysm_ws, 'can intantiate' );
 
 is( $ysm_ws->use_wsse_security_headers, 1, 'use wsse security headers defaults' );
 is( $ysm_ws->use_location_service,      1, 'use location service defaults' );
-is( $ysm_ws->version, 'V5', 'version defaults' );
-is( $ysm_ws->uri, 'http://marketing.ews.yahooapis.com/V5', 'uri defaults' );
+is( $ysm_ws->version, 'V6', 'version defaults' );
+is( $ysm_ws->uri, 'http://marketing.ews.yahooapis.com/V6', 'uri defaults' );
 is( $ysm_ws->cache_expire_time, '1 day', 'cache expire time defaults' );
 is( ref $ysm_ws->cache, 'Cache::FileCache', 'cache defaults' );
 
@@ -49,7 +49,7 @@ is( $ysm_ws->uri, 'our test uri', 'can get uri' );
 
 my $ysm_ws2 = Yahoo::Marketing::Service->new( use_wsse_security_headers => 0,
                                               use_location_service      => undef,
-                                              version                   => 'V5',
+                                              version                   => 'V6',
                                               uri                       => 'http://foo.bar',
                                               cache_expire_time         => '2 weeks',
                                               cache                     => Cache::SizeAwareFileCache->new,
@@ -57,7 +57,7 @@ my $ysm_ws2 = Yahoo::Marketing::Service->new( use_wsse_security_headers => 0,
 
 is( $ysm_ws2->use_wsse_security_headers, 0,     'can set use_wsse_security_headers in new' );
 is( $ysm_ws2->use_location_service,      undef, 'can set use_location_service in new' );
-is( $ysm_ws2->version, 'V5', 'can set version in new' );
+is( $ysm_ws2->version, 'V6', 'can set version in new' );
 is( $ysm_ws2->uri, 'http://foo.bar', 'can set uri in new' );
 is( $ysm_ws2->cache_expire_time, '2 weeks', 'can set cache expire time in new' );
 is( ref $ysm_ws2->cache, 'Cache::SizeAwareFileCache', 'can set cache in new' );

@@ -18,7 +18,7 @@ Yahoo::Marketing::BulkService - an object that provides capability to modify or 
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V5/reference/services/BulkService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/services/BulkService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

@@ -120,3 +120,6 @@ Revision history for Yahoo-Marketing
 
 5.21    8 September 2009
         Add MobileDictionaryService.
+
+6.01    6 October 2009
+        Major version # bumped for EWS V6.  All changes neccessary to support V6 added.

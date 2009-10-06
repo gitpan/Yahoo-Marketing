@@ -108,25 +108,6 @@ sub test_is_books_closed : Test(1) {
 };
 
 
-sub test_add_report_request_with_account_aggregation : Test(2) {
-    my $self = shift;
-
-    my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
-
-    my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
-        ->reportName( 'account aggregation report' )
-        ->reportType( 'AccountSummary' )
-        ->dateRange( 'LastCalendarMonth' );
-
-    my $reportID = $ysm_ws->addReportRequestWithAccountAggregation(
-        reportRequest => $basic_report_request,
-    );
-
-    ok( $reportID );
-    like( $reportID, qr/^\d+$/, 'reportID looks right' );
-};
-
-
 sub test_add_report_request_for_account_id : Test(2) {
     my $self = shift;
 
@@ -137,9 +118,10 @@ sub test_add_report_request_for_account_id : Test(2) {
         ->reportType( 'CampaignSummary' )
         ->dateRange( 'WeekToDate' );
 
-    my $reportID = $ysm_ws->addReportRequestForAccountID(
+    my $reportID = $ysm_ws->addReportRequest(
         accountID => $ysm_ws->account,
         reportRequest => $basic_report_request,
+        fileOutputFormat => Yahoo::Marketing::FileOutputFormat->new->fileOutputType('TSV')->zipped('true'),
     );
 
     ok( $reportID );
@@ -157,9 +139,10 @@ sub test_get_report_list : Test(2) {
         ->reportType( 'AdvancedAdKeywordPerformance' )
         ->dateRange( 'MonthToDate' );
 
-    my $reportID = $ysm_ws->addReportRequestForAccountID(
+    my $reportID = $ysm_ws->addReportRequest(
         accountID => $ysm_ws->account,
         reportRequest => $basic_report_request,
+        fileOutputFormat => Yahoo::Marketing::FileOutputFormat->new->fileOutputType('TSV')->zipped('true'),
     );
 
     my @report_info = $ysm_ws->getReportList(
@@ -187,9 +170,10 @@ sub test_delete_report : Test(2) {
         ->reportType( 'KeywordSummary' )
         ->dateRange( 'LastBusinessWeek' );
 
-    my $reportID = $ysm_ws->addReportRequestForAccountID(
+    my $reportID = $ysm_ws->addReportRequest(
         accountID => $ysm_ws->account,
         reportRequest => $basic_report_request,
+        fileOutputFormat => Yahoo::Marketing::FileOutputFormat->new->fileOutputType('TSV')->zipped('true'),
     );
 
     ok( $reportID );
@@ -220,9 +204,10 @@ sub test_delete_reports : Test(3) {
         ->reportType( 'AdGroupSummary' )
         ->dateRange( 'Last7Days' );
 
-    my $reportID1 = $ysm_ws->addReportRequestForAccountID(
+    my $reportID1 = $ysm_ws->addReportRequest(
         accountID => $ysm_ws->account,
         reportRequest => $basic_report_request1,
+        fileOutputFormat => Yahoo::Marketing::FileOutputFormat->new->fileOutputType('TSV')->zipped('true'),
     );
 
     ok( $reportID1 );
@@ -232,9 +217,10 @@ sub test_delete_reports : Test(3) {
         ->reportType( 'AccountSummary' )
         ->dateRange( 'Last30Days' );
 
-    my $reportID2 = $ysm_ws->addReportRequestForAccountID(
+    my $reportID2 = $ysm_ws->addReportRequest(
         accountID => $ysm_ws->account,
         reportRequest => $basic_report_request2,
+        fileOutputFormat => Yahoo::Marketing::FileOutputFormat->new->fileOutputType('TSV')->zipped('true'),
     );
 
     ok( $reportID2 );
@@ -255,7 +241,7 @@ sub test_delete_reports : Test(3) {
 }
 
 
-sub test_get_report_output_url : Test(2) {
+sub test_get_report_download_url : Test(2) {
     my $self = shift;
 
     my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
@@ -265,9 +251,10 @@ sub test_get_report_output_url : Test(2) {
         ->reportType( 'AdGroupSummary' )
         ->dateRange( 'LastCalendarQuarter' );
 
-    my $reportID = $ysm_ws->addReportRequestForAccountID(
+    my $reportID = $ysm_ws->addReportRequest(
         accountID => $ysm_ws->account,
         reportRequest => $basic_report_request,
+        fileOutputFormat => Yahoo::Marketing::FileOutputFormat->new->fileOutputType('TSV')->zipped('true'),
     );
 
     my $retry = 5;
@@ -280,23 +267,18 @@ sub test_get_report_output_url : Test(2) {
         sleep 5;
     }
 
-    return 'report pending for too long time, skip test of getReportOutputUrl(s)' unless @ready;
+    return 'report pending for too long time, skip test of getReportDownloadUrl(s)' unless @ready;
 
-    my $file_output_format = Yahoo::Marketing::FileOutputFormat->new
-        ->fileOutputType( 'CSV' )
-        ->zipped( 'true' );
-
-    my $report_url = $ysm_ws->getReportOutputUrl(
+    my $report_url = $ysm_ws->getReportDownloadUrl(
         reportID   => $reportID,
-        fileFormat => $file_output_format,
-    );
+    )->downloadUrl;
 
     ok( $report_url );
     like( $report_url, qr{^http(s?)://}, 'looks like a URL' );
 };
 
 
-sub test_get_report_output_urls : Test(4) {
+sub test_get_report_download_urls : Test(4) {
     my $self = shift;
 
     my $ysm_ws = Yahoo::Marketing::BasicReportService->new->parse_config( section => $self->section );
@@ -306,9 +288,10 @@ sub test_get_report_output_urls : Test(4) {
         ->reportType( 'CampaignSummary' )
         ->dateRange( 'Yesterday' );
 
-    my $reportID1 = $ysm_ws->addReportRequestForAccountID(
+    my $reportID1 = $ysm_ws->addReportRequest(
         accountID => $ysm_ws->account,
         reportRequest => $basic_report_request1,
+        fileOutputFormat => Yahoo::Marketing::FileOutputFormat->new->fileOutputType('TSV')->zipped('true'),
     );
 
     my $basic_report_request2 = Yahoo::Marketing::BasicReportRequest->new
@@ -316,9 +299,10 @@ sub test_get_report_output_urls : Test(4) {
         ->reportType( 'DailySummary' )
         ->dateRange( 'LastCalendarWeek' );
 
-    my $reportID2 = $ysm_ws->addReportRequestForAccountID(
+    my $reportID2 = $ysm_ws->addReportRequest(
         accountID => $ysm_ws->account,
         reportRequest => $basic_report_request2,
+        fileOutputFormat => Yahoo::Marketing::FileOutputFormat->new->fileOutputType('TSV')->zipped('true'),
     );
 
     my $retry = 5;
@@ -334,21 +318,16 @@ sub test_get_report_output_urls : Test(4) {
         @ready = ();
     }
 
-    return 'report pending for too long time, skip test of getReportOutputUrl(s)' unless @ready;
+    return 'report pending for too long time, skip test of getReportDownloadUrl(s)' unless @ready;
 
-    my $file_output_format = Yahoo::Marketing::FileOutputFormat->new
-        ->fileOutputType( 'XML' )
-        ->zipped( 'false' );
-
-    my @report_urls = $ysm_ws->getReportOutputUrls(
+    my @report_urls = $ysm_ws->getReportDownloadUrls(
         reportIDs   => [ $reportID1, $reportID2 ],
-        fileFormat  => $file_output_format,
     );
 
     ok( @report_urls );
     is( scalar @report_urls, 2 );
-    like( $report_urls[0], qr{^http(s?)://}, 'looks like a URL' );
-    like( $report_urls[1], qr{^http(s?)://}, 'looks like a URL' );
+    like( $report_urls[0]->downloadUrl, qr{^http(s?)://}, 'looks like a URL' );
+    like( $report_urls[1]->downloadUrl, qr{^http(s?)://}, 'looks like a URL' );
 };
 
 
@@ -357,10 +336,9 @@ sub test_get_report_output_urls : Test(4) {
 
 __END__
 
-# addReportRequestWithAccountAggregation
-# addReportRequestForAccountID
+# addReportRequest
 # deleteReport
 # deleteReports
 # getReportList
-# getReportOutputUrl
-# getReportOutputUrls
+# getReportDownloadUrl
+# getReportDownloadUrls
