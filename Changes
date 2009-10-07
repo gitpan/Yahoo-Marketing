@@ -123,3 +123,6 @@ Revision history for Yahoo-Marketing
 
 6.01    6 October 2009
         Major version # bumped for EWS V6.  All changes neccessary to support V6 added.
+
+6.02    7 October 2009
+        Add ConverterService.

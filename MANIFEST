@@ -49,6 +49,7 @@ lib/Yahoo/Marketing/CombinedAccountStatus.pm
 lib/Yahoo/Marketing/Company.pm
 lib/Yahoo/Marketing/CompanyService.pm
 lib/Yahoo/Marketing/ComplexType.pm
+lib/Yahoo/Marketing/ConverterService.pm
 lib/Yahoo/Marketing/CreditCardInfo.pm
 lib/Yahoo/Marketing/DateTimeAccessor.pm
 lib/Yahoo/Marketing/DayPart.pm
