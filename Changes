@@ -126,3 +126,7 @@ Revision history for Yahoo-Marketing
 
 6.02    7 October 2009
         Add ConverterService.
+
+6.03    9 November 2009
+        Add element 'warnings' in HistoricalResponseData data object;
+        Add element 'vatRegistrationCountry' in Account data object.

@@ -9,7 +9,7 @@ use Test::More;
 
 use Yahoo::Marketing::HistoricalResponseData;
 
-sub test_can_create_historical_response_data_and_set_all_fields : Test(6) {
+sub test_can_create_historical_response_data_and_set_all_fields : Test(7) {
 
     my $historical_response_data = Yahoo::Marketing::HistoricalResponseData->new
                                                                            ->avgSearches( 'avg searches' )
@@ -17,6 +17,7 @@ sub test_can_create_historical_response_data_and_set_all_fields : Test(6) {
                                                                            ->errors( 'errors' )
                                                                            ->monthYear( 'month year' )
                                                                            ->operationSucceeded( 'operation succeeded' )
+									   ->warnings( 'warnings' )
                    ;
 
     ok( $historical_response_data );
@@ -26,7 +27,7 @@ sub test_can_create_historical_response_data_and_set_all_fields : Test(6) {
     is( $historical_response_data->errors, 'errors', 'can get errors' );
     is( $historical_response_data->monthYear, 'month year', 'can get month year' );
     is( $historical_response_data->operationSucceeded, 'operation succeeded', 'can get operation succeeded' );
-
+    is( $historical_response_data->warnings, 'warnings', 'can get warnings' );
 };
 
 

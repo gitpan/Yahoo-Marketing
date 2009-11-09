@@ -19,6 +19,7 @@ sub _user_setable_attributes {
                  errors
                  monthYear
                  operationSucceeded
+                 warnings
             /  );
 }
 
@@ -55,6 +56,7 @@ Creates a new instance
     errors
     monthYear
     operationSucceeded
+    warnings
 
 =back
 

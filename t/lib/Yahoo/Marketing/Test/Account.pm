@@ -9,7 +9,7 @@ use Test::More;
 
 use Yahoo::Marketing::Account;
 
-sub test_can_create_account_and_set_all_fields : Test(23) {
+sub test_can_create_account_and_set_all_fields : Test(24) {
 
     my $account = Yahoo::Marketing::Account->new
                                            ->ID( 'id' )
@@ -32,6 +32,7 @@ sub test_can_create_account_and_set_all_fields : Test(23) {
                                            ->sitePassword( 'site password' )
                                            ->siteUserName( 'site user name' )
                                            ->sponsoredSearchON( 'sponsored search on' )
+                                           ->vatRegistrationCountry( 'vat registration country' )
                                            ->vatRegistrationNumber( 'vat registration number' )
                                            ->websiteURL( 'website url' )
                    ;
@@ -58,6 +59,7 @@ sub test_can_create_account_and_set_all_fields : Test(23) {
     is( $account->sitePassword, 'site password', 'can get site password' );
     is( $account->siteUserName, 'site user name', 'can get site user name' );
     is( $account->sponsoredSearchON, 'sponsored search on', 'can get sponsored search on' );
+    is( $account->vatRegistrationCountry, 'vat registration country', 'can get vat registration country' );
     is( $account->vatRegistrationNumber, 'vat registration number', 'can get vat registration number' );
     is( $account->websiteURL, 'website url', 'can get website url' );
 

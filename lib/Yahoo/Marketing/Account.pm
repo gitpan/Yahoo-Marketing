@@ -34,6 +34,7 @@ sub _user_setable_attributes {
                  sitePassword
                  siteUserName
                  sponsoredSearchON
+                 vatRegistrationCountry
                  vatRegistrationNumber
                  websiteURL
             /  );
@@ -87,6 +88,7 @@ Creates a new instance
     sitePassword
     siteUserName
     sponsoredSearchON
+    vatRegistrationCountry
     vatRegistrationNumber
     websiteURL
 
