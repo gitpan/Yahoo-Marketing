@@ -130,3 +130,6 @@ Revision history for Yahoo-Marketing
 6.03    9 November 2009
         Add element 'warnings' in HistoricalResponseData data object;
         Add element 'vatRegistrationCountry' in Account data object.
+
+6.11    21 January 2010
+        Minor version # bumped for EWS V6.1.0.
