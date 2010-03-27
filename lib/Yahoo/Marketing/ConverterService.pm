@@ -17,7 +17,7 @@ Yahoo::Marketing::ConverterService - an object that provides bulksheet converter
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/services/ConverterService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V7/reference/services/ConverterService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

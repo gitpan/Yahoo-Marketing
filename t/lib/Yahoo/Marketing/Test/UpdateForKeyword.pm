@@ -9,13 +9,14 @@ use Test::More;
 
 use Yahoo::Marketing::UpdateForKeyword;
 
-sub test_can_create_update_for_keyword_and_set_all_fields : Test(11) {
+sub test_can_create_update_for_keyword_and_set_all_fields : Test(12) {
 
     my $update_for_keyword = Yahoo::Marketing::UpdateForKeyword->new
                                                                ->ID( 'id' )
                                                                ->accountID( 'account id' )
                                                                ->alternateText( 'alternate text' )
                                                                ->canonicalSearchText( 'canonical search text' )
+                                                               ->carrierConfig( 'carrier config' )
                                                                ->editorialStatus( 'editorial status' )
                                                                ->phraseSearchText( 'phrase search text' )
                                                                ->text( 'text' )
@@ -30,6 +31,7 @@ sub test_can_create_update_for_keyword_and_set_all_fields : Test(11) {
     is( $update_for_keyword->accountID, 'account id', 'can get account id' );
     is( $update_for_keyword->alternateText, 'alternate text', 'can get alternate text' );
     is( $update_for_keyword->canonicalSearchText, 'canonical search text', 'can get canonical search text' );
+    is( $update_for_keyword->carrierConfig, 'carrier config', 'can get carrier config' );
     is( $update_for_keyword->editorialStatus, 'editorial status', 'can get editorial status' );
     is( $update_for_keyword->phraseSearchText, 'phrase search text', 'can get phrase search text' );
     is( $update_for_keyword->text, 'text', 'can get text' );

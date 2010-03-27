@@ -18,7 +18,7 @@ Yahoo::Marketing::VaultService - an object that provides access to Yahoo Marketi
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/services/VaultService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V7/reference/services/VaultService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

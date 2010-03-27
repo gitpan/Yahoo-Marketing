@@ -50,6 +50,8 @@ sub simple_type_exceptions {
     BulkDownloadStatus
     BulkFeedbackFileType
     BulkFileType
+    BulkUploadStatus
+    CarrierStatus
     CampaignStatus
     Continent
     ConversionMetric
@@ -72,6 +74,7 @@ sub simple_type_exceptions {
     OutputFile
     ParticipationStatus
     RangeNameType
+    ReportStatus
     ResponseStatusCodeType
     SignupStatus
     SpendCapTactic
@@ -93,9 +96,9 @@ sub new {
     $args{ use_wsse_security_headers } = 1       unless exists $args{ use_wsse_security_headers };
     $args{ use_location_service }      = 1       unless exists $args{ use_location_service };
     $args{ cache_expire_time }         = '1 day' unless exists $args{ cache_expire_time };
-    $args{ version }                   = 'V6'    unless exists $args{ version };
+    $args{ version }                   = 'V7'    unless exists $args{ version };
 
-    $args{ uri } = 'http://marketing.ews.yahooapis.com/V6' 
+    $args{ uri } = 'http://marketing.ews.yahooapis.com/V7' 
         unless exists $args{ uri };
 
     my $self = bless \%args, $class;
@@ -778,7 +781,7 @@ See also perldoc Yahoo::Marketing::AccountService
 
 Please see the API docs at 
 
-L<http://searchmarketing.yahoo.com/developer/docs/V6/gsg/index.php#services>
+L<http://searchmarketing.yahoo.com/developer/docs/V7/gsg/index.php#services>
 
 for details about what methods are available from each of the Services.
 
@@ -819,7 +822,7 @@ Get/set the version to be used for requests
 
 Get/set the URI to be used for requests.  
 
-Defaults to http://marketing.ews.yahooapis.com/V6
+Defaults to http://marketing.ews.yahooapis.com/V7
 
 =head2 master_account
 
@@ -831,7 +834,7 @@ Get/set the account to be used for requests.  Not all requests require an accoun
 Any service that deals with Campaigns (or Ad Groups, Ads, or Keywords) requires account
 to be set.
 
-L<http://searchmarketing.yahoo.com/developer/docs/V6/gsg/requests.php#header>
+L<http://searchmarketing.yahoo.com/developer/docs/V7/gsg/requests.php#header>
 
 =head2 immortal
 
@@ -845,13 +848,13 @@ Defaults to false.
 
 Get/set the onBehalfOfUsername to be used for requests.  
 
-L<http://searchmarketing.yahoo.com/developer/docs/V6/gsg/auth.php#onbehalfof>
+L<http://searchmarketing.yahoo.com/developer/docs/V7/gsg/auth.php#onbehalfof>
 
 =head2 on_behalf_of_password
 
 Get/set the onBehalfOfPassword to be used for requests.  
 
-L<http://searchmarketing.yahoo.com/developer/docs/V6/gsg/auth.php#onbehalfof>
+L<http://searchmarketing.yahoo.com/developer/docs/V7/gsg/auth.php#onbehalfof>
 
 =head2 use_wsse_security_headers
 

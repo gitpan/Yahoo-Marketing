@@ -15,7 +15,7 @@ Yahoo::Marketing::EditorialReasons - a base class for various EditoralReasons ty
 1;
 =head1 SYNOPSIS
 
-See L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/dataObjects.php> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V7/reference/dataObjects.php> for documentation of the various data objects.
 
 This module is not intended to be used directly.   Documentation for each of the complex types is in the appropriate module.  
 

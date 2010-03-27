@@ -12,20 +12,20 @@ Yahoo::Marketing - an interface for Yahoo! Search Marketing's Web Services.
 
 =head1 VERSION
 
-Version 6.11
+Version 7.01
 
 =cut
 
 # not using 3 part version #s, 
 # see http://www.perlmonks.org/?node_id=520850
-our $VERSION = '6.11';
+our $VERSION = '7.01';
 
 
 =head1 SYNOPSIS
 
 This collection of modules makes interacting with Yahoo! Search Marketing's Web Services as easy as possible.
 
-B<Note that this version (6.x) is intended to be used with V6 of the marketing web services.>
+B<Note that this version (6.x) is intended to be used with V7 of the marketing web services.>
 
 Sample Usage:
 
@@ -69,7 +69,7 @@ Sample Usage:
 
 =head1 VERSIONING
 
-This version of Yahoo::Marketing is intended to be used with V6 of Yahoo's Marketing API.  If you need to access both V4 and V6 simultaneously, you'll need to install 2 versions of Yahoo::Marketing.  In order to have 2 versions of the same perl module installed, you'll need to put one in a non-standard location, for example ~/perl/.  See perldoc CPAN for more information.
+This version of Yahoo::Marketing is intended to be used with V7 of Yahoo's Marketing API.  If you need to access both V4 and V6 simultaneously, you'll need to install 2 versions of Yahoo::Marketing.  In order to have 2 versions of the same perl module installed, you'll need to put one in a non-standard location, for example ~/perl/.  See perldoc CPAN for more information.
 
 =head1 OVERVIEW
 
@@ -148,11 +148,11 @@ And perldoc Yahoo::Marketing::ComplexTypes for Complex Type documentation
 
 See t/example.t for an example that parallels the perl example code at 
 
-L<http://searchmarketing.yahoo.com/developer/docs/V6/sample_code/perl.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V7/sample_code/perl.php>
 
 and
 
-L<http://searchmarketing.yahoo.com/developer/docs/V6/sample_code/perlsdk.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V7/sample_code/perlsdk.php>
 
 =head2 Example 1 - creating a campaign
  
@@ -281,9 +281,9 @@ is loaded B<only if an account has not already been set!>
    license: your-ews-license
    master_account: 98765432
    password: secretpassword
-   uri: http://marketing.ews.yahooapis.com/V6
+   uri: http://marketing.ews.yahooapis.com/V7
    username: defaultusername
-   version: V6
+   version: V7
  sandbox:
    default_account: 21921327 
    endpoint: https://sandbox.marketing.ews.yahooapis.com/services
@@ -291,9 +291,9 @@ is loaded B<only if an account has not already been set!>
    license: 90837ada-3b26-c2e5-6d59-61d7f2fb578e
    master_account: 21921326 
    password: mypassword
-   uri: http://marketing.ews.yahooapis.com/V6
+   uri: http://marketing.ews.yahooapis.com/V7
    username: mytestusername
-   version: V6
+   version: V7
 
 
 =head1 DEBUGGING

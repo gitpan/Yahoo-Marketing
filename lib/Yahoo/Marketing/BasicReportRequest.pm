@@ -14,6 +14,7 @@ Yahoo::Marketing::BasicReportRequest - an object to represent a Yahoo Marketing 
 
 sub _user_setable_attributes {
     return ( qw/ 
+                 campaignIDs
                  dateRange
                  endDate
                  reportName
@@ -35,21 +36,22 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 1;
 =head1 SYNOPSIS
 
-See L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/dataObjects.php> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V7/reference/dataObjects.php> for documentation of the various data objects.
 
-
-=head2 new
-
-Creates a new instance
 
 =cut
 
 =head1 METHODS
 
+=head2 new
+
+Creates a new instance
+
 =head2 get/set methods
 
 =over 8
 
+    campaignIDs
     dateRange
     endDate
     reportName

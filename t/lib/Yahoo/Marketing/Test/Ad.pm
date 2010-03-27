@@ -9,12 +9,13 @@ use Test::More;
 
 use Yahoo::Marketing::Ad;
 
-sub test_can_create_ad_and_set_all_fields : Test(19) {
+sub test_can_create_ad_and_set_all_fields : Test(20) {
 
     my $ad = Yahoo::Marketing::Ad->new
                                  ->ID( 'id' )
                                  ->accountID( 'account id' )
                                  ->adGroupID( 'ad group id' )
+                                 ->carrierConfig( 'carrier config' )
                                  ->contentMatchQualityScore( 'content match quality score' )
                                  ->description( 'description' )
                                  ->displayUrl( 'display url' )
@@ -37,6 +38,7 @@ sub test_can_create_ad_and_set_all_fields : Test(19) {
     is( $ad->ID, 'id', 'can get id' );
     is( $ad->accountID, 'account id', 'can get account id' );
     is( $ad->adGroupID, 'ad group id', 'can get ad group id' );
+    is( $ad->carrierConfig, 'carrier config', 'can get carrier config' );
     is( $ad->contentMatchQualityScore, 'content match quality score', 'can get content match quality score' );
     is( $ad->description, 'description', 'can get description' );
     is( $ad->displayUrl, 'display url', 'can get display url' );

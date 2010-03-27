@@ -1,12 +1,10 @@
 ---
 name: Yahoo-Marketing
-version: 6.11
+version: 7.01
 author:
   - 'Jeff Lavallee <jeff@zeroclue.com>'
 abstract: an interface for Yahoo! Search Marketing's Web Services.
 license: artistic
-resources:
-  license: http://opensource.org/licenses/artistic-license.php
 requires:
   Cache::Cache: 1.01
   Class::Accessor::Chained: 0.01
@@ -30,21 +28,37 @@ build_requires:
 provides:
   Yahoo::Marketing:
     file: lib/Yahoo/Marketing.pm
-    version: 6.11
+    version: 7.01
   Yahoo::Marketing::Account:
     file: lib/Yahoo/Marketing/Account.pm
   Yahoo::Marketing::AccountAggregate:
     file: lib/Yahoo/Marketing/AccountAggregate.pm
   Yahoo::Marketing::AccountBalance:
     file: lib/Yahoo/Marketing/AccountBalance.pm
+  Yahoo::Marketing::AccountCarrierConfig:
+    file: lib/Yahoo/Marketing/AccountCarrierConfig.pm
+  Yahoo::Marketing::AccountCarrierSetting:
+    file: lib/Yahoo/Marketing/AccountCarrierSetting.pm
   Yahoo::Marketing::AccountService:
     file: lib/Yahoo/Marketing/AccountService.pm
   Yahoo::Marketing::Ad:
     file: lib/Yahoo/Marketing/Ad.pm
+  Yahoo::Marketing::AdCarrierConfig:
+    file: lib/Yahoo/Marketing/AdCarrierConfig.pm
+  Yahoo::Marketing::AdCarrierEditorialReasonInfo:
+    file: lib/Yahoo/Marketing/AdCarrierEditorialReasonInfo.pm
+  Yahoo::Marketing::AdCarrierEditorialReasons:
+    file: lib/Yahoo/Marketing/AdCarrierEditorialReasons.pm
+  Yahoo::Marketing::AdCarrierSetting:
+    file: lib/Yahoo/Marketing/AdCarrierSetting.pm
   Yahoo::Marketing::AdEditorialReasons:
     file: lib/Yahoo/Marketing/AdEditorialReasons.pm
   Yahoo::Marketing::AdGroup:
     file: lib/Yahoo/Marketing/AdGroup.pm
+  Yahoo::Marketing::AdGroupCarrierConfig:
+    file: lib/Yahoo/Marketing/AdGroupCarrierConfig.pm
+  Yahoo::Marketing::AdGroupCarrierSetting:
+    file: lib/Yahoo/Marketing/AdGroupCarrierSetting.pm
   Yahoo::Marketing::AdGroupForecastRequestData:
     file: lib/Yahoo/Marketing/AdGroupForecastRequestData.pm
   Yahoo::Marketing::AdGroupOptimizationGuidelines:
@@ -103,6 +117,10 @@ provides:
     file: lib/Yahoo/Marketing/BulkUploadTokenUrlResponse.pm
   Yahoo::Marketing::Campaign:
     file: lib/Yahoo/Marketing/Campaign.pm
+  Yahoo::Marketing::CampaignCarrierConfig:
+    file: lib/Yahoo/Marketing/CampaignCarrierConfig.pm
+  Yahoo::Marketing::CampaignCarrierSetting:
+    file: lib/Yahoo/Marketing/CampaignCarrierSetting.pm
   Yahoo::Marketing::CampaignOptimizationGuidelines:
     file: lib/Yahoo/Marketing/CampaignOptimizationGuidelines.pm
   Yahoo::Marketing::CampaignOptimizationGuidelinesResponse:
@@ -205,6 +223,14 @@ provides:
     file: lib/Yahoo/Marketing/HistoricalResponseData.pm
   Yahoo::Marketing::Keyword:
     file: lib/Yahoo/Marketing/Keyword.pm
+  Yahoo::Marketing::KeywordCarrierConfig:
+    file: lib/Yahoo/Marketing/KeywordCarrierConfig.pm
+  Yahoo::Marketing::KeywordCarrierEditorialReasonInfo:
+    file: lib/Yahoo/Marketing/KeywordCarrierEditorialReasonInfo.pm
+  Yahoo::Marketing::KeywordCarrierEditorialReasons:
+    file: lib/Yahoo/Marketing/KeywordCarrierEditorialReasons.pm
+  Yahoo::Marketing::KeywordCarrierSetting:
+    file: lib/Yahoo/Marketing/KeywordCarrierSetting.pm
   Yahoo::Marketing::KeywordEditorialReasons:
     file: lib/Yahoo/Marketing/KeywordEditorialReasons.pm
   Yahoo::Marketing::KeywordForecastRequestData:
@@ -317,8 +343,16 @@ provides:
     file: lib/Yahoo/Marketing/Token.pm
   Yahoo::Marketing::UpdateForAd:
     file: lib/Yahoo/Marketing/UpdateForAd.pm
+  Yahoo::Marketing::UpdateForAdCarrierConfig:
+    file: lib/Yahoo/Marketing/UpdateForAdCarrierConfig.pm
+  Yahoo::Marketing::UpdateForAdCarrierSetting:
+    file: lib/Yahoo/Marketing/UpdateForAdCarrierSetting.pm
   Yahoo::Marketing::UpdateForKeyword:
     file: lib/Yahoo/Marketing/UpdateForKeyword.pm
+  Yahoo::Marketing::UpdateForKeywordCarrierConfig:
+    file: lib/Yahoo/Marketing/UpdateForKeywordCarrierConfig.pm
+  Yahoo::Marketing::UpdateForKeywordCarrierSetting:
+    file: lib/Yahoo/Marketing/UpdateForKeywordCarrierSetting.pm
   Yahoo::Marketing::User:
     file: lib/Yahoo/Marketing/User.pm
   Yahoo::Marketing::UserAuthorization:
@@ -329,7 +363,4 @@ provides:
     file: lib/Yahoo/Marketing/VaultService.pm
   Yahoo::Marketing::Warning:
     file: lib/Yahoo/Marketing/Warning.pm
-generated_by: Module::Build version 0.2808
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.2.html
-  version: 1.2
+generated_by: Module::Build version 0.261

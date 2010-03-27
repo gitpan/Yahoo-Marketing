@@ -8,15 +8,15 @@ use base qw/Yahoo::Marketing::ComplexType/;
 
 =head1 NAME
 
-Yahoo::Marketing::CombinedAccountStatus - an object to represent the status of the account as set by the user and the online status of the account as set by the system.
+Yahoo::Marketing::CombinedAccountStatus - an object to represent a Yahoo Marketing CombinedAccountStatus.
 
 =cut
 
 sub _user_setable_attributes {
     return ( qw/ 
-                accountStatus
-                onlineStatus
-                onlineStatusAsOf
+                 accountStatus
+                 onlineStatus
+                 onlineStatusAsOf
             /  );
 }
 
@@ -33,24 +33,24 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 1;
 =head1 SYNOPSIS
 
-See L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/dataObjects.php> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V7/reference/dataObjects.php> for documentation of the various data objects.
 
-
-=head2 new
-
-Creates a new instance
 
 =cut
 
 =head1 METHODS
 
+=head2 new
+
+Creates a new instance
+
 =head2 get/set methods
 
 =over 8
 
-accountStatus
-onlineStatus
-onlineStatusAsOf
+    accountStatus
+    onlineStatus
+    onlineStatusAsOf
 
 =back
 

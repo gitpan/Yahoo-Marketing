@@ -20,12 +20,11 @@ sub _user_setable_attributes {
                  advancedMatchON
                  alternateText
                  canonicalSearchText
+                 carrierConfig
                  editorialStatus
                  participatesInMarketplace
                  phraseSearchText
-                 sponsoredSearchBidStatus
                  sponsoredSearchMaxBid
-                 sponsoredSearchMinBid
                  status
                  text
                  update
@@ -39,7 +38,9 @@ sub _read_only_attributes {
                  createTimestamp
                  deleteTimestamp
                  lastUpdateTimestamp
+                 sponsoredSearchBidStatus
                  sponsoredSearchMaxBidTimestamp
+                 sponsoredSearchMinBid
            / );
 }
 
@@ -51,7 +52,7 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 1;
 =head1 SYNOPSIS
 
-See L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/dataObjects.php> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V7/reference/dataObjects.php> for documentation of the various data objects.
 
 
 =cut
@@ -72,12 +73,11 @@ Creates a new instance
     advancedMatchON
     alternateText
     canonicalSearchText
+    carrierConfig
     editorialStatus
     participatesInMarketplace
     phraseSearchText
-    sponsoredSearchBidStatus
     sponsoredSearchMaxBid
-    sponsoredSearchMinBid
     status
     text
     update
@@ -93,7 +93,9 @@ Creates a new instance
     createTimestamp
     deleteTimestamp
     lastUpdateTimestamp
+    sponsoredSearchBidStatus
     sponsoredSearchMaxBidTimestamp
+    sponsoredSearchMinBid
 
 =back
 

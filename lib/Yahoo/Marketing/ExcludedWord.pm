@@ -14,18 +14,19 @@ Yahoo::Marketing::ExcludedWord - an object to represent a Yahoo Marketing Exclud
 
 sub _user_setable_attributes {
     return ( qw/ 
+                 ID
                  accountID
                  adGroupID
+                 campaignID
+                 phraseSearchText
                  text
             /  );
 }
 
 sub _read_only_attributes {
     return ( qw/
-                 ID
                  createTimestamp
                  deleteTimestamp
-                 phraseSearchText
            / );
 }
 
@@ -37,23 +38,26 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 1;
 =head1 SYNOPSIS
 
-See L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/dataObjects.php> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V7/reference/dataObjects.php> for documentation of the various data objects.
 
-
-=head2 new
-
-Creates a new instance
 
 =cut
 
 =head1 METHODS
 
+=head2 new
+
+Creates a new instance
+
 =head2 get/set methods
 
 =over 8
 
+    ID
     accountID
     adGroupID
+    campaignID
+    phraseSearchText
     text
 
 =back
@@ -62,10 +66,8 @@ Creates a new instance
 
 =over 8
 
-    ID
     createTimestamp
     deleteTimestamp
-    phraseSearchText
 
 =back
 

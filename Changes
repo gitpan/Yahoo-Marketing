@@ -133,3 +133,6 @@ Revision history for Yahoo-Marketing
 
 6.11    21 January 2010
         Minor version # bumped for EWS V6.1.0.
+
+7.01    26 March 2010
+        Major version # bumped for EWS V7.  All changes neccessary to support V7 added.

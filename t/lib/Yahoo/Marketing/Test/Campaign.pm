@@ -9,12 +9,13 @@ use Test::More;
 
 use Yahoo::Marketing::Campaign;
 
-sub test_can_create_campaign_and_set_all_fields : Test(16) {
+sub test_can_create_campaign_and_set_all_fields : Test(17) {
 
     my $campaign = Yahoo::Marketing::Campaign->new
                                              ->ID( 'id' )
                                              ->accountID( 'account id' )
                                              ->advancedMatchON( 'advanced match on' )
+                                             ->carrierConfig( 'carrier config' )
                                              ->contentMatchON( 'content match on' )
                                              ->description( 'description' )
                                              ->endDate( '2008-01-06T17:51:55' )
@@ -34,6 +35,7 @@ sub test_can_create_campaign_and_set_all_fields : Test(16) {
     is( $campaign->ID, 'id', 'can get id' );
     is( $campaign->accountID, 'account id', 'can get account id' );
     is( $campaign->advancedMatchON, 'advanced match on', 'can get advanced match on' );
+    is( $campaign->carrierConfig, 'carrier config', 'can get carrier config' );
     is( $campaign->contentMatchON, 'content match on', 'can get content match on' );
     is( $campaign->description, 'description', 'can get description' );
     is( $campaign->endDate, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
@@ -48,34 +50,6 @@ sub test_can_create_campaign_and_set_all_fields : Test(16) {
     is( $campaign->lastUpdateTimestamp, '2008-01-10T17:51:55', 'can get 2008-01-10T17:51:55' );
 
 };
-
-sub test_campaign_datetime_fields_appear_to_work : Test(11) {
-
-    my $campaign = Yahoo::Marketing::Campaign->new
-                                             ->ID( 'id' )
-                                             ->endDate( '2008-01-05T17:51:55-06:00' )
-                                             ->startDate( '2008-01-06T17:51:55-06:00' )
-                                             ->createTimestamp( '2008-01-07T17:51:55-06:00' )
-                                             ->deleteTimestamp( '2008-01-08T17:51:55-06:00' )
-                                             ->lastUpdateTimestamp( '2008-01-09T17:51:55-06:00' )
-                   ;
-
-    ok( $campaign );
-
-    is( "@{[$campaign->endDate]}",             '2008-01-05T17:51:55-06:00' );
-    is( "@{[$campaign->startDate]}",           '2008-01-06T17:51:55-06:00' );
-    is( "@{[$campaign->createTimestamp]}",     '2008-01-07T17:51:55-06:00' );
-    is( "@{[$campaign->deleteTimestamp]}",     '2008-01-08T17:51:55-06:00' );
-    is( "@{[$campaign->lastUpdateTimestamp]}", '2008-01-09T17:51:55-06:00' );
-
-    ok( $campaign->endDate->UNIVERSAL::isa( 'DateTime' ) );
-    ok( $campaign->startDate->UNIVERSAL::isa( 'DateTime' ) );
-    ok( $campaign->createTimestamp()->UNIVERSAL::isa( 'DateTime' ) );
-    ok( $campaign->deleteTimestamp()->UNIVERSAL::isa( 'DateTime' ) );
-    ok( $campaign->lastUpdateTimestamp()->UNIVERSAL::isa( 'DateTime' ) );
-
-}
-
 
 
 

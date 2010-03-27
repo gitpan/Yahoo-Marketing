@@ -9,9 +9,10 @@ use Test::More;
 
 use Yahoo::Marketing::BasicReportRequest;
 
-sub test_can_create_basic_report_request_and_set_all_fields : Test(6) {
+sub test_can_create_basic_report_request_and_set_all_fields : Test(7) {
 
     my $basic_report_request = Yahoo::Marketing::BasicReportRequest->new
+                                                                   ->campaignIDs( 'campaign ids' )
                                                                    ->dateRange( 'date range' )
                                                                    ->endDate( '2008-01-06T17:51:55' )
                                                                    ->reportName( 'report name' )
@@ -21,6 +22,7 @@ sub test_can_create_basic_report_request_and_set_all_fields : Test(6) {
 
     ok( $basic_report_request );
 
+    is( $basic_report_request->campaignIDs, 'campaign ids', 'can get campaign ids' );
     is( $basic_report_request->dateRange, 'date range', 'can get date range' );
     is( $basic_report_request->endDate, '2008-01-06T17:51:55', 'can get 2008-01-06T17:51:55' );
     is( $basic_report_request->reportName, 'report name', 'can get report name' );

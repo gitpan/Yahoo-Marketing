@@ -17,6 +17,7 @@ sub _user_setable_attributes {
                  ID
                  accountID
                  adGroupID
+                 carrierConfig
                  contentMatchQualityScore
                  description
                  displayUrl
@@ -48,7 +49,7 @@ __PACKAGE__->mk_accessors( __PACKAGE__->_user_setable_attributes,
 1;
 =head1 SYNOPSIS
 
-See L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/dataObjects.php> for documentation of the various data objects.
+See L<http://searchmarketing.yahoo.com/developer/docs/V7/reference/dataObjects.php> for documentation of the various data objects.
 
 
 =cut
@@ -66,6 +67,7 @@ Creates a new instance
     ID
     accountID
     adGroupID
+    carrierConfig
     contentMatchQualityScore
     description
     displayUrl

@@ -18,7 +18,7 @@ Yahoo::Marketing::ForecastService - an object that let you know the results you 
 
 See EWS documentation online for available SOAP methods:
 
-L<http://searchmarketing.yahoo.com/developer/docs/V6/reference/services/ForecastService.php>
+L<http://searchmarketing.yahoo.com/developer/docs/V7/reference/services/ForecastService.php>
 
 Also see perldoc Yahoo::Marketing::Service for functionality common to all service modules.
 

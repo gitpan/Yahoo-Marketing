@@ -9,11 +9,12 @@ use Test::More;
 
 use Yahoo::Marketing::UpdateForAd;
 
-sub test_can_create_update_for_ad_and_set_all_fields : Test(11) {
+sub test_can_create_update_for_ad_and_set_all_fields : Test(12) {
 
     my $update_for_ad = Yahoo::Marketing::UpdateForAd->new
                                                      ->ID( 'id' )
                                                      ->accountID( 'account id' )
+                                                     ->carrierConfig( 'carrier config' )
                                                      ->description( 'description' )
                                                      ->displayUrl( 'display url' )
                                                      ->editorialStatus( 'editorial status' )
@@ -28,6 +29,7 @@ sub test_can_create_update_for_ad_and_set_all_fields : Test(11) {
 
     is( $update_for_ad->ID, 'id', 'can get id' );
     is( $update_for_ad->accountID, 'account id', 'can get account id' );
+    is( $update_for_ad->carrierConfig, 'carrier config', 'can get carrier config' );
     is( $update_for_ad->description, 'description', 'can get description' );
     is( $update_for_ad->displayUrl, 'display url', 'can get display url' );
     is( $update_for_ad->editorialStatus, 'editorial status', 'can get editorial status' );
