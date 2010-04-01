@@ -30,6 +30,7 @@ Creates a new instance
 =cut 
 
 
+sub _add_account_to_header { return 1; } # force addition of account to header
 
 
 1;

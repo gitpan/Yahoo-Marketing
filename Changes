@@ -136,3 +136,6 @@ Revision history for Yahoo-Marketing
 
 7.01    26 March 2010
         Major version # bumped for EWS V7.  All changes neccessary to support V7 added.
+
+7.02    1 April 2010
+        Add _add_account_to_header sub in ConverterService.pm.
