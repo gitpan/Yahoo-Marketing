@@ -139,3 +139,6 @@ Revision history for Yahoo-Marketing
 
 7.02    1 April 2010
         Add _add_account_to_header sub in ConverterService.pm.
+
+7.03    9 April 2010
+        Make adAutoOptimizationON value settable in AdGroup data obj.

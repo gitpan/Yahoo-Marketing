@@ -17,6 +17,7 @@ sub _user_setable_attributes {
                  ID
                  accountID
                  advancedMatchON
+                 adAutoOptimizationON
                  campaignID
                  carrierConfig
                  contentMatchMaxBid
@@ -31,7 +32,6 @@ sub _user_setable_attributes {
 
 sub _read_only_attributes {
     return ( qw/
-                 adAutoOptimizationON
                  contentMatchBidStatus
                  contentMatchMaxBidTimestamp
                  contentMatchMinBid
